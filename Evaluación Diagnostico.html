@@ -1,0 +1,848 @@
+<!DOCTYPE html> 
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Evaluación Diagnóstica - Herramientas Colaborativas</title>
+  <style>
+    :root {
+      --color-primary: #0078D4;       
+      --color-bg: #ffffff;            
+      --color-bg-secondary: #f0f0f0;  
+      --color-text: #333;
+      --transition-speed: 0.4s;
+      --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+                   Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0; 
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--color-bg-secondary);
+      color: var(--color-text);
+      line-height: 1.5;
+    }
+
+    /* ENCABEZADO */
+    header {
+      background: linear-gradient(135deg, var(--color-primary) 0%, #78C2F3 100%);
+      padding: 2.5rem 1rem;
+      text-align: center;
+      color: #fff;
+      border-bottom-left-radius: 50px;
+      border-bottom-right-radius: 50px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    header h1 {
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+    }
+    header p {
+      max-width: 600px;
+      margin: 0.5rem auto 0;
+      font-size: 1rem;
+    }
+
+    /* CONTENEDOR PRINCIPAL */
+    main {
+      max-width: 800px;
+      margin: 2rem auto;
+      background: var(--color-bg);
+      border-radius: 15px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      overflow: hidden;
+      position: relative;
+    }
+    .container {
+      padding: 2rem;
+      min-height: 450px;
+    }
+
+    /* SECCIONES (PASO A PASO) */
+    section {
+      display: none;
+      animation: fadeIn var(--transition-speed) ease-in-out;
+    }
+    section.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(10px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    /* BARRA DE PROGRESO */
+    .progress-bar {
+      position: relative;
+      height: 6px;
+      background-color: #e0e0e0;
+      border-radius: 3px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    .progress-fill {
+      background-color: var(--color-primary);
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* TITULOS Y PARRAFOS DE SECCION */
+    section h2 {
+      color: var(--color-primary);
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+    }
+
+    /* OPCIONES DE PREGUNTAS (RADIO/VERDADERO-FALSO) */
+    .options {
+      margin-top: 1rem;
+    }
+
+    .option-item {
+      display: flex; 
+      align-items: center; 
+      position: relative;
+      background-color: #fafafa;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 0.8rem 1rem;
+      margin-bottom: 0.6rem;
+      cursor: pointer;
+      transition: box-shadow 0.3s, background-color 0.3s;
+      overflow: hidden;
+    }
+
+    /* Borde vertical animado en hover */
+    .option-item::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 4px;
+      height: 100%;
+      background-color: var(--color-primary);
+      transform: scaleY(0);
+      transition: transform 0.3s ease;
+      border-radius: 0 5px 5px 0;
+    }
+
+    .option-item:hover {
+      background-color: #f0faff;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    }
+    .option-item:hover::before {
+      transform: scaleY(1);
+    }
+
+    .option-item input[type="radio"] {
+      margin-right: 0.5rem;
+      transform: translateY(1px);
+      cursor: pointer;
+    }
+
+    /* BOTONES DE NAVEGACIÓN */
+    .navigation {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2rem;
+    }
+    button {
+      background-color: var(--color-primary);
+      color: #ffffff;
+      border: none;
+      border-radius: 5px;
+      padding: 0.8rem 1.2rem;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.2s;
+    }
+    button:hover {
+      background-color: #005a9e;
+    }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    /* SECCIÓN FINAL (RESULTADOS) */
+    .final h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    .results-summary {
+      text-align: center;
+      margin-top: 1.5rem;
+    }
+
+    /* CONTENEDOR DE GRÁFICAS */
+    .chart-container {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      margin-top: 2rem;
+      align-items: center;
+    }
+    .chart-box {
+      width: 80%;
+      max-width: 500px;
+      height: 300px; /* Altura fija para un mejor dimensionado */
+    }
+
+    footer {
+      text-align: center;
+      color: #777;
+      font-size: 0.85rem;
+      margin-bottom: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Evaluación Diagnóstica</h1>
+    <p>Conoce tu nivel en OneDrive, Outlook y Teams mediante casos prácticos</p>
+  </header>
+
+  <main>
+    <div class="container">
+      <!-- Barra de progreso -->
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+
+      <!-- INTRO - step-0 -->
+      <section id="step-0" class="active">
+        <h2>Bienvenido(a)</h2>
+        <p>
+          Esta evaluación consta de <strong>15 preguntas</strong> sobre escenarios en OneDrive, Outlook y Teams.  
+          Al finalizar, verás tus resultados y recomendaciones. 
+        </p>
+        <p style="margin-top:1rem;">¡Haz clic en <em>Siguiente</em> para iniciar!</p>
+      </section>
+
+      <!-- 1: Outlook (OL) -->
+      <section id="step-1">
+        <h2>1. Reunión de Última Hora</h2>
+        <p>
+          Tu jefatura necesita convocar a una reunión inmediata.  
+          ¿Cómo agendarla y notificar más rápido usando Outlook?
+        </p>
+        <div class="options">
+          <label class="option-item">
+            <input type="radio" name="q1" value="A" />
+            A. Mensaje de WhatsApp a todos.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q1" value="B" />
+            B. Crear invitación en Outlook con los asistentes.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q1" value="C" />
+            C. Enviar correo manual sin invitación formal.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q1" value="D" />
+            D. Esperar a que todos estén juntos en la oficina.
+          </label>
+        </div>
+      </section>
+
+      <!-- 2: Outlook (OL) -->
+      <section id="step-2">
+        <h2>2. Reglas de Correo</h2>
+        <p>
+          Recibes muchos correos de proveedores y quieres organizarlos automáticamente.
+        </p>
+        <p><strong>“Configurar reglas y carpetas ayuda a clasificar correos en Outlook.”</strong></p>
+        <div class="options">
+          <label class="option-item">
+            <input type="radio" name="q2" value="V" />
+            Verdadero
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q2" value="F" />
+            Falso
+          </label>
+        </div>
+      </section>
+
+      <!-- 3: OneDrive (OD) -->
+      <section id="step-3">
+        <h2>3. Edición Colaborativa</h2>
+        <p>
+          Quieres que dos compañeros editen un documento simultáneamente, evitando múltiples versiones.
+        </p>
+        <div class="options">
+          <label class="option-item">
+            <input type="radio" name="q3" value="A" />
+            A. Subirlo a OneDrive y compartir enlace de edición.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q3" value="B" />
+            B. Intercambiarlo por correo con copia oculta.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q3" value="C" />
+            C. Adjuntarlo en un grupo de WhatsApp.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q3" value="D" />
+            D. Crear una carpeta en disco local y pasar un pendrive.
+          </label>
+        </div>
+      </section>
+
+      <!-- 4: Outlook (OL) -->
+      <section id="step-4">
+        <h2>4. Búsqueda de Correos</h2>
+        <p>
+          Necesitas encontrar un mensaje con un adjunto de hace 2 meses enviado por un cliente.
+        </p>
+        <p><strong>“Outlook permite filtrar por remitente y fecha para ubicarlo rápidamente.”</strong></p>
+        <div class="options">
+          <label class="option-item">
+            <input type="radio" name="q4" value="V" />
+            Verdadero
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q4" value="F" />
+            Falso
+          </label>
+        </div>
+      </section>
+
+      <!-- 5: OneDrive (OD) -->
+      <section id="step-5">
+        <h2>5. Control de Versiones</h2>
+        <p>
+          Tu equipo legal revisa un contrato y teme perder información al haber varias versiones.
+        </p>
+        <div class="options">
+          <label class="option-item">
+            <input type="radio" name="q5" value="A" />
+            A. Subir a OneDrive con historial de versiones.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q5" value="B" />
+            B. Imprimir cada versión y archivarla.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q5" value="C" />
+            C. Reenviar el contrato por correo cada vez.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q5" value="D" />
+            D. Que cada revisor tenga su copia local distinta.
+          </label>
+        </div>
+      </section>
+
+      <!-- 6: OneDrive (OD) -->
+      <section id="step-6">
+        <h2>6. Compartir con Externos</h2>
+        <p>
+          Debes enviar un documento grande a un cliente externo sin saturar su bandeja de entrada.  
+          Solo debe poder verlo, sin editar.
+        </p>
+        <div class="options">
+          <label class="option-item">
+            <input type="radio" name="q6" value="A" />
+            A. Subir a OneDrive y compartir enlace de solo lectura.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q6" value="B" />
+            B. Comprimir en .zip y adjuntar por correo.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q6" value="C" />
+            C. Colocarlo en un servidor FTP público.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q6" value="D" />
+            D. Enviarlo por un grupo de WhatsApp.
+          </label>
+        </div>
+      </section>
+
+      <!-- 7: Outlook (OL) -->
+      <section id="step-7">
+        <h2>7. Actividad Semanal</h2>
+        <p>
+          El equipo de ventas realiza reuniones virtuales cada semana.  
+          Quieres programarlas de forma recurrente en Outlook.
+        </p>
+        <p><strong>“Outlook permite programar reuniones periódicas con recordatorios.”</strong></p>
+        <div class="options">
+          <label class="option-item">
+            <input type="radio" name="q7" value="V" />
+            Verdadero
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q7" value="F" />
+            Falso
+          </label>
+        </div>
+      </section>
+
+      <!-- 8: Teams (TM) -->
+      <section id="step-8">
+        <h2>8. Videollamada Masiva</h2>
+        <p>
+          Hay más de 50 personas en sucursales distintas que deben unirse a una videollamada.  
+          Requieren chat, compartir pantalla y grabar la reunión.
+        </p>
+        <div class="options">
+          <label class="option-item">
+            <input type="radio" name="q8" value="A" />
+            A. OneDrive para subir luego el video.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q8" value="B" />
+            B. Teams con reunión grupal y grabación.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q8" value="C" />
+            C. Microsoft Word para anotar.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q8" value="D" />
+            D. Llamadas individuales por Skype.
+          </label>
+        </div>
+      </section>
+
+      <!-- 9: Outlook (OL) -->
+      <section id="step-9">
+        <h2>9. Reasignación de Tareas</h2>
+        <p>
+          Debes delegar tareas a un compañero y darle acceso solo a ciertos correos relacionados,
+          sin exponer tu bandeja completa.
+        </p>
+        <div class="options">
+          <label class="option-item">
+            <input type="radio" name="q9" value="A" />
+            A. Crear una carpeta compartida en Outlook con los correos relevantes.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q9" value="B" />
+            B. Darle tu usuario y contraseña.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q9" value="C" />
+            C. Imprimir todos los correos.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q9" value="D" />
+            D. Copiar manualmente cada mensaje en un .doc.
+          </label>
+        </div>
+      </section>
+
+      <!-- 10: OneDrive (OD) -->
+      <section id="step-10">
+        <h2>10. Sincronización Incompleta </h2>
+        <p>
+          Algunos archivos no se reflejan en la versión web.  
+          Sospechas un error de sincronización en tu laptop.
+        </p>
+        <div class="options">
+          <label class="option-item">
+            <input type="radio" name="q10" value="A" />
+            A. Cerrar sesión y volver a iniciar, revisando el ícono de sincronización.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q10" value="B" />
+            B. Borrar la carpeta en la nube y empezar de cero.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q10" value="C" />
+            C. Esperar a que pase solo un tiempo.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q10" value="D" />
+            D. Llamar a TI cada vez que falte un archivo.
+          </label>
+        </div>
+      </section>
+
+      <!-- 11: Outlook (OL) -->
+      <section id="step-11">
+        <h2>11. Calendario Compartido </h2>
+        <p>
+          El equipo de marketing necesita un calendario común para sus campañas.
+        </p>
+        <p><strong>“Un calendario compartido en Outlook puede ser editado por varios usuarios.”</strong></p>
+        <div class="options">
+          <label class="option-item">
+            <input type="radio" name="q11" value="V" />
+            Verdadero
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q11" value="F" />
+            Falso
+          </label>
+        </div>
+      </section>
+
+      <!-- 12: Teams (TM) -->
+      <section id="step-12">
+        <h2>12. Trabajo Multidisciplinario </h2>
+        <p>
+          Tres departamentos (Diseño, Ventas, Finanzas) requieren un espacio para chatear en equipo y subir documentos.
+        </p>
+        <div class="options">
+          <label class="option-item">
+            <input type="radio" name="q12" value="A" />
+            A. Crear un canal en Teams con los miembros adecuados.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q12" value="B" />
+            B. Usar correos en cadena y llamadas telefónicas.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q12" value="C" />
+            C. Solicitar reuniones presenciales cada día.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q12" value="D" />
+            D. Abrir un grupo de WhatsApp con todos.
+          </label>
+        </div>
+      </section>
+
+      <!-- 13: OneDrive (OD) -->
+      <section id="step-13">
+        <h2>13. Robo de Equipo </h2>
+        <p>
+          Tu laptop es robada. Tenías archivos importantes sincronizados en la nube.
+        </p>
+        <div class="options">
+          <label class="option-item">
+            <input type="radio" name="q13" value="A" />
+            A. Cambiar contraseña y revocar sesiones, luego acceder a los archivos desde otro dispositivo.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q13" value="B" />
+            B. Dar por perdidos los archivos.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q13" value="C" />
+            C. Esperar a que alguien devuelva la laptop.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q13" value="D" />
+            D. Suspender todos los proyectos temporalmente.
+          </label>
+        </div>
+      </section>
+
+      <!-- 14: Outlook (OL) -->
+      <section id="step-14">
+        <h2>14. Respuesta Automática</h2>
+        <p>
+          Te vas de vacaciones. Quieres que Outlook avise a quienes te escriban que no estarás disponible.
+        </p>
+        <p><strong>“Outlook permite habilitar respuesta automática (Fuera de Oficina).”</strong></p>
+        <div class="options">
+          <label class="option-item">
+            <input type="radio" name="q14" value="V" />
+            Verdadero
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q14" value="F" />
+            Falso
+          </label>
+        </div>
+      </section>
+
+      <!-- 15: Outlook (OL) -->
+      <section id="step-15">
+        <h2>15. Listas de Distribución </h2>
+        <p>
+          Envías informes a un grupo grande. Te cansa escribir manualmente sus correos cada vez.
+        </p>
+        <div class="options">
+          <label class="option-item">
+            <input type="radio" name="q15" value="A" />
+            A. Crear una lista de distribución en Outlook.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q15" value="B" />
+            B. Ponerlos en copia oculta uno a uno.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q15" value="C" />
+            C. Mandar correos en cadena.
+          </label>
+          <label class="option-item">
+            <input type="radio" name="q15" value="D" />
+            D. Pedir a otro compañero que lo haga.
+          </label>
+        </div>
+      </section>
+
+      <!-- RESULTADOS - step-16 -->
+      <section id="step-16">
+        <div class="final">
+          <h2>¡Evaluación Completada!</h2>
+          <p id="scoreText"></p>
+          <div class="results-summary" id="resultsSummary"></div>
+
+          <!-- CONTENEDOR DE GRÁFICAS -->
+          <div class="chart-container">
+            <div class="chart-box">
+              <canvas id="radarChart"></canvas>
+            </div>
+            <div class="chart-box">
+              <canvas id="barChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- BOTONES DE NAVEGACIÓN -->
+      <div class="navigation">
+        <button id="btnPrev">&laquo; Anterior</button>
+        <button id="btnNext">Siguiente &raquo;</button>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>Instituto de capacitación Tecnipro</p>
+  </footer>
+
+  <!-- Chart.js para gráficas -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    /* ==============================================
+       LÓGICA DE NAVEGACIÓN
+    =============================================== */
+    const sections = document.querySelectorAll('main section');
+    let currentStep = 0;
+    const totalSteps = sections.length - 1; // Último: step-16
+
+    const btnPrev = document.getElementById('btnPrev');
+    const btnNext = document.getElementById('btnNext');
+    const progressFill = document.getElementById('progressFill');
+
+    function mostrarSeccion(index) {
+      sections.forEach((sec, i) => {
+        sec.classList.toggle('active', i === index);
+      });
+      // Actualiza la barra de progreso
+      const progressPercent = (index / totalSteps) * 100;
+      progressFill.style.width = progressPercent + '%';
+
+      // Habilita o deshabilita el botón Anterior
+      btnPrev.disabled = (index === 0);
+
+      // Cambia el texto del botón Siguiente
+      btnNext.textContent = (index === totalSteps) ? 'Finalizar' : 'Siguiente »';
+    }
+
+    btnNext.addEventListener('click', () => {
+      if (currentStep < totalSteps) {
+        currentStep++;
+        mostrarSeccion(currentStep);
+      } else {
+        alert('¡Has finalizado la evaluación!');
+      }
+      // Cuando se llega a la sección de resultados (step-16), se calculan los resultados
+      if (currentStep === totalSteps) {
+        calcularResultados();
+      }
+    });
+
+    btnPrev.addEventListener('click', () => {
+      if (currentStep > 0) {
+        currentStep--;
+        mostrarSeccion(currentStep);
+      }
+    });
+
+    mostrarSeccion(currentStep);
+
+    /* ==============================================
+       CÁLCULO DE RESULTADOS, NIVELES Y FEEDBACK
+       (15 preguntas, cada una con 1 categoría)
+    =============================================== */
+    const correctAnswers = {
+      q1:  { answer: 'B', category: 'OL' },
+      q2:  { answer: 'V', category: 'OL' },
+      q3:  { answer: 'A', category: 'OD' },
+      q4:  { answer: 'V', category: 'OL' },
+      q5:  { answer: 'A', category: 'OD' },
+      q6:  { answer: 'A', category: 'OD' },
+      q7:  { answer: 'V', category: 'OL' },
+      q8:  { answer: 'B', category: 'TM' },
+      q9:  { answer: 'A', category: 'OL' },
+      q10: { answer: 'A', category: 'OD' },
+      q11: { answer: 'V', category: 'OL' },
+      q12: { answer: 'A', category: 'TM' },
+      q13: { answer: 'A', category: 'OD' },
+      q14: { answer: 'V', category: 'OL' },
+      q15: { answer: 'A', category: 'OL' },
+    };
+
+    let scoreOL = 0; // Outlook
+    let scoreOD = 0; // OneDrive
+    let scoreTM = 0; // Teams
+    let totalCorrect = 0;
+
+    // Función que asigna un nivel según el porcentaje
+    function getLevel(percentage) {
+      if (percentage >= 80) return 'Avanzado';
+      else if (percentage >= 50) return 'Intermedio';
+      else return 'Básico';
+    }
+
+    function calcularResultados() {
+      scoreOL = 0; 
+      scoreOD = 0; 
+      scoreTM = 0; 
+      totalCorrect = 0;
+
+      const totalPreguntas = Object.keys(correctAnswers).length; // 15
+
+      // Recorremos cada pregunta y evaluamos la respuesta
+      for (let key in correctAnswers) {
+        const { category, answer } = correctAnswers[key];
+        const userInput = document.querySelector(`input[name="${key}"]:checked`);
+        
+        if (userInput && userInput.value === answer) {
+          totalCorrect++;
+          if (category === 'OL') scoreOL++;
+          if (category === 'OD') scoreOD++;
+          if (category === 'TM') scoreTM++;
+        }
+      }
+
+      // Calculamos el total de preguntas por categoría
+      const totalQuestionsByCategory = { OL: 0, OD: 0, TM: 0 };
+      for (let key in correctAnswers) {
+        const cat = correctAnswers[key].category;
+        totalQuestionsByCategory[cat] = (totalQuestionsByCategory[cat] || 0) + 1;
+      }
+
+      // Porcentajes por categoría
+      const pctOL = (scoreOL / totalQuestionsByCategory.OL) * 100;
+      const pctOD = (scoreOD / totalQuestionsByCategory.OD) * 100;
+      const pctTM = (scoreTM / totalQuestionsByCategory.TM) * 100;
+
+      // Porcentaje global
+      const overallPct = (totalCorrect / totalPreguntas) * 100;
+      const overallLevel = getLevel(overallPct);
+
+      // Actualiza el texto de resultados globales
+      const scoreText = document.getElementById('scoreText');
+      scoreText.textContent = `Has respondido correctamente ${totalCorrect} de ${totalPreguntas} preguntas (${overallPct.toFixed(0)}%). Nivel general: ${overallLevel}.`;
+
+      // Feedback detallado por categoría
+      const feedbackText = `
+        <p><strong>Desglose por categoría:</strong></p>
+        <ul style="list-style: none; padding: 0;">
+          <li>Outlook (OL): ${scoreOL} de ${totalQuestionsByCategory.OL} aciertos — ${(pctOL).toFixed(0)}% (<strong>${getLevel(pctOL)}</strong>)</li>
+          <li>OneDrive (OD): ${scoreOD} de ${totalQuestionsByCategory.OD} aciertos — ${(pctOD).toFixed(0)}% (<strong>${getLevel(pctOD)}</strong>)</li>
+          <li>Teams (TM): ${scoreTM} de ${totalQuestionsByCategory.TM} aciertos — ${(pctTM).toFixed(0)}% (<strong>${getLevel(pctTM)}</strong>)</li>
+        </ul>
+      `;
+      document.getElementById('resultsSummary').innerHTML = feedbackText;
+
+      // Se generan las gráficas usando los porcentajes
+      generarGraficos(pctOL, pctOD, pctTM);
+    }
+
+    /* ==============================================
+       GRÁFICAS CON Chart.js (RADAR Y BARRAS) – Usando porcentajes
+    =============================================== */
+    function generarGraficos(pctOL, pctOD, pctTM) {
+      // Gráfico Radar
+      const ctxRadar = document.getElementById('radarChart').getContext('2d');
+      let gradientRadar = ctxRadar.createLinearGradient(0, 0, 0, 400);
+      gradientRadar.addColorStop(0, 'rgba(0,120,212,0.8)');
+      gradientRadar.addColorStop(1, 'rgba(0,120,212,0.1)');
+
+      new Chart(ctxRadar, {
+        type: 'radar',
+        data: {
+          labels: ['Outlook', 'OneDrive', 'Teams'],
+          datasets: [{
+            label: 'Porcentaje de aciertos',
+            data: [pctOL, pctOD, pctTM],
+            fill: true,
+            backgroundColor: gradientRadar,
+            borderColor: 'rgba(0,120,212,0.8)',
+            borderWidth: 2,
+            pointBackgroundColor: '#0078D4',
+            tension: 0.3
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            r: {
+              min: 0,
+              max: 100,
+              ticks: {
+                stepSize: 20,
+                callback: function(value) { return value + '%'; }
+              },
+              angleLines: { display: false },
+              grid: { color: '#ccc', circular: true },
+              pointLabels: { color: '#333', font: { size: 12 } }
+            }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+
+      // Gráfico de Barras
+      const ctxBar = document.getElementById('barChart').getContext('2d');
+      let gradientBar = ctxBar.createLinearGradient(0, 0, 0, 300);
+      gradientBar.addColorStop(0, 'rgba(0,120,212,0.8)');
+      gradientBar.addColorStop(1, 'rgba(0,120,212,0.3)');
+
+      new Chart(ctxBar, {
+        type: 'bar',
+        data: {
+          labels: ['Outlook', 'OneDrive', 'Teams'],
+          datasets: [{
+            label: 'Porcentaje',
+            data: [pctOL, pctOD, pctTM],
+            backgroundColor: gradientBar,
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              min: 0,
+              max: 100,
+              grid: { color: '#eee' },
+              ticks: { stepSize: 20, callback: value => value + '%' }
+            },
+            x: {
+              grid: { display: false }
+            }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>
