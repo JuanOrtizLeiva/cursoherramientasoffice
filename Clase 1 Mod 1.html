@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clase 1 - Herramientas de Microsoft Office: MS Teams, Outlook y OneDrive</title>
+  
+  <!-- 
+    Ajustes de estilo:
+      - Se agrega un título general al inicio.
+      - Mejor separación de textos en la parte posterior de las tarjetas (flip-card-back).
+      - Efecto de transición más atractivo en las tarjetas.
+  -->
+  <style>
+    /* ------------------------------
+       Estilos Generales
+    ------------------------------ */
+    :root {
+      --primary-color: #0078D4;   /* Color principal de Microsoft */
+      --secondary-color: #e5f1fb; /* Azul claro para secciones */
+      --font-main: Arial, sans-serif;
+      --transition-speed: 0.7s;   /* Velocidad para transiciones un poco más vistosas */
+      --flip-scale-hover: 1.02;   /* Escala de crecimiento al voltear tarjeta */
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font-main);
+      line-height: 1.6;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+
+    header, main, footer {
+      padding: 1rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* ------------------------------
+       Títulos y Tipografías
+    ------------------------------ */
+    h1, h2, h3 {
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+    }
+
+    h1 {
+      color: var(--primary-color);
+      font-size: 2.2rem;
+    }
+
+    h2 {
+      color: var(--primary-color);
+      font-size: 1.8rem;
+      margin-top: 2rem;
+    }
+
+    h3 {
+      color: var(--primary-color);
+      font-size: 1.4rem;
+    }
+
+    p {
+      margin-bottom: 1rem;
+      line-height: 1.5;
+    }
+
+    section {
+      margin-bottom: 2rem;
+    }
+
+    /* ------------------------------
+       Encabezado Principal
+    ------------------------------ */
+    header {
+      background-color: var(--primary-color);
+      color: #fff;
+      text-align: center;
+      padding: 2rem 1rem;
+      border-radius: 5px;
+    }
+
+    header h1 {
+      margin: 0;
+    }
+
+    /* Título General Extra */
+    .titulo-general {
+      text-align: center;
+      background-color: #ffffff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin: 1rem auto;
+      padding: 1rem;
+      font-size: 1.5rem;
+      color: var(--primary-color);
+      font-weight: bold;
+    }
+
+    /* ------------------------------
+       Menú de Navegación/Índice
+    ------------------------------ */
+    nav {
+      background-color: #ffffff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin: 2rem auto;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    nav a {
+      margin: 0 0.5rem;
+      text-decoration: none;
+      color: var(--primary-color);
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    /* ------------------------------
+       Contenedor Principal
+    ------------------------------ */
+    main {
+      background-color: #fff;
+      padding: 2rem 1rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border-radius: 5px;
+    }
+
+    /* Sección Caso de Estudio con fondo tenue */
+    #caso-de-estudio {
+      background-color: #fafafa;
+      border: 1px solid #ccc;
+      padding: 1rem;
+      border-radius: 5px;
+    }
+
+    /* ------------------------------
+       Tarjetas Giratorias
+    ------------------------------ */
+    .cards-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+
+    @media (min-width: 768px) {
+      .cards-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .flip-card {
+      background-color: transparent;
+      width: 100%;
+      height: 320px; /* Se aumenta un poco la altura */
+      perspective: 1000px; /* Efecto 3D */
+      cursor: pointer;
+      border-radius: 10px;
+      margin: 0 auto;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      transition: box-shadow var(--transition-speed);
+    }
+
+    .flip-card:hover {
+      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    }
+
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform var(--transition-speed);
+      transform-style: preserve-3d;
+      border-radius: 10px;
+    }
+
+    /* Al hacer foco o hover, rotamos y aumentamos levemente la escala */
+    .flip-card:focus .flip-card-inner,
+    .flip-card:hover .flip-card-inner {
+      transform: rotateY(180deg) scale(var(--flip-scale-hover));
+    }
+
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column; /* Para alinear textos verticalmente con espacios */
+      justify-content: center;
+      padding: 1rem;
+      border-radius: 10px;
+      box-sizing: border-box;
+      text-align: left;
+    }
+
+    /* Se agrega separación interna en el contenido trasero */
+    .flip-card-back p {
+      margin-bottom: 0.8rem;
+    }
+
+    /* Colores de cada tarjeta */
+    .flip-card-front-1 {
+      background-color: #e5f1fb; 
+      color: var(--primary-color);
+    }
+    .flip-card-back-1 {
+      background-color: var(--primary-color);
+      color: #ffffff;
+      transform: rotateY(180deg);
+    }
+
+    .flip-card-front-2 {
+      background-color: #FDEFEF; 
+      color: #D83B01; 
+    }
+    .flip-card-back-2 {
+      background-color: #D83B01;
+      color: #ffffff;
+      transform: rotateY(180deg);
+    }
+
+    .flip-card-front-3 {
+      background-color: #F3FDEB; 
+      color: #107C10; 
+    }
+    .flip-card-back-3 {
+      background-color: #107C10;
+      color: #ffffff;
+      transform: rotateY(180deg);
+    }
+
+    .flip-card-front-4 {
+      background-color: #FFF4CE; 
+      color: #8E562E; 
+    }
+    .flip-card-back-4 {
+      background-color: #8E562E;
+      color: #ffffff;
+      transform: rotateY(180deg);
+    }
+
+    /* ------------------------------
+       Sección de Botones Colapsables
+    ------------------------------ */
+    .collapsible-section {
+      margin: 2rem 0;
+    }
+
+    details {
+      margin-bottom: 1rem;
+      border: 1px solid var(--primary-color);
+      border-radius: 5px;
+      background-color: var(--secondary-color);
+      padding: 0.5rem;
+    }
+
+    details summary {
+      cursor: pointer;
+      font-weight: bold;
+      color: var(--primary-color);
+      outline: none;
+      position: relative;
+      padding-left: 1.5rem;
+    }
+
+    /* Indicador de colapso/expand */
+    details summary::before {
+      content: '▶';
+      font-size: 0.9rem;
+      margin-right: 0.5rem;
+      position: absolute;
+      left: 0;
+    }
+
+    details[open] summary::before {
+      content: '▼';
+    }
+
+    details[open] summary {
+      color: #005a9e; 
+    }
+
+    /* ------------------------------
+       Preguntas Interactivas
+    ------------------------------ */
+    .question-section {
+      margin: 2rem 0;
+    }
+
+    .question {
+      margin-bottom: 1.5rem;
+      background-color: var(--secondary-color);
+      border: 1px solid var(--primary-color);
+      border-radius: 5px;
+      padding: 1rem;
+    }
+
+    .question h3 {
+      margin-top: 0;
+    }
+
+    .options {
+      list-style-type: none;
+      padding-left: 0;
+      margin: 0.5rem 0;
+    }
+
+    .options li {
+      margin-bottom: 0.5rem;
+    }
+
+    .feedback {
+      margin-top: 0.5rem;
+      font-weight: bold;
+    }
+
+    .feedback.correct {
+      color: green;
+    }
+
+    .feedback.incorrect {
+      color: red;
+    }
+
+    /* ------------------------------
+       Accesibilidad y Focus
+    ------------------------------ */
+    .flip-card:focus {
+      outline: 2px solid #ffbf47;
+    }
+
+    /* ------------------------------
+       Pie de Página
+    ------------------------------ */
+    footer {
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    footer p {
+      margin: 0.2rem 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Encabezado Principal -->
+  <header>
+    <h1>Importancia de las herramientas de Microsoft Office en el entorno laboral</h1>
+  </header>
+
+  <!-- Título General Extra -->
+  <div class="titulo-general">
+    Bienvenidos al Curso de Microsoft Teams, Outlook y OneDrive
+  </div>
+
+  <!-- Menú de Navegación / Índice de Secciones -->
+  <nav aria-label="Índice de secciones">
+    <a href="#presentacion-titulo">Presentación</a>
+    <a href="#casos-de-uso-titulo">Casos de Uso</a>
+    <a href="#descripcion-detallada-titulo">Herramientas</a>
+    <a href="#preguntas-titulo">Preguntas</a>
+    <a href="#caso-estudio-title">Caso de Estudio</a>
+  </nav>
+
+  <main>
+
+    <!-- Presentación de la Clase -->
+    <section aria-labelledby="presentacion-titulo">
+      <h2 id="presentacion-titulo">Presentación de la Clase</h2>
+      <p>
+        El entorno laboral moderno exige soluciones eficientes de comunicación, colaboración y 
+        administración de información. Sin un adecuado manejo de herramientas digitales, 
+        las organizaciones pueden enfrentar pérdidas de productividad, obstáculos en la 
+        comunicación y riesgos significativos de seguridad. 
+      </p>
+      <p>
+        Según cifras de diversas consultoras tecnológicas, hasta un 
+        <strong>30% de las pequeñas y medianas empresas</strong> en Latinoamérica experimentan 
+        retrasos en la entrega de proyectos o tareas debido a problemas de coordinación y 
+        acceso a la información. En Chile, en particular, este porcentaje puede variar 
+        dependiendo del sector, pero se estima que, en promedio, <strong>1 de cada 4 proyectos</strong> 
+        sufre contratiempos por una comunicación interna deficiente.
+      </p>
+      <p>
+        En este escenario, Microsoft Teams, Outlook y OneDrive se han convertido en piezas 
+        fundamentales para afrontar desafíos cotidianos. La integración de estas tres 
+        plataformas no solo asegura un mejor flujo de trabajo, sino que también mitiga 
+        riesgos como la <strong>pérdida de información</strong> en caso de robo o extravío 
+        de equipos, y fomenta la colaboración entre equipos distribuidos en diferentes 
+        ubicaciones geográficas.
+      </p>
+      <p>
+        A través de esta clase, buscaremos no solo profundizar en las funcionalidades 
+        de cada herramienta, sino también comprender cómo se complementan entre sí, 
+        conformando un ecosistema robusto de productividad. Este conocimiento 
+        se traducirá en un mayor control sobre la información, flujos de comunicación 
+        más efectivos y la capacidad de trabajar en equipo de manera segura y confiable.
+      </p>
+    </section>
+
+    <!-- Casos de Uso en Chile (Tarjetas Giratorias) -->
+    <section aria-labelledby="casos-de-uso-titulo">
+      <h2 id="casos-de-uso-titulo">Casos de Uso en Chile</h2>
+      <p>
+        A continuación, verás algunas tarjetas con ejemplos de la vida real en Chile que ilustran cómo 
+        el uso conjunto de MS Teams, OneDrive y Outlook pueden transformar la forma de trabajar, 
+        y cómo la ausencia de estas herramientas puede impactar negativamente en la productividad 
+        y la seguridad de la información.
+      </p>
+
+      <div class="cards-container">
+
+        <!-- Tarjeta 1 -->
+        <div class="flip-card" tabindex="0" aria-label="Tarjeta de uso de MS Teams">
+          <div class="flip-card-inner">
+            <div class="flip-card-front flip-card-front-1">
+              <h3>Uso de MS Teams</h3>
+              <p>Coordinación de equipos en remoto</p>
+            </div>
+            <div class="flip-card-back flip-card-back-1">
+              <p>
+                <strong>Con las herramientas:</strong> Un empleado remoto en Valdivia utiliza 
+                Microsoft Teams para coordinar en tiempo real con colegas que trabajan 
+                desde Santiago y Antofagasta. Gracias a la integración con OneDrive, comparten documentos 
+                sin necesidad de correos repetitivos. Outlook sincroniza los calendarios de reuniones, 
+                evitando confusiones de horario.
+              </p>
+              <p>
+                <strong>Sin estas herramientas:</strong> El mismo equipo recurre a correos dispersos 
+                y llamadas telefónicas, lo cual retrasa la comunicación y provoca pérdida de información 
+                debido a la falta de un espacio centralizado de archivos.
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Tarjeta 2 -->
+        <div class="flip-card" tabindex="0" aria-label="Tarjeta de uso de OneDrive">
+          <div class="flip-card-inner">
+            <div class="flip-card-front flip-card-front-2">
+              <h3>Uso de OneDrive</h3>
+              <p>Gestión de documentos en la nube</p>
+            </div>
+            <div class="flip-card-back flip-card-back-2">
+              <p>
+                <strong>Con las herramientas:</strong> Una pequeña empresa de marketing en Santiago 
+                centraliza sus proyectos en OneDrive, permitiendo que los socios en regiones 
+                accedan a los mismos archivos en tiempo real. MS Teams facilita discusiones sobre 
+                los documentos sin que se mezclen versiones. Outlook se emplea para coordinar 
+                reuniones de seguimiento a las campañas.
+              </p>
+              <p>
+                <strong>Sin estas herramientas:</strong> Los socios deben intercambiar archivos 
+                por correo electrónico, corriendo el riesgo de usar versiones obsoletas o 
+                sobrescribir documentos críticos. Cualquier robo o avería de los equipos 
+                podría significar la pérdida total de información si no hay copias de seguridad.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjeta 3 -->
+        <div class="flip-card" tabindex="0" aria-label="Tarjeta de uso de Outlook">
+          <div class="flip-card-inner">
+            <div class="flip-card-front flip-card-front-3">
+              <h3>Uso de Outlook</h3>
+              <p>Organización de correos y calendarios</p>
+            </div>
+            <div class="flip-card-back flip-card-back-3">
+              <p>
+                <strong>Con las herramientas:</strong> Un profesor en Valparaíso utiliza Outlook 
+                para gestionar su correo institucional y programar reuniones virtuales en Teams. 
+                Adicionalmente, guarda sus materiales didácticos en OneDrive, de modo que 
+                estudiantes y colegas tengan acceso a la versión más reciente de cada documento.
+              </p>
+              <p>
+                <strong>Sin estas herramientas:</strong> El profesor se ve obligado a mantener 
+                diferentes cuentas de correo y a usar aplicaciones de mensajería externas 
+                para videoconferencias. Sus archivos se reparten en diferentes servicios 
+                de almacenamiento, resultando en una organización caótica y dificultad 
+                para compartir el contenido con los alumnos.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjeta 4 -->
+        <div class="flip-card" tabindex="0" aria-label="Tarjeta de uso combinado de Teams, OneDrive y Outlook">
+          <div class="flip-card-inner">
+            <div class="flip-card-front flip-card-front-4">
+              <h3>Uso Combinado</h3>
+              <p>Seguridad y Resguardo de la Información</p>
+            </div>
+            <div class="flip-card-back flip-card-back-4">
+              <p>
+                <strong>Con las herramientas:</strong> Una empresa tecnológica almacena 
+                toda su información crítica en OneDrive, comparte actualizaciones de proyectos 
+                y coordinaciones en MS Teams, y planifica reuniones y notificaciones de tareas 
+                mediante Outlook. Ante cualquier robo o daño de equipos, la información 
+                permanece segura en la nube, lista para ser restaurada.
+              </p>
+              <p>
+                <strong>Sin estas herramientas:</strong> El robo de un computador personal 
+                podría implicar la pérdida irreversible de datos confidenciales. 
+                Además, las fallas en la comunicación por falta de canales unificados 
+                conducen a retrasos y errores en los proyectos.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Descripción Detallada de Cada Herramienta (Botones Colapsables) -->
+    <section class="collapsible-section" aria-labelledby="descripcion-detallada-titulo">
+      <h2 id="descripcion-detallada-titulo">Descripción Detallada de Cada Herramienta</h2>
+
+      <details>
+        <summary>MS Teams</summary>
+        <p>
+          Microsoft Teams es una plataforma de comunicación y colaboración 
+          que integra chat, videollamadas, uso compartido de archivos y 
+          herramientas de productividad en un solo lugar. 
+          Su importancia radica en la posibilidad de <strong>centralizar 
+          la comunicación de equipos</strong>, evitando la dispersión 
+          de correos y mensajes en múltiples canales.
+        </p>
+        <ul>
+          <li><strong>Comunicación en tiempo real:</strong> Chats, videoconferencias y llamadas reducen la dependencia de los correos electrónicos.</li>
+          <li><strong>Integración con otras aplicaciones de Microsoft 365:</strong> Permite abrir, editar y guardar documentos de Word, Excel y PowerPoint sin salir de la plataforma.</li>
+          <li><strong>Espacios de trabajo por canal:</strong> Cada proyecto o departamento puede tener su propio canal, facilitando la organización de conversaciones y archivos relacionados.</li>
+        </ul>
+        <p>
+          <strong>Dato relevante:</strong> Según estimaciones de Microsoft, Teams 
+          incrementa la productividad de los equipos en un <strong>15%</strong> 
+          al reducir el tiempo de búsqueda de documentos y coordinar reuniones de manera más ágil.
+        </p>
+      </details>
+
+      <details>
+        <summary>OneDrive</summary>
+        <p>
+          OneDrive es el servicio de almacenamiento en la nube de Microsoft, 
+          que permite guardar archivos en línea y acceder a ellos desde 
+          cualquier dispositivo. Gracias a su integración con Windows 
+          y el resto de la suite de Microsoft 365, se ha convertido en 
+          un <strong>estándar de facto</strong> para la colaboración y el respaldo de información.
+        </p>
+        <ul>
+          <li><strong>Sincronización de archivos y carpetas:</strong> Permite trabajar offline y sincronizar cambios cuando se recupera la conexión a Internet.</li>
+          <li><strong>Uso compartido de documentos con control de permisos:</strong> Se puede otorgar acceso de solo lectura o edición a diferentes usuarios, ofreciendo un control granular de la información.</li>
+          <li><strong>Historial de versiones:</strong> Si se realizan cambios erróneos, es posible recuperar versiones anteriores de los documentos.</li>
+        </ul>
+        <p>
+          <strong>Dato relevante:</strong> El 65% de los ciberincidentes relacionados 
+          con la pérdida de datos se debe a la falta de copias de seguridad. 
+          Al usar OneDrive, esta cifra se reduce significativamente.
+        </p>
+      </details>
+
+      <details>
+        <summary>Outlook</summary>
+        <p>
+          Microsoft Outlook es una herramienta de correo electrónico, 
+          gestión de contactos y calendarios. Sus funciones avanzadas 
+          para la organización de eventos y envío de invitaciones 
+          facilitan la programación de reuniones y la coordinación 
+          de agendas con los miembros de un equipo.
+        </p>
+        <ul>
+          <li><strong>Filtros y reglas para clasificar el correo entrante:</strong> Ayuda a priorizar la bandeja de entrada y evitar correos no deseados.</li>
+          <li><strong>Programación de eventos y reuniones con recordatorios integrados:</strong> Asegura la asistencia puntual y reduce el riesgo de perder citas importantes.</li>
+          <li><strong>Integración con Microsoft Teams:</strong> Permite programar y unirse a reuniones virtuales directamente desde el calendario.</li>
+        </ul>
+        <p>
+          <strong>Dato relevante:</strong> Un estudio interno de Microsoft indica que 
+          el uso eficiente de Outlook puede reducir hasta en un <strong>25%</strong> 
+          la cantidad de correos duplicados y la confusión generada por hilos demasiado extensos.
+        </p>
+      </details>
+    </section>
+
+    <!-- Preguntas Interactivas con Retroalimentación -->
+    <section class="question-section" aria-labelledby="preguntas-titulo">
+      <h2 id="preguntas-titulo">Preguntas Interactivas</h2>
+
+      <div class="question">
+        <h3>1. ¿Cuál de las siguientes herramientas es ideal para almacenar y compartir archivos en la nube?</h3>
+        <ul class="options">
+          <li><input type="radio" name="q1" value="MS Teams" id="q1-a1" /> <label for="q1-a1">MS Teams</label></li>
+          <li><input type="radio" name="q1" value="OneDrive" id="q1-a2" /> <label for="q1-a2">OneDrive</label></li>
+          <li><input type="radio" name="q1" value="Outlook" id="q1-a3" /> <label for="q1-a3">Outlook</label></li>
+        </ul>
+        <button onclick="checkAnswer('q1', 'OneDrive', 'feedback1')">Verificar</button>
+        <div id="feedback1" class="feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="question">
+        <h3>2. ¿Si tu empresa desea coordinar reuniones virtuales y comunicación en tiempo real, qué herramienta elegirías?</h3>
+        <ul class="options">
+          <li><input type="radio" name="q2" value="Outlook" id="q2-a1" /> <label for="q2-a1">Outlook</label></li>
+          <li><input type="radio" name="q2" value="MS Teams" id="q2-a2" /> <label for="q2-a2">MS Teams</label></li>
+          <li><input type="radio" name="q2" value="OneDrive" id="q2-a3" /> <label for="q2-a3">OneDrive</label></li>
+        </ul>
+        <button onclick="checkAnswer('q2', 'MS Teams', 'feedback2')">Verificar</button>
+        <div id="feedback2" class="feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="question">
+        <h3>3. ¿Cuál de las siguientes herramientas es fundamental para gestionar el correo y programar reuniones?</h3>
+        <ul class="options">
+          <li><input type="radio" name="q3" value="OneDrive" id="q3-a1" /> <label for="q3-a1">OneDrive</label></li>
+          <li><input type="radio" name="q3" value="MS Teams" id="q3-a2" /> <label for="q3-a2">MS Teams</label></li>
+          <li><input type="radio" name="q3" value="Outlook" id="q3-a3" /> <label for="q3-a3">Outlook</label></li>
+        </ul>
+        <button onclick="checkAnswer('q3', 'Outlook', 'feedback3')">Verificar</button>
+        <div id="feedback3" class="feedback" aria-live="polite"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Caso de Estudio: Tronco S.A. -->
+  <section id="caso-de-estudio" aria-labelledby="caso-estudio-title">
+    <h2 id="caso-estudio-title">La Transformación Digital Pendiente en "Tronco S.A."</h2>
+
+    <article>
+      <h3>Introducción</h3>
+      <p>
+        La empresa Tronco S.A. es una compañía mediana del sector maderero en Chile, 
+        con más de 200 empleados distribuidos en distintas sedes ubicadas en Santiago, 
+        Valdivia y Concepción. Fundada hace tres décadas, ha logrado posicionarse como 
+        uno de los proveedores favoritos para la industria de la construcción, ofreciendo 
+        materiales de madera certificados y respetuosos con el medio ambiente. A pesar de su éxito, 
+        Tronco S.A. se enfrenta a un gran desafío en el que la falta de coordinación y la 
+        ausencia de una estrategia digital clara amenazan con mermar su competitividad.
+      </p>
+    </article>
+
+    <article>
+      <h3>Contexto Organizacional</h3>
+      <ul>
+        <li>
+          La empresa cuenta con un área de producción en la Región de Los Ríos, 
+          un área de ventas y distribución en la Región Metropolitana y 
+          un pequeño equipo de investigación y desarrollo en el Biobío.
+        </li>
+        <li>
+          Sus procesos operativos, en general, se han mantenido al día en términos 
+          de maquinaria y normativas industriales. Sin embargo, en el plano administrativo 
+          y de coordinación, las herramientas tecnológicas se han quedado rezagadas.
+        </li>
+        <li>
+          El equipo directivo está conformado por profesionales de alto nivel 
+          en el sector maderero, pero no cuentan con formación sólida en 
+          administración digital o informática.
+        </li>
+      </ul>
+    </article>
+
+    <article>
+      <h3>La Problemática de la Falta de Coordinación</h3>
+      <ol>
+        <li>
+          <strong>Múltiples Canales de Comunicación:</strong> Empleados de distintas sedes utilizan 
+          correos personales, mensajes de texto y llamadas telefónicas para coordinar pedidos, 
+          envíos y tiempos de producción. Esto provoca que la información se pierda o, 
+          en el mejor de los casos, quede fragmentada en distintos canales.
+        </li>
+        <li>
+          <strong>Archivos Dispersos y Duplicados:</strong> Los planos de proyectos y documentos de 
+          control de calidad se almacenan en discos duros locales y servicios de almacenamiento 
+          en la nube gratuitos, sin una política unificada. A menudo, hay versiones diferentes 
+          del mismo archivo, lo que genera confusiones y retrasos.
+        </li>
+        <li>
+          <strong>Dependencia de Personal Clave:</strong> Ciertas áreas dependen excesivamente del conocimiento 
+          que guardan algunos empleados en sus computadoras personales. Si ellos no están disponibles, 
+          no hay forma de acceder de forma rápida a la información esencial de proyectos o proveedores.
+        </li>
+        <li>
+          <strong>Pérdida de Datos y Riesgos de Seguridad:</strong> Ante la ausencia de una plataforma 
+          de respaldo corporativo, la empresa ha sufrido incidentes donde equipos robados o dañados 
+          han dejado a departamentos completos sin acceso a información crítica, 
+          impactando la operación y la relación con clientes.
+        </li>
+      </ol>
+    </article>
+
+    <article>
+      <h3>Consecuencias en el Rendimiento</h3>
+      <p>
+        Durante el último año, Tronco S.A. experimentó un retraso del <strong>15%</strong> 
+        en la entrega de sus pedidos más grandes, debido a la mala coordinación 
+        entre las áreas de producción y ventas. El índice de satisfacción de los clientes bajó, 
+        reflejándose en una disminución de las renovaciones de contratos con constructoras de renombre. 
+        Además, la alta gerencia ha observado un aumento del estrés y la rotación de personal, 
+        especialmente en el área de administración, que lidia de manera constante 
+        con múltiples canales de comunicación y duplicación de tareas.
+      </p>
+    </article>
+
+    <article>
+      <h3>Intentos de Solución</h3>
+      <p>
+        Una consultora externa sugirió la implementación de una plataforma unificada para la colaboración 
+        y el almacenamiento de archivos, pero la falta de entrenamiento y el desconocimiento 
+        de las ventajas de estas herramientas generaron resistencia interna.  
+        También se intentó instaurar un calendario compartido en la nube para que el equipo directivo 
+        y los supervisores de planta coordinaran sus reuniones, pero la iniciativa fracasó 
+        por la desconfianza y el escaso conocimiento tecnológico de algunos mandos medios.
+      </p>
+    </article>
+
+    <article>
+      <h3>Puntos de Reflexión</h3>
+      <ol>
+        <li>
+          ¿Qué tipo de estrategia digital podría implementar Tronco S.A. para integrar 
+          las necesidades de comunicación, gestión de documentos y reuniones virtuales?
+        </li>
+        <li>
+          ¿Cómo se puede contrarrestar la resistencia al cambio entre los empleados 
+          con menor experiencia en herramientas informáticas?
+        </li>
+        <li>
+          ¿De qué manera una solución global, como la suite de Microsoft Office 
+          (Teams, OneDrive y Outlook), podría responder a las necesidades específicas de Tronco S.A.?
+        </li>
+        <li>
+          ¿Qué retos culturales y organizacionales se deben abordar para garantizar 
+          que estas herramientas se adopten y se usen de forma sostenible en la empresa?
+        </li>
+      </ol>
+    </article>
+
+    <article>
+      <h3>Conclusión</h3>
+      <p>
+        El caso de Tronco S.A. plantea un escenario común en muchas empresas tradicionales 
+        que han tenido éxito en su modelo de negocio, pero que se enfrentan al reto de modernizar 
+        sus procesos de coordinación y gestión de la información. La pregunta no es solo 
+        qué herramientas adoptar, sino cómo facilitar la transformación cultural y organizacional 
+        para asegurar un uso coherente y productivo de las nuevas soluciones digitales.
+      </p>
+    </article>
+  </section>
+<!-- =======================
+     Escenario Interactivo
+     ======================= -->
+<section id="escenario-interactivo" aria-labelledby="escenario-interactivo-titulo" style="margin-top: 3rem;">
+  <h2 id="escenario-interactivo-titulo">Escenario Interactivo: Estrategia para Tronco S.A.</h2>
+
+  <p>
+    Imagina que eres parte del equipo directivo de Tronco S.A. Has tomado nota de 
+    todas las problemáticas expuestas y deseas implementar una solución de digitalización 
+    para mejorar la coordinación y la seguridad de la información.  
+    <strong>¿Cuál de las siguientes opciones consideras que puede ser el mejor primer paso estratégico?</strong>
+  </p>
+
+  <!-- Contenedor de opciones con estilo -->
+  <div class="escenario-opciones" style="margin: 1.5rem 0;">
+    <h3 style="margin-bottom: 1rem;">Elige una de las siguientes alternativas:</h3>
+
+    <!-- Opción 1 -->
+    <input type="radio" id="opcion1" name="escenario" value="1" style="display: none;">
+    <label for="opcion1" class="btn-radio">
+      A. Instalar Microsoft Teams y OneDrive sin formación o planificación previa.
+    </label>
+
+    <!-- Opción 2 -->
+    <input type="radio" id="opcion2" name="escenario" value="2" style="display: none;">
+    <label for="opcion2" class="btn-radio">
+      B. Desarrollar un plan de capacitación y adoptar Teams, OneDrive y Outlook gradualmente.
+    </label>
+
+    <!-- Opción 3 -->
+    <input type="radio" id="opcion3" name="escenario" value="3" style="display: none;">
+    <label for="opcion3" class="btn-radio">
+      C. Mantener los mismos métodos y esperar a que el personal se acostumbre por sí solo.
+    </label>
+  </div>
+
+  <!-- Botón para verificar la elección -->
+  <button onclick="verificarEscenario()" class="btn-verificar">Verificar Estrategia</button>
+
+  <!-- Retroalimentación -->
+  <div id="feedback-escenario" class="feedback-escenario" aria-live="polite" style="margin-top:1rem; font-weight:bold;"></div>
+</section>
+
+<!-- =======================
+     Estilos para la Interactividad
+     ======================= -->
+<style>
+  /* Contenedor general de las opciones */
+  .escenario-opciones {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* Estilo de los labels como botones */
+  .btn-radio {
+    display: inline-block;
+    background-color: #f0f0f0;
+    color: #333;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    padding: 0.8rem 1rem;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+  }
+
+  .btn-radio:hover {
+    background-color: #e5f1fb;  /* Azul suave al hover */
+    border-color: #0078D4;
+    color: #0078D4;
+  }
+
+  /* Cuando el radio está checked, aplicar estilo al label */
+  input[type="radio"]:checked + .btn-radio {
+    background-color: #0078D4;  /* Fondo azul */
+    color: #ffffff;             /* Texto blanco */
+    border-color: #005a9e;      /* Borde más oscuro */
+    box-shadow: 0 0 5px rgba(0, 120, 212, 0.6);
+  }
+
+  /* Botón "Verificar Estrategia" */
+  .btn-verificar {
+    display: inline-block;
+    padding: 0.8rem 1.2rem;
+    background-color: #28a745;  /* Verde */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+  }
+
+  .btn-verificar:hover {
+    background-color: #218838;  /* Verde más oscuro al hover */
+  }
+</style>
+
+<!-- =======================
+     Script de Interacción
+     ======================= -->
+<script>
+  function verificarEscenario() {
+    const opciones = document.getElementsByName('escenario');
+    let opcionSeleccionada = null;
+
+    // Verifica cuál opción fue seleccionada
+    for (const opcion of opciones) {
+      if (opcion.checked) {
+        opcionSeleccionada = opcion.value;
+        break;
+      }
+    }
+
+    const feedback = document.getElementById('feedback-escenario');
+
+    if (!opcionSeleccionada) {
+      feedback.textContent = 'Por favor, selecciona una opción antes de verificar.';
+      feedback.style.color = 'red';
+      return;
+    }
+
+    switch (opcionSeleccionada) {
+      case '1':
+        feedback.textContent = 
+          'Has elegido instalar Teams y OneDrive sin formación previa. ' +
+          'Esto puede resultar en confusión y baja adopción por parte de los empleados. ' +
+          'Un plan de capacitación es clave para la transformación digital.';
+        feedback.style.color = 'red';
+        break;
+
+      case '2':
+        feedback.textContent = 
+          '¡Excelente elección! Apostar por la capacitación y una adopción gradual ' +
+          'de las herramientas de Microsoft Office suele conducir a un cambio cultural ' +
+          'más estable y una mejor asimilación de los nuevos procesos.';
+        feedback.style.color = 'green';
+        break;
+
+      case '3':
+        feedback.textContent = 
+          'Mantener los mismos métodos sin cambios puede agravar la situación, ' +
+          'ya que los problemas de coordinación e información persistirán. ' +
+          'Se recomienda adoptar una estrategia de transformación digital.';
+        feedback.style.color = 'red';
+        break;
+    }
+  }
+</script>
+
+  <footer>
+    <p>&copy; 2025 - Curso de Herramientas de Microsoft Office: MS Teams, Outlook y OneDrive</p>
+    <p>Desarrollado para impulsar la productividad y la colaboración en el entorno laboral de Chile y Latinoamérica.</p>
+  </footer>
+
+  <!-- Script para el feedback de las preguntas -->
+  <script>
+    function checkAnswer(questionName, correctValue, feedbackId) {
+      const options = document.getElementsByName(questionName);
+      let selectedValue = '';
+      
+      for (const option of options) {
+        if (option.checked) {
+          selectedValue = option.value;
+          break;
+        }
+      }
+
+      const feedbackElement = document.getElementById(feedbackId);
+
+      if (!selectedValue) {
+        feedbackElement.textContent = 'Por favor, selecciona una opción antes de verificar.';
+        feedbackElement.className = 'feedback incorrect';
+        return;
+      }
+
+      if (selectedValue === correctValue) {
+        feedbackElement.textContent = '¡Correcto! Has elegido la respuesta adecuada.';
+        feedbackElement.className = 'feedback correct';
+      } else {
+        feedbackElement.textContent = 'Respuesta incorrecta. Vuelve a intentarlo.';
+        feedbackElement.className = 'feedback incorrect';
+      }
+    }
+  </script>
+</body>
+</html>
