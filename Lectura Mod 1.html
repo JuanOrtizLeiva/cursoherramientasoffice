@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lectura Extensa de OneDrive - Casos de Uso, Cuidados y Consejos</title>
+
+  <!-- 
+    IMPORTANTE: 
+    Para visualizar los íconos (ej. Font Awesome) en producción,
+    agrega la siguiente línea en el <head>:
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    En este ejemplo se asume que el usuario lo colocará o ya lo tiene integrado.
+  -->
+
+  <style>
+    /* ============================
+       ESTILOS GENERALES
+    ============================ */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    header, main, footer {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+
+    a {
+      color: #0078D4;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Encabezado con gradiente Microsoft */
+    header {
+      background: linear-gradient(135deg, #0078D4 0%, #78C2F3 100%);
+      padding: 3rem 1rem;
+      text-align: center;
+      color: #fff;
+      border-radius: 0 0 20px 20px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+      margin-bottom: 2rem;
+    }
+    header h1 {
+      margin-bottom: 1rem;
+      font-size: 2.5rem;
+      font-weight: bold;
+    }
+    header p {
+      font-size: 1.2rem;
+      max-width: 900px;
+      margin: 0.5rem auto;
+      line-height: 1.5;
+    }
+
+    /* Contenedor principal */
+    main {
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    main h2 {
+      color: #0078D4;
+      margin-top: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    main h3 {
+      color: #333;
+      margin-top: 1.2rem;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+    }
+
+    p, li {
+      margin-bottom: 1rem;
+      text-align: justify;
+    }
+
+    /* Imágenes de ejemplo */
+    .imagen-lateral {
+      float: right;
+      width: 300px;
+      max-width: 50%;
+      margin: 0 0 1rem 1rem;
+      border-radius: 5px;
+    }
+
+    .imagen-centro {
+      display: block;
+      margin: 1rem auto;
+      max-width: 100%;
+      border-radius: 5px;
+    }
+
+    /* Tablas */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+    table thead {
+      background-color: #0078D4;
+      color: #fff;
+    }
+    table th, table td {
+      padding: 0.8rem;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+
+    /* Panel de Tips */
+    .panel-tips {
+      background-color: #e5f1fb;
+      border-left: 5px solid #0078D4;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 5px;
+      position: relative;
+      margin-top: 1rem;
+    }
+    .panel-tips h4 {
+      color: #0078D4;
+      margin-bottom: 0.5rem;
+    }
+    .panel-tips p {
+      margin-bottom: 0.5rem;
+    }
+
+    /* Ícono decorativo en Tips */
+    .icono-tip {
+      position: absolute;
+      top: -15px;
+      left: -15px;
+      font-size: 2rem;
+      color: #0078D4;
+      opacity: 0.2;
+    }
+
+    /* Pie de página */
+    footer {
+      text-align: center;
+      font-size: 0.9rem;
+      margin: 2rem auto;
+      color: #666;
+    }
+
+    /* Ajuste responsivo básico */
+    @media (max-width: 768px) {
+      .imagen-lateral {
+        float: none;
+        display: block;
+        margin: 1rem auto;
+        max-width: 100%;
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- ENCABEZADO PRINCIPAL -->
+  <header>
+    <h1>Todo sobre OneDrive</h1>
+    <p>
+      Descubre cómo sacarle el máximo provecho a la nube de Microsoft para 
+      almacenar, compartir y colaborar de manera segura y eficiente.
+    </p>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main>
+    <!-- SECCIÓN 1: INTRODUCCIÓN A ONEDRIVE -->
+    <h2>1. Introducción</h2>
+    <p>
+      OneDrive es el servicio de almacenamiento en la nube de Microsoft, 
+      diseñado para facilitar el acceso a tus archivos desde cualquier lugar y 
+      dispositivo. Se integra perfectamente con Windows y la suite de Microsoft 365, 
+      ofreciendo un ecosistema completo de productividad. Además, su arquitectura 
+      de seguridad y sincronización continua permite respaldar tus documentos, 
+      fotos y proyectos críticos sin preocuparte por posibles pérdidas de información.
+    </p>
+    <p>
+      En la actualidad, muchas empresas y usuarios personales se benefician de 
+      las ventajas que brinda la nube. OneDrive destaca por su capacidad de 
+      simplificar la colaboración en tiempo real, permitiendo que equipos o 
+      compañeros de estudio trabajen simultáneamente en un mismo archivo de 
+      Word, Excel o PowerPoint. 
+    </p>
+
+    <!-- Imagen lateral para mayor atractivo (se cambiará la URL después) -->
+    <img src="https://via.placeholder.com/400" alt="Imagen de OneDrive" class="imagen-lateral">
+
+    <p>
+      <strong>¿Por qué es importante?</strong>  
+      En un entorno cada vez más remoto e interconectado, la posibilidad de 
+      acceder a tus archivos en cuestión de segundos y de forma segura se 
+      vuelve primordial para mantener la continuidad de los negocios y la 
+      productividad individual.
+    </p>
+
+    <!-- Panel Tip (con ícono de ejemplo) -->
+    <div class="panel-tips">
+      <span class="icono-tip">
+        <!-- Ejemplo de ícono con Font Awesome (ver nota en <head>) -->
+        <i class="fas fa-lightbulb"></i>
+      </span>
+      <h4>TIP: Sincroniza tu carpeta local</h4>
+      <p>
+        Para aprovechar al máximo OneDrive, sincroniza una carpeta de tu equipo 
+        con la nube. Así, cada vez que guardes o modifiques un archivo en esa 
+        carpeta, éste se actualizará automáticamente en línea.
+      </p>
+    </div>
+
+    <!-- SECCIÓN 2: PRINCIPALES CARACTERÍSTICAS -->
+    <h2>2. Principales Características</h2>
+    <p>
+      A continuación, se describen algunas de las funciones más destacadas de OneDrive:
+    </p>
+
+    <h3>2.1 Almacenamiento en la nube</h3>
+    <p>
+      OneDrive ofrece planes de almacenamiento que van desde unos pocos GB 
+      gratuitos hasta varios TB con suscripciones de Microsoft 365. 
+      Esto permite guardar gran cantidad de archivos de manera centralizada, 
+      reemplazando la necesidad de dispositivos de almacenamiento físico.
+    </p>
+
+    <h3>2.2 Compartir y Colaborar</h3>
+    <p>
+      La capacidad de compartir enlaces con permisos específicos (solo lectura, 
+      edición, caducidad, etc.) hace que OneDrive sea una herramienta flexible 
+      para todo tipo de entornos. Tanto en educación como en negocios, 
+      varios usuarios pueden trabajar simultáneamente en un documento, 
+      viendo cambios en tiempo real.
+    </p>
+
+    <h3>2.3 Seguridad y Control de Versiones</h3>
+    <p>
+      OneDrive realiza copias de seguridad automáticas de los archivos y 
+      lleva un control de versiones. Si se produce un cambio no deseado, 
+      es posible retroceder a versiones anteriores. Además, cuenta con 
+      encriptación de datos en tránsito y en reposo, protegiendo tu información 
+      de accesos no autorizados.
+    </p>
+
+    <div class="panel-tips">
+      <span class="icono-tip"><i class="fas fa-shield-alt"></i></span>
+      <h4>TIP: Restaurar archivos eliminados</h4>
+      <p>
+        Si borraste un archivo importante por error, puedes recuperarlo 
+        desde la “Papelera de reciclaje” de OneDrive durante un periodo 
+        determinado (generalmente 30 días para cuentas personales).
+      </p>
+    </div>
+
+    <!-- SECCIÓN 3: CASOS DE USO (TABLA DE EJEMPLO) -->
+    <h2>3. Casos de Uso en el Entorno Laboral</h2>
+    <p>
+      OneDrive se adapta a diferentes sectores, desde pequeñas empresas 
+      hasta grandes corporaciones, e incluso educación y proyectos personales. 
+      A continuación, se muestran algunos casos y datos de uso estimados:
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Sector</th>
+          <th>Uso Común</th>
+          <th>Beneficios Destacados</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Educación</td>
+          <td>Compartir tareas, trabajos grupales, presentaciones</td>
+          <td>Edición colaborativa, control de versiones, fácil acceso para estudiantes</td>
+        </tr>
+        <tr>
+          <td>Pequeñas Empresas</td>
+          <td>Almacenamiento de facturas, documentación legal, catálogos</td>
+          <td>Centralización, seguridad, copias de seguridad automáticas</td>
+        </tr>
+        <tr>
+          <td>Grandes Corporaciones</td>
+          <td>Gestión de proyectos multinacionales, datos corporativos en la nube</td>
+          <td>Escalabilidad, sincronización con Microsoft 365 y Teams, reporting avanzado</td>
+        </tr>
+        <tr>
+          <td>Proyectos Personales</td>
+          <td>Respaldo de fotos y documentos personales</td>
+          <td>Evita pérdida de datos por robo o daño de dispositivos</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      Según estudios de mercado, más del <strong>60% de las empresas</strong> 
+      con suscripciones a Microsoft 365 ya utilizan OneDrive como parte de 
+      sus flujos de trabajo digitales.
+    </p>
+
+    <!-- Imagen centrada -->
+    <img src="https://via.placeholder.com/800x400" alt="Imagen ilustrativa de uso empresarial" class="imagen-centro">
+
+    <p>
+      Al trabajar de forma conjunta con Microsoft Teams y Outlook, 
+      OneDrive refuerza la colaboración y la organización, facilitando 
+      la comunicación instantánea y la gestión de documentos en un mismo ecosistema.
+    </p>
+
+    <!-- SECCIÓN 4: CUIDADOS Y ERRORES COMUNES -->
+    <h2>4. Cuidados y Errores Comunes</h2>
+    <p>
+      Aunque OneDrive simplifica numerosos procesos, es importante 
+      considerar ciertos puntos para evitar problemas:
+    </p>
+
+    <h3>4.1 Cuidados Relevantes</h3>
+    <ul>
+      <li><strong>Manejo de Contraseñas:</strong> Utiliza contraseñas seguras y, si es posible, habilita la autenticación de dos factores (2FA) para tu cuenta de Microsoft.</li>
+      <li><strong>Asignación de Permisos:</strong> Revisa con cuidado a quién otorgas acceso de edición o lectura. A veces es preferible compartir un archivo con permisos de “ver” únicamente.</li>
+      <li><strong>Organización de Carpetas:</strong> Mantén un sistema de carpetas y nombres de archivo coherente, para no crear confusiones entre versiones o documentos duplicados.</li>
+    </ul>
+
+    <h3>4.2 Errores Frecuentes</h3>
+    <ul>
+      <li><strong>No sincronizar la carpeta local:</strong> Muchos usuarios suben archivos manualmente en lugar de sincronizar automáticamente. Esto genera versiones desactualizadas y confusiones.</li>
+      <li><strong>Compartir con “Cualquiera” por defecto:</strong> Si no configuras correctamente los permisos, podrías estar exponiendo información sensible.</li>
+      <li><strong>Ignorar la Papelera de Reciclaje:</strong> Se elimina un archivo y se cree perdido, cuando en realidad sigue disponible por un tiempo limitado en la papelera.</li>
+    </ul>
+
+    <!-- SECCIÓN 5: TIPS PRÁCTICOS DE USO -->
+    <h2>5. Tips Prácticos</h2>
+    <p>
+      Para exprimir aún más las ventajas de OneDrive, ten en cuenta estas recomendaciones:
+    </p>
+    <div class="panel-tips">
+      <span class="icono-tip"><i class="fas fa-check-circle"></i></span>
+      <h4>Descarga la app móvil</h4>
+      <p>
+        Instala la aplicación de OneDrive en tu smartphone o tablet para 
+        acceder y compartir tus archivos en movimiento. Esto es ideal 
+        cuando necesitas revisar un documento de manera urgente mientras 
+        estás fuera de la oficina.
+      </p>
+    </div>
+    <div class="panel-tips">
+      <span class="icono-tip"><i class="fas fa-search"></i></span>
+      <h4>Usa la Búsqueda Integrada</h4>
+      <p>
+        OneDrive cuenta con un motor de búsqueda interno que te permite 
+        encontrar archivos por nombre, tipo o incluso contenido (cuando 
+        indexa los documentos de Word/Excel). Utilízalo para ahorrar tiempo.
+      </p>
+    </div>
+    <div class="panel-tips">
+      <span class="icono-tip"><i class="fas fa-user-shield"></i></span>
+      <h4>Verifica los Permisos con Regularidad</h4>
+      <p>
+        En proyectos donde participan varios colaboradores, revisa 
+        periódicamente los permisos de acceso a carpetas y archivos, 
+        revocando los que ya no sean necesarios.
+      </p>
+    </div>
+
+    <!-- SECCIÓN 6: CONCLUSIÓN FINAL -->
+    <h2>6. Conclusión</h2>
+    <p>
+      OneDrive se ha convertido en un pilar fundamental dentro del 
+      ecosistema de Microsoft para la gestión de archivos en la nube. 
+      Su integración con Windows, su facilidad de uso y sus mecanismos 
+      de seguridad lo posicionan como una alternativa sólida para 
+      particulares y empresas de todos los tamaños. 
+    </p>
+    <p>
+      Desde el simple hecho de subir y descargar documentos, hasta la 
+      colaboración en tiempo real y la sincronización de carpetas, 
+      OneDrive ofrece un amplio abanico de funciones que pueden 
+      simplificar tu día a día y ahorrar tiempo valioso. 
+      Siguiendo las recomendaciones y buenas prácticas aquí descritas, 
+      podrás evitar errores comunes y aprovechar al máximo este servicio.
+    </p>
+    <p>
+      <strong>Recuerda:</strong> La transformación digital no solo 
+      depende de la tecnología, sino también de la forma en que 
+      las personas y organizaciones adoptan estos recursos. OneDrive 
+      es una pieza clave para mejorar la productividad y la gestión 
+      de la información en un mundo cada vez más conectado.
+    </p>
+  </main>
+
+  <!-- PIE DE PÁGINA -->
+  <footer>
+    <p>&copy; 2025 - Guía de OneDrive para Usuarios</p>
+    <p>Desarrollado para impulsar la productividad y la colaboración en la nube.</p>
+  </footer>
+
+  <!-- 
+    NOTA: Para que los íconos (fas fa-...) funcionen, 
+    asegúrate de incluir Font Awesome en tu proyecto.
+  -->
+</body>
+</html>
