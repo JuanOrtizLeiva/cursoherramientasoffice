@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bienvenido al Curso de Microsoft Office</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600&display=swap" rel="stylesheet">
+  <style>
+    /* Reset y base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f0f4f8;
+      color: #333;
+      line-height: 1.6;
+    }
+    /* HEADER */
+    header {
+      background: linear-gradient(135deg, #0078D4, #78C2F3);
+      color: #fff;
+      padding: 80px 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    header::after {
+      content: "";
+      position: absolute;
+      bottom: -20px;
+      left: 0;
+      width: 100%;
+      height: 40px;
+      background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'><path fill='%23f0f4f8' fill-opacity='1' d='M0,96L60,112C120,128,240,160,360,165.3C480,171,600,149,720,149.3C840,149,960,171,1080,186.7C1200,203,1320,213,1380,218.7L1440,224L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z'></path></svg>") no-repeat;
+      background-size: cover;
+    }
+    header h1 {
+      font-size: 2.8rem;
+      margin-bottom: 20px;
+      animation: fadeInDown 1s ease;
+    }
+    header p {
+      font-size: 1.2rem;
+      max-width: 700px;
+      margin: 0 auto;
+      animation: fadeInUp 1s ease;
+    }
+    /* Animaciones */
+    @keyframes fadeInDown {
+      0% {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @keyframes fadeInUp {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    /* SECCIONES */
+    section {
+      padding: 40px 20px;
+      margin: 20px auto;
+      max-width: 900px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      opacity: 0;
+      animation: fadeIn 1s forwards;
+    }
+    section:nth-of-type(1) { animation-delay: 0.3s; }
+    section:nth-of-type(2) { animation-delay: 0.5s; }
+    section:nth-of-type(3) { animation-delay: 0.7s; }
+    /* Estilos para títulos y párrafos */
+    h2 {
+      color: #0078D4;
+      margin-bottom: 15px;
+      font-size: 1.8rem;
+    }
+    p {
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+    /* Estilos para listas */
+    .list {
+      list-style: none;
+      padding-left: 0;
+    }
+    .list li {
+      padding: 10px;
+      border-left: 4px solid #0078D4;
+      margin-bottom: 10px;
+      background: #f7f9fb;
+      border-radius: 4px;
+    }
+    /* Estilos para la tabla del calendario */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table th, table td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    table th {
+      background-color: #0078D4;
+      color: #fff;
+    }
+    table tr:hover {
+      background-color: #f0faff;
+    }
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #f7f9fb;
+      color: #777;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header>
+    <h1>Bienvenido al Curso de Herramientas de Microsoft Office</h1>
+    <p>MS Teams, Outlook y OneDrive</p>
+  </header>
+
+  <!-- SECCIÓN DE BIENVENIDA -->
+  <section>
+    <p>
+      Nos complace darte la bienvenida al <strong>Curso de Herramientas de Microsoft Office: MS Teams, Outlook y OneDrive</strong>, desarrollado y gestionado por el <strong>Instituto de Capacitación Tecnipro</strong>, un referente en formación profesional. Este curso está diseñado para mejorar tus habilidades de colaboración, gestión de archivos y organización en entornos digitales.
+    </p>
+  </section>
+
+  <!-- SECCIÓN DE FECHAS CON CALENDARIO -->
+  <section>
+    <h2>Fechas del Curso</h2>
+    <p>
+      El curso comienza el <strong>martes 11 de febrero de 2025</strong> y finaliza el <strong>viernes 7 de marzo de 2025</strong>. Durante este período, podrás subir las evaluaciones requeridas para completar tu formación. A continuación, se muestran las fechas y horarios de las clases en vivo:
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Día</th>
+          <th>Fecha</th>
+          <th>Horario</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Martes</td>
+          <td>11 de febrero de 2025</td>
+          <td>15:00 - 17:00</td>
+        </tr>
+        <tr>
+          <td>Jueves</td>
+          <td>13 de febrero de 2025</td>
+          <td>15:00 - 17:00</td>
+        </tr>
+        <tr>
+          <td>Martes</td>
+          <td>18 de febrero de 2025</td>
+          <td>15:00 - 17:00</td>
+        </tr>
+        <tr>
+          <td>Jueves</td>
+          <td>20 de febrero de 2025</td>
+          <td>15:00 - 17:00</td>
+        </tr>
+        <tr>
+          <td>Martes</td>
+          <td>25 de febrero de 2025</td>
+          <td>15:00 - 17:00</td>
+        </tr>
+        <tr>
+          <td>Jueves</td>
+          <td>27 de febrero de 2025</td>
+          <td>15:00 - 17:00</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- SECCIÓN DE ESTRUCTURA DEL CURSO -->
+  <section>
+    <h2>Estructura del Curso</h2>
+    <p>
+      El curso tiene una duración total de <strong>20 horas</strong>, en modalidad <strong>Mixta</strong> (12 horas sincrónicas y 8 horas asincrónicas). Los contenidos se desarrollarán a través de:
+    </p>
+    <ul class="list">
+      <li><strong>Clases en vivo por MS Teams</strong></li>
+      <li><strong>Días:</strong> Martes y jueves 11, 13, 18, 20, 25 y 27 de febrero</li>
+      <li><strong>Horario:</strong> 15:00 a 17:00 horas</li>
+      <li>Las clases se grabarán y estarán disponibles posteriormente en la plataforma.</li>
+    </ul>
+    <p>
+      <strong>Material en Plataforma:</strong>
+    </p>
+    <ul class="list">
+      <li><strong>Videos Explicativos:</strong> Tutoriales detallados sobre el uso de MS Teams, Outlook y OneDrive.</li>
+      <li><strong>Materiales de Lectura:</strong> Documentos y guías para profundizar en cada tema.</li>
+      <li><strong>Ejercicios Prácticos:</strong> Actividades diseñadas para aplicar lo aprendido y reforzar los conocimientos.</li>
+    </ul>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2025 Instituto de Capacitación Tecnipro. Todos los derechos reservados.</p>
+  </footer>
+</body>
+</html>
