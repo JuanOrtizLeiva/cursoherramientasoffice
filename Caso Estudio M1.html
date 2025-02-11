@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Optimización del Flujo de Información en la Consolidación de Notas</title>
+  <!-- Google Fonts para tipografía limpia -->
+  <link href="https://i.postimg.cc/vmP29n8D/H-Dorado.png" rel="stylesheet">
+  <!-- Estilos CSS -->
+  <style>
+    /* Estilos generales */
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+      color: #333;
+      line-height: 1.6;
+    }
+    header {
+      background-color: #004080;
+      color: #fff;
+      text-align: center;
+      padding: 20px 0;
+    }
+    header img {
+      max-width: 300px;
+      width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto 10px;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2.5em;
+    }
+    header p {
+      font-size: 1.2em;
+    }
+    .container {
+      max-width: 960px;
+      margin: 20px auto;
+      background: #fff;
+      padding: 20px 30px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    /* Botón para descargar PDF */
+    .pdf-button-container {
+      text-align: right;
+      margin-bottom: 15px;
+    }
+    .btn-pdf {
+      background-color: #004080;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+    .btn-pdf:hover {
+      background-color: #003366;
+    }
+    /* Estilos para secciones colapsables usando <details> */
+    details {
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      padding: 10px;
+      background: #fafafa;
+      transition: background 0.3s ease;
+    }
+    details[open] {
+      background: #e6f0ff;
+    }
+    details summary {
+      font-size: 1.4em;
+      font-weight: 500;
+      cursor: pointer;
+      list-style: none;
+      padding: 5px;
+    }
+    details summary::-webkit-details-marker {
+      display: none;
+    }
+    details summary:before {
+      content: "►";
+      display: inline-block;
+      margin-right: 8px;
+      transition: transform 0.3s ease;
+    }
+    details[open] summary:before {
+      transform: rotate(90deg);
+    }
+    h2 {
+      color: #004080;
+      margin-bottom: 10px;
+    }
+    h3 {
+      color: #0066cc;
+      margin-top: 15px;
+    }
+    p, li {
+      text-align: justify;
+      margin: 10px 0;
+    }
+    ul, ol {
+      margin-left: 20px;
+      margin-bottom: 10px;
+    }
+    footer {
+      text-align: center;
+      background: #004080;
+      color: #fff;
+      padding: 10px;
+      margin-top: 20px;
+    }
+  </style>
+  <!-- Se incluye la librería html2pdf para la generación de PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+  <header>
+    <!-- Reemplaza la URL del logo -->
+    <img src="URL_DEL_LOGO_AQUI" alt="Logo de la Institución">
+    <h1>Optimización del Flujo de Información en la Consolidación de Notas</h1>
+    <p>El Reto del Profesor Jefe en un Curso de 4º Medio en Chile</p>
+  </header>
+  
+  <div class="container">
+    <!-- Botón para descargar PDF -->
+    <div class="pdf-button-container">
+      <button class="btn-pdf" id="downloadPdfBtn">Descargar PDF</button>
+    </div>
+    
+    <!-- Sección I: Resumen Ejecutivo -->
+    <details open>
+      <summary><h2>I. Resumen Ejecutivo</h2></summary>
+      <p>La transformación digital en educación exige procesos eficientes para consolidar la información. Este caso plantea el desafío de un profesor jefe de 4º medio en Chile, con 35 alumnos, que debe coordinar y consolidar las calificaciones de diversas asignaturas de forma eficiente, segura y sostenible, sin utilizar software institucional. Se invita a explorar diversas alternativas utilizando herramientas de uso común (por ejemplo, Outlook, OneDrive y Teams en sus versiones básicas) y a analizar el "costo en tiempo" —entendido como el tiempo invertido en actualizar y gestionar la información (por ejemplo, en horas semanales)— que implica cada método.</p>
+    </details>
+    
+    <!-- Sección II: Antecedentes y Contexto -->
+    <details open>
+      <summary><h2>II. Antecedentes y Contexto</h2></summary>
+      <h3>Perfil y Entorno</h3>
+      <ul>
+        <li><strong>Ubicación:</strong> Chile</li>
+        <li><strong>Nivel Educativo:</strong> 4º medio</li>
+        <li><strong>Cantidad de Alumnos:</strong> Aproximadamente 35</li>
+        <li><strong>Rol Principal:</strong> Profesor jefe, responsable de coordinar y consolidar las calificaciones del curso.</li>
+      </ul>
+      <h3>Asignaturas (Ejemplos)</h3>
+      <ul>
+        <li>Matemáticas</li>
+        <li>Lengua y Comunicación</li>
+        <li>Historia</li>
+        <li>Biología</li>
+        <li>Física</li>
+        <li>Inglés</li>
+        <li>Educación Física</li>
+      </ul>
+      <h3>Situación Actual</h3>
+      <p>Actualmente, la consolidación de notas se realiza mediante métodos dispersos y manuales (por ejemplo, el envío individual de correos electrónicos), lo que ocasiona demoras, errores y dificultades en el control de versiones.</p>
+      <h3>Restricciones</h3>
+      <ul>
+        <li>No se utilizará software institucional para evitar depender de herramientas internas.</li>
+        <li>Se trabajará exclusivamente con herramientas básicas y de acceso común.</li>
+      </ul>
+    </details>
+    
+    <!-- Sección III: Planteamiento del Problema -->
+    <details open>
+      <summary><h2>III. Planteamiento del Problema</h2></summary>
+      <p>El profesor jefe debe definir un método que le permita consolidar de forma eficiente, segura y sostenible las calificaciones de las asignaturas. Se proponen algunas ideas iniciales (sin limitar la creatividad en la búsqueda de otras alternativas):</p>
+      <ul>
+        <li><strong>Recopilación por Correo Electrónico:</strong> Cada profesor envía las notas mediante Outlook, y el profesor jefe consolida la información manualmente en un documento (por ejemplo, un archivo Excel).</li>
+        <li><strong>Archivo Excel Compartido en OneDrive:</strong> Crear un archivo en el que se utilicen pestañas separadas para cada asignatura o bien una única hoja organizada por secciones o filas diferenciadas.</li>
+        <li><strong>Otras Alternativas:</strong> Se invita a proponer cualquier otra solución viable que no dependa del software institucional, pudiendo incluir el uso de formularios online, herramientas colaborativas adicionales u otros procesos innovadores.</li>
+      </ul>
+      <p>El desafío consiste en evaluar las ventajas y desventajas de cada enfoque, considerando tanto aspectos técnicos como humanos, para determinar cuál o cuáles ofrecen el mejor equilibrio entre eficiencia, control y facilidad de uso.</p>
+    </details>
+    
+    <!-- Sección IV: Aspectos a Evaluar -->
+    <details open>
+      <summary><h2>IV. Aspectos a Evaluar</h2></summary>
+      <ul>
+        <li>
+          <strong>Beneficios y Desafíos para los Actores Involucrados:</strong>
+          <ul>
+            <li>Impacto en la labor del profesor jefe y en la rutina de los profesores.</li>
+            <li>Facilidad de uso y nivel de familiaridad con la herramienta elegida.</li>
+            <li>Posibilidad de errores, pérdida de información y dificultades en el control de versiones.</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Gestión y Actualización de la Información:</strong>
+          <ul>
+            <li>Mecanismos para asegurar la integridad y la actualización en tiempo real de los datos.</li>
+            <li>Estrategias para gestionar la edición colaborativa y evitar conflictos.</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Implicaciones Organizacionales y Comunicativas:</strong>
+          <ul>
+            <li>Efecto sobre la transparencia, la responsabilidad y la comunicación entre los docentes.</li>
+            <li>Potencial para fomentar la colaboración y la responsabilidad compartida.</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Capacitación y Adaptabilidad:</strong>
+          <ul>
+            <li>Nivel de formación requerido para el uso efectivo de las herramientas digitales básicas.</li>
+            <li>Facilidad de adaptación al nuevo método por parte de los involucrados.</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Análisis del "Costo en Tiempo":</strong>
+          <ul>
+            <li>Estimación del tiempo requerido para actualizar la información de forma periódica (por ejemplo, semanalmente).</li>
+            <li>Evaluación del impacto en la carga de trabajo y la eficiencia del proceso.</li>
+          </ul>
+        </li>
+      </ul>
+    </details>
+    
+    <!-- Sección V: Preguntas para el Debate -->
+    <details open>
+      <summary><h2>V. Preguntas para el Debate</h2></summary>
+      <ol>
+        <li>¿Cuáles son las ventajas y desventajas de cada alternativa presentada, así como de otras que puedan proponerse?</li>
+        <li>¿Qué mecanismos se pueden implementar para asegurar la integridad y actualización oportuna de la información?</li>
+        <li>¿Cómo afecta la elección del método a la comunicación y colaboración entre profesores?</li>
+        <li>¿Cuál es el "costo en tiempo" estimado para actualizar la información semanalmente en cada alternativa, y cómo podría optimizarse?</li>
+        <li>¿Qué estrategias adicionales se pueden incorporar para mejorar la gestión de las calificaciones sin depender del software institucional?</li>
+      </ol>
+    </details>
+    
+    <!-- Sección VI: Instrucciones para la Presentación de la Solución -->
+    <details open>
+      <summary><h2>VI. Instrucciones para la Presentación de la Solución</h2></summary>
+      <p><strong>Formato de Entrega:</strong> La solución final se presentará en formato <strong>Word</strong> o <strong>PowerPoint</strong> e incluirá:</p>
+      <ul>
+        <li><strong>Resumen de la Solución Propuesta:</strong> Descripción clara del método o combinación de métodos propuestos para consolidar las notas.</li>
+        <li><strong>Análisis de las Alternativas Evaluadas:</strong> Argumentación detallada de las ventajas y desventajas de cada enfoque, abarcando tanto las ideas iniciales como cualquier otra propuesta adicional.</li>
+        <li><strong>Conclusiones y Recomendaciones:</strong> Propuesta fundamentada que equilibre eficiencia, control y facilidad de uso, considerando tanto aspectos técnicos como humanos.</li>
+        <li><strong>Análisis del "Costo en Tiempo":</strong> Estimación del tiempo requerido para la actualización periódica (por ejemplo, semanal) para cada alternativa evaluada, junto con sugerencias para optimizar este proceso.</li>
+      </ul>
+      <p><strong>Objetivos de la Entrega:</strong></p>
+      <ul>
+        <li>Demostrar la capacidad de análisis y evaluación crítica en un contexto real.</li>
+        <li>Proponer una solución integral que mejore el proceso de consolidación de notas.</li>
+        <li>Considerar el impacto práctico y la viabilidad de implementación en el entorno educativo.</li>
+      </ul>
+    </details>
+    
+    <!-- Sección VII: Contexto Comparativo y Antecedentes Históricos (Opcional) -->
+    <details open>
+      <summary><h2>VII. Contexto Comparativo y Antecedentes Históricos (Opcional)</h2></summary>
+      <p>Para enriquecer la discusión, se sugiere investigar brevemente cómo otras instituciones educativas han enfrentado desafíos similares en la gestión de notas. Este análisis comparativo puede incluir:</p>
+      <ul>
+        <li>Ejemplos de procesos de consolidación de notas en otros liceos o colegios.</li>
+        <li>Lecciones aprendidas y mejores prácticas adoptadas en contextos comparables.</li>
+        <li>Reflexiones sobre la evolución de los métodos de gestión administrativa en el sector educativo.</li>
+      </ul>
+    </details>
+    
+    <!-- Sección VIII: Conclusión -->
+    <details open>
+      <summary><h2>VIII. Conclusión</h2></summary>
+      <p>Este caso plantea un desafío real y relevante en el contexto educativo chileno: un profesor jefe de 4º medio debe optimizar la consolidación de las calificaciones de 35 alumnos en diversas asignaturas, utilizando herramientas de uso común sin depender del software institucional. Se invita a explorar alternativas innovadoras y a debatir sobre la eficiencia, el control y el "costo en tiempo" de cada método, fomentando el pensamiento crítico y la colaboración.</p>
+      <p><strong>¡Esperamos sus propuestas y un debate enriquecedor que contribuya a mejorar los procesos de gestión académica en nuestros liceos!</strong></p>
+    </details>
+    
+  </div>
+  
+  <footer>
+    <p>Instituto de Capacitación Tecnipro.</p>
+  </footer>
+  
+  <!-- Script para el botón de Descargar PDF -->
+  <script>
+    document.getElementById("downloadPdfBtn").addEventListener("click", function() {
+      // Expande todos los <details> para que se incluya todo el contenido en el PDF
+      document.querySelectorAll("details").forEach(function(detail) {
+        detail.setAttribute("open", "true");
+      });
+      // Opcional: espera un breve instante para que se apliquen los cambios visuales
+      setTimeout(function() {
+        const element = document.querySelector(".container");
+        const opt = {
+          margin:       10,
+          filename:     'Caso_Consolidacion_Notas.pdf',
+          image:        { type: 'jpeg', quality: 0.98 },
+          html2canvas:  { scale: 2 },
+          jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(opt).from(element).save();
+      }, 500);
+    });
+  </script>
+</body>
+</html>
