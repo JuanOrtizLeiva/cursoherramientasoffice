@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Clase 2: Creación y Configuración de Flujos en Power Automate (Solución sin solapamiento)</title>
+  <style>
+    /* =======================
+       VARIABLES DE COLOR
+       ======================= */
+    :root {
+      --color-primary: #0078D4;          /* Azul principal */
+      --color-secondary: #005a9e;        /* Variación para esta clase */
+      --color-bg: #ffffff;               /* Fondo base */
+      --color-bg-alt: #f7f7f7;           /* Fondo alterno */
+      --color-text: #333;                /* Color de texto principal */
+      --header-gradient-start: #0078D4;  /* Degradado Header (inicio) */
+      --header-gradient-end: #78C2F3;    /* Degradado Header (fin) */
+    }
+
+    /* =======================
+       RESET BÁSICO
+       ======================= */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth; /* Scroll suave */
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+                   Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    }
+
+    body {
+      background-color: var(--color-bg);
+      color: var(--color-text);
+    }
+
+    /* =======================
+       ENCABEZADO CON "WAVE"
+       ======================= */
+    header {
+      position: relative;
+      background: linear-gradient(
+        to right,
+        var(--header-gradient-start),
+        var(--header-gradient-end)
+      );
+      color: #fff;
+      padding: 4rem 2rem 6rem 2rem;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    /* Forma "wave" con clip-path (Clase 2) */
+    .wave {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      clip-path: polygon(0 50%, 
+                         25% 45%, 
+                         50% 55%, 
+                         75% 45%, 
+                         100% 50%, 
+                         100% 100%, 
+                         0 100%);
+      background: linear-gradient(
+        to right,
+        var(--header-gradient-start),
+        var(--header-gradient-end)
+      );
+      z-index: 1;
+    }
+
+    .header-content {
+      position: relative;
+      z-index: 2; /* por encima de la wave */
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    header p {
+      font-size: 1.1rem;
+      line-height: 1.5;
+    }
+
+    /* =======================
+       NAV STICKY
+       ======================= */
+    nav {
+      position: sticky;
+      top: 0;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      z-index: 9999;
+    }
+
+    nav ul {
+      display: flex;
+      justify-content: center;
+      list-style: none;
+    }
+
+    nav ul li a {
+      display: block;
+      padding: 1rem 1.5rem;
+      color: var(--color-primary);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    nav ul li a:hover {
+      color: var(--color-secondary);
+    }
+
+    /* =======================
+       SECCIONES DE CONTENIDO
+       ======================= */
+    section {
+      padding: 3rem 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .bg-alt {
+      background-color: var(--color-bg-alt);
+    }
+
+    section h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    section p {
+      margin-bottom: 1rem;
+      text-align: justify;
+      line-height: 1.6;
+    }
+
+    /* =======================
+       ALERT-BOXES
+       ======================= */
+    .alert-box {
+      border-left: 6px solid;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      border-radius: 4px;
+      display: flex;
+      align-items: flex-start;
+    }
+    .alert-box i {
+      margin-right: 0.75rem;
+      font-style: normal; /* simulamos icono */
+      font-weight: bold;
+      line-height: 1.2;
+    }
+
+    /* Info */
+    .alert-info {
+      background-color: #e3f2fd;
+      border-color: #90caf9;
+      color: #0d47a1;
+    }
+    .alert-info i::before {
+      content: "[i]";
+    }
+
+    /* Warning */
+    .alert-warning {
+      background-color: #fff4e5;
+      border-color: #ffcc80;
+      color: #e65100;
+    }
+    .alert-warning i::before {
+      content: "[!]";
+    }
+
+    /* Success */
+    .alert-success {
+      background-color: #e8f5e9;
+      border-color: #a5d6a7;
+      color: #1b5e20;
+    }
+    .alert-success i::before {
+      content: "[✓]";
+    }
+
+    /* Alert */
+    .alert-alert {
+      background-color: #fce4ec;
+      border-color: #f48fb1;
+      color: #880e4f;
+    }
+    .alert-alert i::before {
+      content: "[x]";
+    }
+
+    /* =======================
+       ANIMACIONES (FADE-IN)
+       ======================= */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .fade-in-active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* =======================
+       CARRUSEL (CLASE 2)
+       ======================= */
+    .carousel-container {
+      width: 100%;
+      max-width: 700px;
+      margin: 2rem auto;
+      overflow: hidden;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .carousel-slide {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+    }
+
+    .carousel-item {
+      min-width: 100%;
+      box-sizing: border-box;
+      padding: 2rem;
+      background-color: #fff;
+      text-align: center;
+    }
+
+    .carousel-item h3 {
+      margin-bottom: 1rem;
+    }
+
+    .carousel-item p {
+      margin-bottom: 1rem;
+    }
+
+    /* Botones del carrusel: sin posicionamiento absoluto,
+       se ubican en un contenedor debajo del slide */
+    .carousel-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1rem;
+    }
+
+    .carousel-buttons button {
+      background-color: var(--color-primary);
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 1rem;
+      transition: background-color 0.3s;
+    }
+
+    .carousel-buttons button:hover {
+      background-color: var(--color-secondary);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="wave"></div>
+    <div class="header-content">
+      <h1>Clase 2: Creación y Configuración de Flujos en Power Automate</h1>
+      <p>
+        En esta segunda clase profundizaremos en la estructura de un flujo
+        (trigger, acciones, condiciones) y en las mejores prácticas para
+        configurarlo. Aprenderás a identificar cuándo usar cada tipo de flujo y
+        a sacar el máximo provecho de las automatizaciones.
+      </p>
+    </div>
+  </header>
+
+  <!-- NAVEGACIÓN STICKY -->
+  <nav>
+    <ul>
+      <li><a href="#repaso-clase1">Repaso Clase 1</a></li>
+      <li><a href="#tipos-flujos">Tipos de Flujos</a></li>
+      <li><a href="#elementos-flujo">Elementos del Flujo</a></li>
+      <li><a href="#mejores-practicas">Mejores Prácticas</a></li>
+      <li><a href="#carousel">Casos Destacados</a></li>
+      <li><a href="#conclusiones">Conclusiones</a></li>
+    </ul>
+  </nav>
+
+  <!-- SECCIÓN 1: REPASO CLASE 1 -->
+  <section id="repaso-clase1" class="fade-in">
+    <h2>Repaso de lo visto en la Clase 1</h2>
+    <p>
+      Anteriormente, revisamos los conceptos básicos de Power Automate, su
+      enfoque low-code/no-code y la manera en que los administrativos en Chile
+      pueden beneficiarse al automatizar tareas repetitivas. Si aún no has
+      leído la primera clase, te recomendamos hacerlo para comprender mejor esta
+      segunda parte.
+    </p>
+    <p>
+      Recordemos que Power Automate se integra con múltiples servicios y
+      aplicaciones de Microsoft, además de sistemas de terceros, permitiendo
+      flujos de trabajo transversales.  
+      <strong>
+        En esta clase nos centraremos en la creación y configuración de flujos,
+        explorando sus componentes fundamentales (disparadores, acciones y
+        condiciones).
+      </strong>
+    </p>
+
+    <div class="alert-box alert-info">
+      <i></i>
+      <div>
+        <strong>Tip recordatorio:</strong><br />
+        Muchas de las funciones que facilitaban la vida del administrativo (p. ej.
+        envío automático de correos, clasificaciones o aprobaciones) requieren
+        elegir correctamente el “trigger” y las “acciones” asociadas. ¡Sigue
+        leyendo para descubrir cómo!
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 2: TIPOS DE FLUJOS -->
+  <section id="tipos-flujos" class="bg-alt fade-in">
+    <h2>1. Tipos de Flujos en Power Automate</h2>
+    <p>
+      Antes de configurar cualquier flujo, es esencial conocer los tipos
+      disponibles. Esto te ayudará a seleccionar el más adecuado para la tarea
+      que deseas automatizar. Estos son los principales:
+    </p>
+    <ul style="margin-bottom:1rem; padding-left:1.5rem;">
+      <li>
+        <strong>Flujos en la nube automatizados:</strong> Se inician cuando
+        ocurre un evento en alguna aplicación o servicio (por ejemplo, al
+        llegar un correo específico a tu bandeja de Outlook).
+      </li>
+      <li>
+        <strong>Flujos en la nube instantáneos:</strong> Se ejecutan
+        manualmente con un botón, ya sea desde la aplicación móvil de Power
+        Automate o desde la propia web.
+      </li>
+      <li>
+        <strong>Flujos programados:</strong> Se disparan en horarios o
+        intervalos fijos (por ejemplo, todos los días a las 8:00 AM).
+      </li>
+      <li>
+        <strong>Flujos de escritorio (Power Automate Desktop):</strong> Para
+        automatizar tareas en el propio PC (por ejemplo, interactuar con
+        aplicaciones locales o archivos en tu computador).
+      </li>
+      <li>
+        <strong>Flujos de proceso empresarial (Business Process Flows):</strong>
+        Diseñados para guiar a los usuarios a través de un proceso definido en
+        aplicaciones como Dynamics 365.
+      </li>
+    </ul>
+    <p>
+      Cada tipo se ajusta a distintos escenarios. Si eres un administrativo que
+      necesita disparar acciones cuando llegue un cierto correo, tu mejor
+      opción será un <em>flujo en la nube automatizado</em>. En cambio, si
+      precisas algo periódico, te convendrá un <em>flujo programado</em>.
+    </p>
+
+    <div class="alert-box alert-warning">
+      <i></i>
+      <div>
+        <strong>Advertencia:</strong><br/>
+        Si vas a automatizar procesos en tu computador (por ejemplo, enviar
+        datos de un software interno a la nube), puede que necesites instalar
+        Power Automate Desktop y asegurarte de que tu equipo cumple con los
+        requisitos de sistema.
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 3: ELEMENTOS DEL FLUJO -->
+  <section id="elementos-flujo" class="fade-in">
+    <h2>2. Elementos principales de un Flujo</h2>
+    <p>
+      Sin importar el tipo de flujo que elijas, hay tres componentes clave:
+      <strong>Trigger (disparador)</strong>, <strong>Actions (acciones)</strong>
+      y <strong>Conditions (condiciones)</strong>.
+    </p>
+    <ol style="margin-bottom:1rem; padding-left:1.5rem;">
+      <li>
+        <strong>Trigger:</strong> Es el evento que inicia todo el proceso.
+        Puede ser la llegada de un nuevo archivo, un correo con asunto
+        específico, o un clic manual en la aplicación móvil de Power Automate.
+      </li>
+      <li>
+        <strong>Actions:</strong> Son las tareas que tu flujo realizará tras
+        dispararse. Pueden ir desde “enviar un correo” hasta “crear un
+        registro en SharePoint” o “actualizar una base de datos”.
+      </li>
+      <li>
+        <strong>Conditions:</strong> Te permiten introducir lógica. Por
+        ejemplo, si “el monto de la factura supera los $500.000”, envía
+        notificación a un supervisor; de lo contrario, aprueba automáticamente.
+      </li>
+    </ol>
+    <p>
+      Entender estos elementos es la base para crear cualquier flujo
+      aprovechando la interfaz de Power Automate. Cada conector (Outlook,
+      SharePoint, Excel, Teams, etc.) ofrece disparadores y acciones distintas
+      que amplían tus posibilidades.
+    </p>
+
+    <div class="alert-box alert-success">
+      <i></i>
+      <div>
+        <strong>Truco de creación rápida:</strong><br/>
+        Muchas veces, comenzar con una plantilla prediseñada de Power Automate es
+        útil para entender cómo se estructuran los triggers y acciones. Luego
+        puedes personalizar la plantilla según tus necesidades.
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 4: MEJORES PRÁCTICAS -->
+  <section id="mejores-practicas" class="bg-alt fade-in">
+    <h2>3. Mejores Prácticas de Configuración</h2>
+    <p>
+      Para sacar el máximo provecho de tus flujos y evitar problemas futuros,
+      considera las siguientes recomendaciones:
+    </p>
+    <ul style="margin-bottom:1rem; padding-left:1.5rem;">
+      <li>
+        <strong>Nombrado claro:</strong> Utiliza nombres descriptivos para tus
+        flujos. En lugar de “Flujo1”, pon “Aprobación_Gastos_Mensuales”.
+      </li>
+      <li>
+        <strong>Control de versiones:</strong> Cada vez que hagas cambios,
+        prueba el flujo y documenta qué modificaste. Esto facilita revertir si
+        algo falla.
+      </li>
+      <li>
+        <strong>Manejo de errores:</strong> Configura alertas o bifurcaciones
+        para casos excepcionales (por ejemplo, si el flujo no logra conectarse a
+        un servicio). Así evitas quedarte sin saber que algo falló.
+      </li>
+      <li>
+        <strong>Mantenerlo simple:</strong> Si el flujo se vuelve demasiado
+        complejo, podría convenir dividirlo en flujos más pequeños y claros, o
+        recurrir a subflujos (child flows).
+      </li>
+      <li>
+        <strong>Seguridad y accesos:</strong> Verifica los permisos de las
+        cuentas de conexión. Un flujo puede fallar si la cuenta que lo ejecuta
+        pierde privilegios en SharePoint, Outlook, etc.
+      </li>
+    </ul>
+    <p>
+      Recuerda que un flujo bien estructurado mejora la confiabilidad y la
+      mantenibilidad a largo plazo, permitiendo que tus procesos administrativos
+      corran sin sobresaltos.
+    </p>
+  </section>
+
+  <!-- SECCIÓN 5: EJEMPLO INTERACTIVO - CARRUSEL -->
+  <section id="carousel" class="fade-in">
+    <h2>4. Casos Destacados (Carrusel Interactivo)</h2>
+    <p>
+      Explora algunos escenarios donde se aplican las recomendaciones
+      anteriores. Usa los botones <strong>“Anterior”</strong> y
+      <strong>“Siguiente”</strong> para navegar:
+    </p>
+
+    <div class="carousel-container">
+      <div class="carousel-slide" id="carouselSlide">
+        <!-- ITEM 1 -->
+        <div class="carousel-item">
+          <h3>Flujo de Aprobación de Gastos</h3>
+          <p>
+            Un administrativo configura un disparador que se activa al subir un
+            archivo de solicitud de gastos a SharePoint. Luego, el flujo envía un
+            correo al gerente para aprobación. Si se aprueba, el sistema actualiza
+            un registro en Excel y manda notificación al solicitante.  
+            <strong>
+              Práctica esencial: Nombrar cada acción según su función (p. ej.
+              “Enviar_notif_gerente”).
+            </strong>
+          </p>
+        </div>
+        <!-- ITEM 2 -->
+        <div class="carousel-item">
+          <h3>Gestión de Incidencias en TI</h3>
+          <p>
+            Cada vez que un usuario reporta una incidencia vía Forms, Power
+            Automate crea un ticket en un sistema de soporte (p. ej. Azure DevOps
+            o Jira), asigna prioridad según la categoría y envía al usuario una
+            respuesta automática de confirmación.  
+            <strong>
+              Sugerencia: Utiliza condiciones para derivar a distintos equipos
+              según el tipo de problema.
+            </strong>
+          </p>
+        </div>
+        <!-- ITEM 3 -->
+        <div class="carousel-item">
+          <h3>Alertas de Vencimiento de Documentos</h3>
+          <p>
+            Un flujo programado revisa periódicamente un listado de documentos
+            con fecha de caducidad (contratos, licencias, etc.). Si detecta algún
+            documento próximo a vencer, envía un correo recordatorio al área
+            correspondiente.  
+            <strong>
+              Consejo: Configura un manejo de errores en caso de que la lista no
+              esté disponible (SharePoint caído, conexión intermitente, etc.).
+            </strong>
+          </p>
+        </div>
+      </div>
+
+      <!-- Botones de navegación (abajo del carrusel) -->
+      <div class="carousel-buttons">
+        <button id="prevBtn">Anterior</button>
+        <button id="nextBtn">Siguiente</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 6: CONCLUSIONES -->
+  <section id="conclusiones" class="bg-alt fade-in">
+    <h2>5. Conclusiones de la Clase 2</h2>
+    <p>
+      Conocer los tipos de flujos y sus elementos (trigger, acciones y
+      condiciones) te permitirá diseñar automatizaciones cada vez más potentes y
+      adaptadas a tu entorno administrativo. Ten presente las mejores prácticas
+      mencionadas para asegurarte de que tus flujos sean robustos, fáciles de
+      mantener y seguros.
+    </p>
+    <p>
+      En la próxima clase profundizaremos en la integración con otros servicios
+      (Microsoft Teams, Excel, OneDrive, etc.), así como la posibilidad de
+      orquestar aprobaciones más complejas. ¡Prepárate para ver cómo Power
+      Automate puede escalar aún más tu eficiencia!
+    </p>
+
+    <div class="alert-box alert-alert">
+      <i></i>
+      <div>
+        <strong>¡Atención!</strong><br />
+        Asegúrate de probar tus flujos en un entorno controlado antes de ponerlos
+        en producción. Así evitarás impactos en procesos críticos o envío masivo
+        de correos por error.
+      </div>
+    </div>
+  </section>
+
+  <!-- SCRIPT: Intersection Observer para animaciones fade-in + Carrusel -->
+  <script>
+    // ANIMACIÓN FADE-IN CON INTERSECTION OBSERVER
+    document.addEventListener("DOMContentLoaded", function() {
+      const options = { threshold: 0.1 };
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('fade-in-active');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, options);
+
+      document.querySelectorAll('.fade-in').forEach(el => {
+        observer.observe(el);
+      });
+    });
+
+    // CARRUSEL
+    const carouselSlide = document.getElementById('carouselSlide');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    let counter = 0;
+    const items = document.querySelectorAll('.carousel-item');
+    const size = items[0].clientWidth;
+
+    // Botón Siguiente
+    nextBtn.addEventListener('click', () => {
+      if(counter >= items.length - 1) return; // evita deslizar más de la cuenta
+      counter++;
+      carouselSlide.style.transform = 'translateX(' + (-size * counter) + 'px)';
+    });
+
+    // Botón Anterior
+    prevBtn.addEventListener('click', () => {
+      if(counter <= 0) return;
+      counter--;
+      carouselSlide.style.transform = 'translateX(' + (-size * counter) + 'px)';
+    });
+  </script>
+
+</body>
+</html>

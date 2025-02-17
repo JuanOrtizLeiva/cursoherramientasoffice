@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Clase 1: Power Automate para Administrativos</title>
+  <style>
+    /* =======================
+       VARIABLES DE COLOR
+       ======================= */
+    :root {
+      --color-primary: #0078D4;            /* Azul principal */
+      --color-secondary: #00427a;          /* Tonalidad para hover/enlaces */
+      --color-bg: #ffffff;                 /* Fondo base */
+      --color-bg-alt: #fafafa;             /* Fondo alterno */
+      --color-text: #333;                  /* Color de texto principal */
+      --header-gradient-start: #0078D4;    /* Degradado Header (inicio) */
+      --header-gradient-end: #66b3f9;      /* Degradado Header (fin) */
+    }
+
+    /* =======================
+       RESET BÁSICO
+       ======================= */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth; /* Scroll suave */
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+                   Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    }
+
+    body {
+      background-color: var(--color-bg);
+      color: var(--color-text);
+    }
+
+    /* =======================
+       ENCABEZADO CON "WAVE"
+       ======================= */
+    header {
+      position: relative;
+      background: linear-gradient(
+        to right,
+        var(--header-gradient-start),
+        var(--header-gradient-end)
+      );
+      color: #fff;
+      padding: 4rem 2rem 6rem 2rem; /* espacio extra para "wave" */
+      text-align: center;
+      overflow: hidden; /* para recortar la forma */
+    }
+
+    /* Forma "wave" con clip-path (Clase 1) */
+    .wave {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      clip-path: polygon(0 45%, 
+                         20% 55%, 
+                         40% 40%, 
+                         60% 60%, 
+                         80% 45%, 
+                         100% 55%, 
+                         100% 100%, 
+                         0 100%);
+      background: linear-gradient(
+        to right,
+        var(--header-gradient-start),
+        var(--header-gradient-end)
+      );
+      z-index: 1;
+    }
+
+    header .header-content {
+      position: relative;
+      z-index: 2; /* por encima de la wave */
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    header p {
+      font-size: 1.1rem;
+      line-height: 1.5;
+    }
+
+    /* =======================
+       NAV STICKY
+       ======================= */
+    nav {
+      position: sticky;
+      top: 0;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      z-index: 9999;
+    }
+
+    nav ul {
+      display: flex;
+      justify-content: center;
+      list-style: none;
+    }
+
+    nav ul li a {
+      display: block;
+      padding: 1rem 1.5rem;
+      color: var(--color-primary);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    nav ul li a:hover {
+      color: var(--color-secondary);
+    }
+
+    /* =======================
+       SECCIONES DE CONTENIDO
+       ======================= */
+    section {
+      padding: 3rem 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    /* Fondo alterno en secciones */
+    .bg-alt {
+      background-color: var(--color-bg-alt);
+    }
+
+    section h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    section p {
+      margin-bottom: 1rem;
+      text-align: justify;
+      line-height: 1.6;
+    }
+
+    /* =======================
+       ALERT-BOXES
+       ======================= */
+    .alert-box {
+      border-left: 6px solid;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      border-radius: 4px;
+      display: flex;
+      align-items: flex-start;
+    }
+    .alert-box i {
+      margin-right: 0.75rem;
+      font-style: normal; /* simulamos icono */
+      font-weight: bold;
+      line-height: 1.2;
+    }
+
+    /* Info */
+    .alert-info {
+      background-color: #e3f2fd;
+      border-color: #90caf9;
+      color: #0d47a1;
+    }
+    .alert-info i::before {
+      content: "[i]";
+    }
+
+    /* Warning */
+    .alert-warning {
+      background-color: #fff4e1;
+      border-color: #ffcc80;
+      color: #e65100;
+    }
+    .alert-warning i::before {
+      content: "[!]";
+    }
+
+    /* Success */
+    .alert-success {
+      background-color: #e8f5e9;
+      border-color: #a5d6a7;
+      color: #1b5e20;
+    }
+    .alert-success i::before {
+      content: "[✓]";
+    }
+
+    /* Alert */
+    .alert-alert {
+      background-color: #fce4ec;
+      border-color: #f48fb1;
+      color: #880e4f;
+    }
+    .alert-alert i::before {
+      content: "[x]";
+    }
+
+    /* =======================
+       EFECTO PARALLAX (Clase 1)
+       ======================= */
+    .parallax-section {
+      background: linear-gradient(#e1f5fe, #b3e5fc);
+      background-attachment: fixed;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      color: #333;
+      padding: 6rem 2rem;
+      text-align: center;
+    }
+    .parallax-section h3 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+    .parallax-section p {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    /* =======================
+       ANIMACIONES (FADE-IN)
+       ======================= */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .fade-in-active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header>
+    <div class="wave"></div>
+    <div class="header-content">
+      <h1>Clase 1: Power Automate para Administrativos</h1>
+      <p>
+        Exploraremos cómo Power Automate puede ayudar a reducir tareas
+        repetitivas, ahorrar tiempo y mejorar la eficiencia en el ámbito
+        administrativo. Este contenido está especialmente orientado a
+        organizaciones en Chile, tanto públicas como privadas.
+      </p>
+    </div>
+  </header>
+
+  <!-- NAVEGACIÓN STICKY -->
+  <nav>
+    <ul>
+      <li><a href="#introduccion">Inicio</a></li>
+      <li><a href="#definicion">Definición</a></li>
+      <li><a href="#beneficios">Beneficios</a></li>
+      <li><a href="#usos">Usos y Aplicaciones</a></li>
+      <li><a href="#casos-chile">Casos en Chile</a></li>
+      <li><a href="#ejemplos">Ejemplos Prácticos</a></li>
+    </ul>
+  </nav>
+
+  <!-- SECCIÓN 1: INTRODUCCIÓN -->
+  <section id="introduccion" class="fade-in">
+    <h2>Introducción</h2>
+    <p>
+      Power Automate es una herramienta de Microsoft diseñada para automatizar
+      flujos de trabajo de forma fácil y sin necesidad de programación. En el
+      contexto de empresas tanto públicas como privadas en Chile, los
+      administrativos pueden aprovechar esta plataforma para reducir tareas
+      repetitivas, ahorrar tiempo y mejorar la eficiencia en sus procesos
+      diarios.
+    </p>
+    <p>
+      A lo largo de esta lectura de ~30 minutos, profundizaremos en los
+      conceptos básicos de Power Automate, sus beneficios y usos en distintos
+      contextos, así como ejemplos prácticos que servirán de introducción para
+      quienes se inician en la automatización de procesos.
+    </p>
+
+    <!-- Ejemplo de alerta tipo Info -->
+    <div class="alert-box alert-info">
+      <i></i>
+      <div>
+        <strong>¿Sabías que…?</strong><br/>
+        Muchas tareas administrativas como revisar correos, aprobar solicitudes
+        o procesar formularios pueden automatizarse con pocos clics usando
+        plantillas de Power Automate.
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 2: DEFINICIÓN Y CONCEPTOS BÁSICOS -->
+  <section id="definicion" class="bg-alt fade-in">
+    <h2>1. Definición y conceptos básicos</h2>
+    <p>
+      Power Automate es un servicio basado en la nube que permite crear flujos
+      de trabajo automatizados entre diferentes aplicaciones y servicios. Forma
+      parte de la suite Microsoft Power Platform, junto con otras herramientas
+      como Power Apps, Power BI, Microsoft Dataverse, Dynamics 365 y Office 365.
+      Esto significa que se integra de forma nativa con dichas herramientas,
+      facilitando la creación de soluciones empresariales completas.
+    </p>
+    <p>
+      <strong>Automatización sin código:</strong> Power Automate se destaca
+      por su enfoque low-code/no-code. Mediante una interfaz gráfica, los
+      usuarios pueden crear automatizaciones sin necesidad de escribir código.
+      Esto elimina barreras técnicas y permite que empleados de distintas áreas
+      diseñen sus propios flujos de trabajo rápidamente.
+    </p>
+    <p>
+      <strong>Conectividad y alcance:</strong> La plataforma ofrece cientos de
+      conectores predefinidos para integrar múltiples aplicaciones y servicios
+      (Outlook, Excel, SharePoint, Teams, Google Drive, Salesforce, Twitter, y
+      muchos más). Con ello, se puede configurar un flujo que, por ejemplo, tome
+      datos de Excel, los envíe por correo y los almacene en una lista de
+      SharePoint de manera automática.
+    </p>
+    <p>
+      <strong>Función dentro de Power Platform:</strong> En el ecosistema de
+      Microsoft Power Platform, Power Automate se encarga de la orquestación de
+      procesos y tareas automáticas, complementando las soluciones creadas con
+      Power Apps y Power BI. Por ejemplo, un administrativo podría usar Power
+      Apps para un formulario de solicitudes y Power Automate para que, cada vez
+      que alguien envíe el formulario, se desencadene un flujo de aprobaciones
+      y notificaciones por correo.
+    </p>
+
+    <!-- Alerta tipo Warning -->
+    <div class="alert-box alert-warning">
+      <i></i>
+      <div>
+        <strong>¡Atención!</strong><br/>
+        Aunque sea una herramienta “no-code”, es importante capacitar a los
+        usuarios para diseñar flujos de forma correcta y segura, evitando
+        automatizaciones poco claras o con errores.
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 3: BENEFICIOS PARA ADMINISTRATIVOS -->
+  <section id="beneficios" class="fade-in">
+    <h2>2. Beneficios para administrativos</h2>
+    <p>
+      <strong>Reducción de tareas repetitivas y ahorro de tiempo:</strong> Al
+      automatizar tareas manuales y tediosas, los administrativos pueden
+      enfocarse en actividades de mayor valor agregado. Por ejemplo, en lugar de
+      ingresar datos a mano en múltiples sistemas, un flujo automatizado puede
+      hacerlo en segundos.
+    </p>
+    <p>
+      <strong>Mejora de la eficiencia operativa:</strong> La automatización de
+      flujos de trabajo optimiza los procesos al eliminar cuellos de botella y
+      minimizar tiempos muertos. Un proceso que antes requería pasos en serie
+      (con esperas entre departamentos) ahora puede ejecutarse en paralelo o de
+      forma automática.
+    </p>
+    <p>
+      <strong>Colaboración y flujo de información:</strong> Power Automate
+      permite integrar sistemas y automatizar procesos entre equipos, de modo
+      que la información fluye más rápidamente dentro de la organización. Esto
+      significa menos tiempo persiguiendo datos o solicitudes de otros
+      departamentos.
+    </p>
+    <p>
+      <strong>Reducción de errores manuales:</strong> Al delegar tareas
+      repetitivas a la automatización, se disminuye la probabilidad de errores
+      humanos. Un flujo bien diseñado puede garantizar calidad e integridad de
+      datos, algo crucial en tareas administrativas.
+    </p>
+
+    <!-- Alerta tipo Success -->
+    <div class="alert-box alert-success">
+      <i></i>
+      <div>
+        <strong>Consejo de productividad:</strong><br/>
+        Hacer un inventario inicial de las tareas más repetitivas ayuda a
+        priorizar qué procesos automatizar primero. Así, el impacto en la carga
+        de trabajo y en la reducción de costos se hace tangible muy rápido.
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN PARALLAX (EJEMPLO INTERACTIVO CLASE 1) -->
+  <div class="parallax-section fade-in">
+    <h3>Automatiza sin límites</h3>
+    <p>
+      La adopción de flujos automatizados está transformando la cultura de
+      trabajo, permitiendo que los equipos se centren más en la estrategia y
+      menos en las tareas repetitivas. ¡Anímate a probar Power Automate en tu
+      día a día!
+    </p>
+  </div>
+
+  <!-- SECCIÓN 4: USOS Y APLICACIONES GENERALES -->
+  <section id="usos" class="bg-alt fade-in">
+    <h2>3. Usos y aplicaciones en entornos empresariales</h2>
+    <p>
+      <strong>Empresas privadas:</strong> En el sector privado, las empresas
+      utilizan Power Automate para agilizar procesos internos y mejorar la
+      respuesta en un entorno competitivo. Algunos ejemplos incluyen:
+    </p>
+    <ul style="margin-bottom:1rem; padding-left:1.5rem;">
+      <li><em>Procesos de ventas y atención al cliente:</em> Integración con
+        sistemas CRM, notificaciones instantáneas cuando un cliente potencial
+        llena un formulario web, etc.</li>
+      <li><em>Operaciones y logística:</em> Automatización de la cadena de
+        suministro, gestión de inventarios, avisos de stock bajo y generación
+        de órdenes de compra.</li>
+      <li><em>Aprobaciones internas:</em> Flujos de aprobación para gastos,
+        presupuestos, reembolsos y contratos, eliminando tiempos muertos y
+        papeleo.</li>
+      <li><em>Integración de sistemas:</em> Conexión con ERP, bases de datos,
+        software de RR.HH., asegurando sincronización y consistencia en toda la
+        empresa.</li>
+    </ul>
+    <p>
+      <strong>Instituciones públicas:</strong> En el sector público, Power
+      Automate impulsa la modernización y la mejora en la calidad de los
+      servicios al ciudadano, con ejemplos como:
+    </p>
+    <ul style="margin-bottom:1rem; padding-left:1.5rem;">
+      <li><em>Digitalización de trámites y formularios:</em> Reducción de
+        papeleo, aceleración de procesos y mayor transparencia.</li>
+      <li><em>Trazabilidad y cumplimiento normativo:</em> Flujos que dejan
+        registro en cada paso, cumpliendo con exigencias legales y auditorías.</li>
+      <li><em>Atención al público:</em> Asignación automática de solicitudes
+        entrantes, notificaciones a funcionarios y respuesta más rápida a los
+        ciudadanos.</li>
+      <li><em>Integración con sistemas gubernamentales:</em> Salud, finanzas,
+        bases de datos sectoriales, etc., para compartir datos en tiempo real.</li>
+    </ul>
+  </section>
+
+  <!-- SECCIÓN 5: CASOS DE USO EN CHILE -->
+  <section id="casos-chile" class="fade-in">
+    <h2>4. Casos de uso en Chile</h2>
+    <p>
+      En Chile, tanto el sector público como el privado aprovechan Power
+      Automate para distintos fines. Ejemplos destacados incluyen:
+    </p>
+    <ul style="margin-bottom:1rem; padding-left:1.5rem;">
+      <li><strong>Sector público (gobierno):</strong> Digitalización de
+        formularios, recaudación fiscal, gestión interna de solicitudes con
+        trazabilidad, entre otros.</li>
+      <li><strong>Sector salud:</strong> Hospitales y clínicas (públicas y
+        privadas) agilizan registro de pacientes, derivación de exámenes,
+        notificaciones sobre resultados, etc.</li>
+      <li><strong>Sector financiero y empresarial:</strong> Aprobación de
+        créditos, automatización de presupuesto, notificaciones de riesgo,
+        estandarización de procesos en bancos y aseguradoras.</li>
+      <li><strong>Sector comercio y logística:</strong> Actualización en tiempo
+        real de inventarios, seguimiento de pedidos, integración con servicios
+        de despacho y notificaciones proactivas a clientes.</li>
+    </ul>
+
+    <!-- Alerta tipo Alert -->
+    <div class="alert-box alert-alert">
+      <i></i>
+      <div>
+        <strong>Nota:</strong><br/>
+        Para el correcto uso de Power Automate en Chile, es esencial cuidar el
+        cumplimiento de normas locales (por ejemplo, leyes de protección de
+        datos personales). Así, la automatización se implementa de forma
+        responsable y segura.
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 6: EJEMPLOS PRÁCTICOS -->
+  <section id="ejemplos" class="bg-alt fade-in">
+    <h2>5. Ejemplos prácticos de flujos de automatización</h2>
+    <p>
+      A continuación, se describen algunos flujos de trabajo sencillos y
+      frecuentes que un administrativo puede crear con Power Automate en su día
+      a día:
+    </p>
+    <ul style="margin-bottom:1rem; padding-left:1.5rem;">
+      <li>
+        <em>Clasificación y respuesta automática de correos:</em> Filtrar
+        correos y enviar respuestas basadas en palabras clave, asignándolos a
+        carpetas o responsables específicos.
+      </li>
+      <li>
+        <em>Guardar adjuntos en la nube:</em> Descargar y organizar adjuntos
+        automáticamente en carpetas de OneDrive o SharePoint para centralizar la
+        información sin esfuerzo.
+      </li>
+      <li>
+        <em>Gestión de solicitudes de empleados (vacaciones, permisos):</em>
+        Reemplazar procesos manuales en papel con formularios en línea, activando
+        notificaciones y aprobaciones al instante.
+      </li>
+      <li>
+        <em>Creación automática de tareas y recordatorios:</em> Generar tareas
+        en Planner (u otras herramientas) cuando llegan correos con ciertos
+        criterios, o programar alertas previas a fechas límite.
+      </li>
+      <li>
+        <em>Proceso de aprobación de documentos:</em> Manejar aprobaciones de
+        órdenes de compra, informes o contratos de manera digital y centralizada,
+        con rastreo de quién aprobó y cuándo.
+      </li>
+    </ul>
+    <p>
+      Estos ejemplos muestran la versatilidad de Power Automate y cómo, con un
+      poco de práctica, cualquier administrativo puede crear automatizaciones
+      que simplifiquen su rutina y mejoren la eficiencia de su organización.
+    </p>
+  </section>
+
+  <!-- SCRIPT: Intersection Observer para animaciones fade-in -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const options = {
+        threshold: 0.1
+      };
+
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('fade-in-active');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, options);
+
+      document.querySelectorAll('.fade-in').forEach(el => {
+        observer.observe(el);
+      });
+    });
+  </script>
+
+</body>
+</html>

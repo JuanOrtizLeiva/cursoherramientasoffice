@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Entrega #1</title>
+  <style>
+    :root {
+      --color-primary: #0078D4;
+      /* Para esta primera entrega, elegimos un tono secundario cercano a #005a9e */
+      --color-secondary: #005a9e;
+      --color-bg: #ffffff;
+      --color-bg-alt: #fafafa;
+      --color-text: #333;
+    }
+
+    /* Reset básico */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+                   Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      color: var(--color-text);
+    }
+
+    body {
+      background-color: var(--color-bg);
+      line-height: 1.5;
+      scroll-behavior: smooth; /* Scroll suave en navegadores modernos */
+    }
+
+    /* Barra de navegación sticky */
+    nav {
+      position: sticky;
+      top: 0;
+      background: #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: center;
+      padding: 0.5rem 1rem;
+      z-index: 10;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1rem;
+    }
+
+    nav li a {
+      text-decoration: none;
+      color: var(--color-primary);
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+
+    nav li a:hover {
+      color: var(--color-secondary);
+    }
+
+    /* Header con degradado y wave */
+    header {
+      background: linear-gradient(to right, var(--color-primary), #66b3f9);
+      color: #fff;
+      padding: 4rem 2rem 6rem; /* espacio extra para mostrar la onda */
+      position: relative;
+      text-align: center;
+      overflow: hidden; /* Para contener el wave */
+      clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+    }
+
+    header h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    header p {
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Secciones con alternancia de fondo */
+    section {
+      padding: 3rem 1rem;
+      max-width: 1024px;
+      margin: 0 auto;
+    }
+
+    section:nth-of-type(even) {
+      background-color: var(--color-bg-alt);
+    }
+
+    section h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    section p {
+      text-align: justify;
+      margin-bottom: 1rem;
+    }
+
+    /* Ejemplo de imagen centrada */
+    section img {
+      display: block;
+      margin: 1rem auto;
+      max-width: 90%;
+      height: auto;
+    }
+
+    /* Alert-boxes */
+    .alert-box {
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      margin: 1rem 0;
+      border: 2px solid transparent;
+      border-radius: 4px;
+      opacity: 0;             /* Por defecto ocultas para la animación con IntersectionObserver */
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .alert-box.appear {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .alert-box svg {
+      width: 24px;
+      height: 24px;
+      margin-right: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    /* Estilos específicos para cada tipo de alerta */
+    .info {
+      background-color: #ebf6ff;
+      border-color: #b7e0ff;
+    }
+    .warning {
+      background-color: #fff7e6;
+      border-color: #ffe099;
+    }
+    .success {
+      background-color: #e6ffed;
+      border-color: #9be5b3;
+    }
+    .alert {
+      background-color: #ffe6ed;
+      border-color: #ff99b8;
+    }
+
+    /* Acordeón */
+    .accordion {
+      margin: 2rem 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateX(-20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .accordion.appear {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .accordion-header {
+      background-color: var(--color-primary);
+      color: #fff;
+      padding: 1rem;
+      width: 100%;
+      border: none;
+      text-align: left;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .accordion-header:hover {
+      background-color: var(--color-secondary);
+    }
+    .accordion-header:focus {
+      outline: 2px solid var(--color-secondary);
+    }
+    .accordion-content {
+      background-color: #fff;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+      padding: 0 1rem;
+    }
+    .accordion-content.open {
+      padding: 1rem;
+    }
+
+    /* Flecha del acordeón */
+    .arrow {
+      transition: transform 0.4s;
+    }
+    .arrow.rotate {
+      transform: rotate(90deg);
+    }
+
+    /* Animación fade-in genérica para secciones */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .fade-in.appear {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra de navegación -->
+  <nav>
+    <ul>
+      <li><a href="#intro">Inicio</a></li>
+      <li><a href="#gestion-correo">Gestión de Correo</a></li>
+      <li><a href="#calendario">Calendario</a></li>
+      <li><a href="#alertas">Alertas</a></li>
+      <li><a href="#acordeon">Acordeón</a></li>
+    </ul>
+  </nav>
+
+  <!-- Header con degradado y wave clip-path -->
+  <header>
+    <h1>Introducción a Microsoft Outlook</h1>
+    <p>
+      Bienvenido/a a esta primera entrega sobre el uso de Microsoft Outlook en entornos empresariales.
+      A continuación, exploraremos sus principales características, buenas prácticas de correo y manejo de tareas.
+    </p>
+  </header>
+
+  <main>
+    <!-- Sección 1 -->
+    <section id="intro" class="fade-in">
+      <h2>
+        <!-- Icono decorativo (SVG inline) -->
+        <svg fill="#0078D4" viewBox="0 0 24 24" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16 5C16 3.34315 17.3431 2 19 2H21C22.6569 2 24 3.34315 24 5V19C24 20.6569 22.6569 22 21 22H19C17.3431 22 16 20.6569 16 19V5Z"/>
+          <path d="M2 5C2 3.34315 3.34315 2 5 2H7C8.65685 2 10 3.34315 10 5V19C10 20.6569 8.65685 22 7 22H5C3.34315 22 2 20.6569 2 19V5Z" opacity="0.3"/>
+        </svg>
+        ¿Qué es Outlook?
+      </h2>
+      <p>
+        Microsoft Outlook es una aplicación de la suite de Microsoft 365 diseñada para gestionar de forma integrada
+        el correo electrónico, calendarios, contactos y tareas. Su adopción en organizaciones públicas y privadas
+        de Chile ha facilitado la comunicación interna y externa, permitiendo a los usuarios mantener un control
+        centralizado de su información y optimizar su productividad diaria.
+      </p>
+      <p>
+        Outlook puede ejecutarse en tres versiones principales: en Escritorio (instalada en el PC), en la Web
+        (navegador) y en dispositivos Móviles (smartphones o tablets). Cada versión presenta ventajas particulares,
+        pero en general, todas ofrecen la misma estructura básica para leer y enviar correos, agendar reuniones,
+        y gestionar contactos y tareas.
+      </p>
+      <p>
+        Por ejemplo, la versión de escritorio brinda más opciones avanzadas (reglas personalizadas, complementos),
+        y permite trabajar offline. En cambio, la versión web es ideal para acceso rápido desde cualquier lugar,
+        y la aplicación móvil resulta imprescindible para trabajadores en constante movimiento. Outlook se integra
+        con otras herramientas de Microsoft 365 como Teams, OneDrive, SharePoint y OneNote, potenciando la
+        colaboración y el trabajo en equipo.
+      </p>
+      <img src="https://i.postimg.cc/BnWMpfdN/0o1a5394-2-1675-min.jpg" alt="Representación de Microsoft Outlook">
+      <p>
+        En esta primera entrega, nos enfocaremos en las prácticas iniciales para el uso del correo electrónico,
+        la seguridad básica y la organización de los mensajes. Los siguientes apartados se dedican a la
+        configuración de la bandeja de entrada, la creación de reglas y categorías, y las alertas que Outlook
+        puede emitir para recordatorios o notificaciones importantes.
+      </p>
+    </section>
+
+    <!-- Sección 2 -->
+    <section id="gestion-correo" class="fade-in">
+      <h2>
+        <!-- Icono decorativo -->
+        <svg fill="#0078D4" viewBox="0 0 24 24" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20,4H4C2.89,4 2,4.89 2,6V18C2,19.11 2.89,20 4,20H20C21.11,20 22,19.11 22,18V6C22,4.89 21.11,4 20,4M20,6V6.04L12,11L4,6.04V6H20Z" />
+        </svg>
+        Gestión eficiente del correo
+      </h2>
+      <p>
+        Un uso adecuado de la bandeja de entrada puede marcar la diferencia entre un día de trabajo productivo
+        y uno caótico. Outlook ofrece herramientas como las carpetas, categorías, la bandeja de entrada prioritaria
+        y las reglas automatizadas para filtrar o clasificar los correos en base a remitente, asunto, etiquetas, etc.
+      </p>
+      <p>
+        Una práctica muy utilizada es la técnica “Inbox Zero”, que anima a procesar cada correo rápidamente, ya sea
+        respondiéndolo, archivándolo, eliminándolo o marcándolo como pendiente. Para automatizar parte del proceso,
+        configura reglas en Outlook que reubiquen mensajes de boletines o notificaciones en carpetas separadas,
+        de modo que tu bandeja principal permanezca limpia y enfocada en los correos realmente importantes.
+      </p>
+      <p>
+        Por otro lado, para facilitar la clasificación, Outlook permite asignar distintas categorías de color
+        a los correos. Por ejemplo, podrías usar el color rojo para asuntos urgentes, verde para proyectos
+        específicos y azul para seguimientos. Además, la búsqueda avanzada posibilita recuperar correos antiguos
+        con rapidez, evitando la acumulación excesiva de mensajes sin procesar.
+      </p>
+      <img src="https://i.postimg.cc/DzSQ3jkm/0o1a9246-2789-min.jpg" alt="Ejemplo de bandeja de entrada en Outlook">
+      <p>
+        Una vez que domines la gestión de la bandeja de entrada, verás que Outlook no es solo una aplicación
+        para enviar y recibir correos, sino una herramienta de organización de tu día a día.
+      </p>
+    </section>
+
+    <!-- Sección 3 -->
+    <section id="calendario" class="fade-in">
+      <h2>
+        <!-- Icono decorativo -->
+        <svg fill="#0078D4" viewBox="0 0 24 24" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+          <path d="M19 3H18V1H16V3H8V1H6V3H5C3.9 3 3 3.9 3 5V21C3 22.1 3.9 23 5 23H19C20.1 23 21 22.1 21 21V5C21 3.9 20.1 3 19 3M19 21H5V10H19V21M19 8H5V5H19V8Z" />
+        </svg>
+        Manejo del calendario y recordatorios
+      </h2>
+      <p>
+        El calendario de Outlook es una de las herramientas más potentes para la planificación de reuniones y
+        eventos, así como para la creación de recordatorios. Puedes compartir tu calendario con compañeros para
+        facilitar la coordinación de horarios, y aprovechar el Asistente para programación (Scheduling Assistant)
+        al momento de proponer una reunión con varias personas.
+      </p>
+      <p>
+        También puedes utilizar recordatorios automáticos para evitar olvidar citas importantes, estableciendo
+        avisos con minutos u horas de antelación. Si tu organización utiliza Microsoft Teams, Outlook genera
+        automáticamente el enlace para reunirse en línea, integrando el calendario y la videoconferencia de forma
+        fluida.
+      </p>
+      <p>
+        Al igual que en la gestión de correo, la clave para un uso eficiente del calendario es la organización
+        y la personalización de los recordatorios. Esto te permitirá optimizar tu tiempo y el de los equipos
+        con los que trabajas.
+      </p>
+      <img src="https://i.postimg.cc/gkfmKrz5/10335-min.jpg" alt="Vista del calendario en Outlook">
+    </section>
+
+    <!-- Sección 4: Ejemplo de alert-boxes -->
+    <section id="alertas" class="fade-in">
+      <h2>
+        <!-- Icono decorativo -->
+        <svg fill="#0078D4" width="28" height="28" viewBox="0 0 24 24">
+          <path d="M13 13H11V7H13M13 17H11V15H13M12 2C6.48 2 2 6.48 2 12C2
+          17.52 6.48 22 12 22C17.52 22 22 17.52 22
+          12C22 6.48 17.52 2 12 2Z"></path>
+        </svg>
+        Ejemplos de Alertas
+      </h2>
+
+      <div class="alert-box info">
+        <!-- Ícono SVG inline para alerta tipo info -->
+        <svg fill="#0078D4" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" fill="#cce5ff"></circle>
+          <text x="12" y="16" font-size="12" text-anchor="middle" fill="#0078D4" font-weight="bold">i</text>
+        </svg>
+        <span>Esta es una alerta informativa, útil para notificar datos generales o cambios no críticos.</span>
+      </div>
+
+      <div class="alert-box warning">
+        <!-- Ícono SVG inline para alerta tipo warning -->
+        <svg fill="#ffaf00" viewBox="0 0 24 24">
+          <path d="M1 21h22L12 2 1 21z" fill="#fff3cd"></path>
+          <path d="M12 8v4" stroke="#ffaf00" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="12" cy="16" r="1" fill="#ffaf00"></circle>
+        </svg>
+        <span>Esta alerta advierte de un posible problema o requiere atención inmediata.</span>
+      </div>
+
+      <div class="alert-box success">
+        <!-- Ícono SVG inline para alerta tipo success -->
+        <svg fill="#28a745" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" fill="#d4edda"></circle>
+          <path d="M16 8L10 14L8 12" stroke="#28a745" stroke-width="2" fill="none"/>
+        </svg>
+        <span>Mensaje de éxito: se ha realizado la operación correctamente.</span>
+      </div>
+
+      <div class="alert-box alert">
+        <!-- Ícono SVG inline para alerta tipo error/alert -->
+        <svg fill="#dc3545" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" fill="#f8d7da"></circle>
+          <path d="M9 9l6 6M15 9l-6 6" stroke="#dc3545" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span>Ocurrió un error crítico, por favor revise la información y contacte soporte.</span>
+      </div>
+
+      <p>
+        Estas alertas se pueden usar en distintos contextos dentro de Outlook o de cualquier aplicación web.
+        Con IntersectionObserver, aparecen con una ligera animación cuando el usuario hace scroll.
+      </p>
+    </section>
+
+    <!-- Sección 5: Acordeón (Elemento interactivo) -->
+    <section id="acordeon">
+      <h2>
+        <!-- Icono decorativo -->
+        <svg fill="#0078D4" viewBox="0 0 24 24" width="28" height="28">
+          <path d="M12 2.04C6.47 2.55 2 7.25 2 12.83C2 18.4
+          6.48 23 12 23C17.52 23 22 18.4 22 12.83C22
+          7.25 17.53 2.55 12 2.04M16.59
+          15L12 10.41L7.41 15L6 13.59L10.59
+          9L6 4.41L7.41 3L12 7.59L16.59
+          3L18 4.41L13.41 9L18 13.59L16.59 15Z"></path>
+        </svg>
+        Acordeón de preguntas frecuentes
+      </h2>
+      <div class="accordion">
+        <button class="accordion-header">
+          <span>¿Cómo configuro mi cuenta de correo en Outlook?</span>
+          <svg class="arrow" width="20" height="20" viewBox="0 0 24 24">
+            <path fill="#ffffff" d="M7,10L12,15L17,10H7Z" />
+          </svg>
+        </button>
+        <div class="accordion-content">
+          <p>
+            Al abrir por primera vez Outlook, el asistente te pedirá ingresar tu dirección de correo y contraseña. 
+            Si la organización usa Microsoft 365, bastará con tu credencial corporativa. 
+            Outlook se encargará de configurar automáticamente el servidor de correo y la sincronización de datos.
+          </p>
+        </div>
+
+        <button class="accordion-header">
+          <span>¿Qué ventajas tiene usar la versión de escritorio?</span>
+          <svg class="arrow" width="20" height="20" viewBox="0 0 24 24">
+            <path fill="#ffffff" d="M7,10L12,15L17,10H7Z" />
+          </svg>
+        </button>
+        <div class="accordion-content">
+          <p>
+            La versión de escritorio de Outlook ofrece funciones avanzadas como la creación de reglas detalladas 
+            para filtrar el correo, la personalización completa de la vista de bandeja de entrada y la posibilidad 
+            de trabajar sin conexión (offline). Además, integra complementos (Add-ins) que facilitan la interacción 
+            con herramientas de terceros.
+          </p>
+        </div>
+
+        <button class="accordion-header">
+          <span>¿Cómo organizar mejor mis carpetas de correo?</span>
+          <svg class="arrow" width="20" height="20" viewBox="0 0 24 24">
+            <path fill="#ffffff" d="M7,10L12,15L17,10H7Z" />
+          </svg>
+        </button>
+        <div class="accordion-content">
+          <p>
+            Crea carpetas con nombres claros (por ejemplo, “Proyectos 2024”, “Clientes”, “Interno”) y reglas que 
+            automaticen el envío de correos a la carpeta correspondiente. También puedes usar categorías de colores 
+            y búsquedas guardadas para acceder rápidamente a mensajes antiguos.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // =====================
+    // Intersection Observer para animar secciones y alert-boxes al hacer scroll
+    // =====================
+    document.addEventListener('DOMContentLoaded', function() {
+      const animatedElements = document.querySelectorAll('.fade-in, .alert-box, .accordion');
+
+      const options = {
+        threshold: 0.1
+      };
+
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if(entry.isIntersecting){
+            entry.target.classList.add('appear');
+            obs.unobserve(entry.target); 
+          }
+        });
+      }, options);
+
+      animatedElements.forEach(el => {
+        observer.observe(el);
+      });
+    });
+
+    // =====================
+    // Lógica del acordeón
+    // =====================
+    const accordionHeaders = document.querySelectorAll('.accordion-header');
+
+    accordionHeaders.forEach(header => {
+      header.addEventListener('click', () => {
+        const content = header.nextElementSibling;
+        const arrowIcon = header.querySelector('.arrow');
+        
+        if(content.classList.contains('open')){
+          content.classList.remove('open');
+          content.style.maxHeight = null;
+          arrowIcon.classList.remove('rotate');
+        } else {
+          // Cerrar cualquier otro acordeón abierto (opcional)
+          document.querySelectorAll('.accordion-content.open').forEach(openContent => {
+            openContent.classList.remove('open');
+            openContent.style.maxHeight = null;
+            openContent.previousElementSibling.querySelector('.arrow').classList.remove('rotate');
+          });
+
+          content.classList.add('open');
+          content.style.maxHeight = content.scrollHeight + "px";
+          arrowIcon.classList.add('rotate');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

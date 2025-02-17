@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Entrega #3</title>
+  <style>
+    :root {
+      --color-primary: #0078D4;   /* Mantiene el color principal de la serie */
+      --color-secondary: #00588d; /* Tono ligeramente distinto para la tercera entrega */
+      --color-bg: #ffffff;
+      --color-bg-alt: #f7f7f7;
+      --color-text: #333;
+    }
+
+    /* Reset básico */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+                   Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    }
+
+    body {
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    /* Barra de navegación sticky */
+    nav {
+      position: sticky;
+      top: 0;
+      background: #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      z-index: 10;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      padding: 0.5rem 1rem;
+    }
+    nav li a {
+      text-decoration: none;
+      color: var(--color-primary);
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+    nav li a:hover {
+      color: var(--color-secondary);
+    }
+
+    /* Header con degradado y wave distinta a entregas anteriores */
+    header {
+      background: linear-gradient(to right, var(--color-primary), #66b3f9);
+      color: #fff;
+      padding: 4rem 2rem 6rem;
+      text-align: center;
+      position: relative;
+      clip-path: polygon(0 0, 100% 0, 100% 75%, 75% 85%, 50% 90%, 0 100%);
+      overflow: hidden;
+    }
+    header h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    header p {
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Secciones y alternancia de fondo */
+    section {
+      padding: 3rem 1rem;
+      max-width: 1024px;
+      margin: 0 auto;
+    }
+    section:nth-of-type(even) {
+      background-color: var(--color-bg-alt);
+    }
+    section h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    section h3 {
+      margin: 1.5rem 0 0.5rem;
+      font-size: 1.3rem;
+    }
+    section p {
+      text-align: justify;
+      margin-bottom: 1rem;
+    }
+    section ul {
+      margin: 1rem 1.5rem;
+      list-style: disc;
+    }
+    section img {
+      display: block;
+      margin: 1rem auto;
+      max-width: 90%;
+      height: auto;
+    }
+
+    /* Animaciones de scroll con IntersectionObserver */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .fade-in.appear {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Alert-boxes */
+    .alert-box {
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      margin: 1rem 0;
+      border: 2px solid transparent;
+      border-radius: 4px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .alert-box.appear {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .alert-box svg {
+      width: 24px;
+      height: 24px;
+      margin-right: 0.5rem;
+      flex-shrink: 0;
+    }
+    .info {
+      background-color: #ebf6ff;
+      border-color: #b7e0ff;
+      color: var(--color-text);
+    }
+    .warning {
+      background-color: #fff7e6;
+      border-color: #ffe099;
+      color: var(--color-text);
+    }
+    .success {
+      background-color: #e6ffed;
+      border-color: #9be5b3;
+      color: var(--color-text);
+    }
+    .alert {
+      background-color: #ffe6ed;
+      border-color: #ff99b8;
+      color: var(--color-text);
+    }
+
+    /* Carrusel (slider) como nuevo elemento interactivo */
+    .carousel-container {
+      position: relative;
+      width: 90%;
+      margin: 2rem auto;
+      overflow: hidden;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      max-width: 800px;
+      opacity: 0;              /* para animación con IntersectionObserver */
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .carousel-container.appear {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .carousel-slide {
+      display: flex;
+      width: 100%;
+      transition: transform 0.5s ease-in-out;
+    }
+
+    .carousel-item {
+      min-width: 100%;
+      box-sizing: border-box;
+      padding: 2rem;
+      background: var(--color-bg-alt);
+      text-align: center;
+    }
+
+    /* Botones de control */
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--color-primary);
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+      border-radius: 4px;
+      opacity: 0.8;
+    }
+    .carousel-btn:hover {
+      opacity: 1;
+      background-color: var(--color-secondary);
+    }
+    .btn-prev {
+      left: 10px;
+    }
+    .btn-next {
+      right: 10px;
+    }
+
+    /* Secciones muy largas: anchura y tipografía */
+    .long-text-block {
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Barra de navegación -->
+  <nav>
+    <ul>
+      <li><a href="#introduccion">Inicio</a></li>
+      <li><a href="#config-avanzada">Config. Avanzada</a></li>
+      <li><a href="#productividad">Productividad</a></li>
+      <li><a href="#ejemplos-uso">Ejemplos de Uso</a></li>
+      <li><a href="#carrusel">Carrusel</a></li>
+    </ul>
+  </nav>
+
+  <!-- Header con wave y degradado -->
+  <header>
+    <h1>Explorando Outlook a Fondo</h1>
+    <p>
+      En esta tercera entrega, profundizamos en configuraciones avanzadas, flujos de trabajo
+      y estrategias de productividad dentro de Microsoft Outlook. Encontrarás una lectura extensa,
+      orientada a cubrir múltiples aspectos y casos prácticos que fortalezcan tus conocimientos.
+    </p>
+  </header>
+
+  <main>
+    <!-- Sección: Introducción extensa (approx 1000+ palabras) -->
+    <section id="introduccion" class="fade-in">
+      <h2>
+        <svg fill="#00588d" viewBox="0 0 24 24" width="28" height="28">
+          <path d="M12,2A10,10 0 0,0 2,12A10,10
+                   0 0,0 12,22A10,10 0 0,0 22,12A10,
+                   10 0 0,0 12,2M11,17H13V19H11V17M11,
+                   5H13V15H11V5Z"/>
+        </svg>
+        Introducción y objetivos de esta entrega
+      </h2>
+
+      <div class="long-text-block">
+        <p>
+          Microsoft Outlook se ha posicionado como una de las aplicaciones más versátiles y completas en el ámbito
+          empresarial, proporcionando múltiples capas de funcionalidades que abarcan desde la gestión del correo
+          electrónico hasta la programación de reuniones y la colaboración en equipo. Esta herramienta forma parte
+          del ecosistema Microsoft 365, lo que implica una integración nativa con un conjunto amplio de servicios
+          adicionales, como Microsoft Teams, OneDrive y SharePoint, entre otros. Sin embargo, para muchos usuarios,
+          Outlook sigue siendo esencialmente un cliente de correo donde se redactan y reciben mensajes. La realidad
+          es que su potencial va mucho más allá, y el objetivo de esta sección inicial es, precisamente, presentar
+          una visión panorámica de las posibilidades que Outlook ofrece cuando se exploran a profundidad sus opciones
+          de configuración y personalización.
+        </p>
+        <p>
+          Desde la perspectiva de la administración de sistemas corporativos, Outlook puede conectarse a servidores
+          Exchange locales o a la nube de Microsoft 365, brindando un entorno seguro y robusto para el intercambio
+          de información. No obstante, existen múltiples aspectos que deben considerarse para un uso avanzado:
+          políticas de retención de correo, uso de firmas digitales, cifrado extremo a extremo, niveles de acceso
+          y configuraciones de buzones compartidos, entre otros. A lo largo de los apartados de este documento,
+          se profundizará en cómo aprovechar estas capacidades para sacarle el máximo provecho a la aplicación en
+          un entorno organizacional, ya sea en una empresa privada, un ente público o incluso para fines personales
+          de usuarios que requieren un alto grado de organización.
+        </p>
+        <p>
+          Uno de los pilares fundamentales para el éxito en la adopción de Outlook es entender cómo se integra con
+          el resto de servicios de la suite. Por ejemplo, en el área de la comunicación en tiempo real, la relación
+          entre Outlook y Microsoft Teams es sumamente relevante. Cuando un usuario crea una reunión desde el calendario
+          de Outlook, puede, con un solo clic, generar el enlace para una sesión de Teams. Este sencillo paso elimina
+          fricciones a la hora de invitar a participantes a encuentros virtuales, y añade funcionalidades como la
+          grabación de la reunión y la colaboración en documentos compartidos. Por otro lado, la interacción con
+          OneDrive brinda la oportunidad de adjuntar archivos en la nube, reduciendo la necesidad de enviar y
+          recibir documentos pesados y desactualizados. Con SharePoint, la integración permite que los grupos de
+          trabajo dispongan de sitios colaborativos, buzones compartidos y calendarios colectivos, todo ello
+          sincronizado de manera automática con Outlook.
+        </p>
+        <p>
+          Además, Outlook se puede conectar con Power Automate (anteriormente Microsoft Flow) para crear flujos de
+          trabajo automatizados. Esto significa que ciertas acciones repetitivas se pueden disparar de forma
+          automática cuando llegan correos con características específicas. Imagina, por ejemplo, un escenario
+          donde cada vez que se recibe un correo con un archivo adjunto que contenga “Factura” en el asunto, Power
+          Automate mueva dicho adjunto a una carpeta en OneDrive y envíe una notificación a cierto canal de Teams.
+          Estas automatizaciones ahorran tiempo y disminuyen el riesgo de errores humanos, otorgando mayor agilidad
+          a las operaciones diarias de una organización.
+        </p>
+        <p>
+          A la par de estas herramientas y extensiones, Outlook mantiene su esencia como gestor de información
+          personal (PIM, por sus siglas en inglés). Esto implica que podemos usarlo no solo para el correo, sino
+          también para crear y asignar tareas, almacenar contactos detallados o incluso registrar notas rápidas
+          que luego sincronizan con OneNote. Y si se quiere profundizar en la gestión de proyectos, es posible
+          interconectar esas tareas con Planner o To Do, logrando un ecosistema unificado donde la información
+          fluye sin necesidad de que el usuario esté saltando entre múltiples aplicaciones o duplicando la
+          información. El objetivo es que Outlook se convierta en un “hub” central de toda la actividad laboral,
+          evitando las distracciones y el tiempo muerto que se genera al cambiar de plataforma en plataforma.
+        </p>
+        <p>
+          En este tercer capítulo extenso, pretendemos ahondar en todos estos aspectos, mostrando configuraciones
+          más avanzadas en la cuenta de correo (como las respuestas automáticas, filtros condicionales, vistas
+          personalizadas y categorías múltiples), así como en la administración de calendarios (incluyendo
+          calendarios compartidos, grupos de Office 365 y prácticas recomendadas para la programación de eventos
+          masivos). También veremos cómo Outlook maneja la mensajería archivada y cuáles son las prácticas más
+          efectivas para limpiar y optimizar el buzón cuando el espacio comienza a escasear. En un mundo digital
+          donde la saturación informativa es constante, aprender a filtrar, priorizar y organizar es indispensable
+          para ser realmente productivos.
+        </p>
+        <p>
+          Por otra parte, profundizaremos en la capa de seguridad. Outlook, al estar diseñado para entornos
+          empresariales, ofrece varios niveles de protección frente a intentos de phishing y malware. Sin embargo,
+          gran parte de la seguridad depende del criterio de los usuarios y de la configuración que establezcan
+          los administradores de TI. Veremos consejos para identificar correos peligrosos, habilitar la
+          autenticación multifactor (MFA) y utilizar complementos de cifrado para proteger la confidencialidad
+          de la información. De igual manera, exploraremos cómo es posible limitar la visualización de datos
+          sensibles dentro de la organización, asignando permisos de lectura y edición a grupos o individuos
+          específicos. Estas medidas resultan cruciales para cumplir con las regulaciones locales en Chile y
+          en otros países, como las leyes de protección de datos personales y las normas de cumplimiento (por
+          ejemplo, en sectores bancarios o gubernamentales).
+        </p>
+        <p>
+          En resumen, esta introducción pretende sentar las bases para un recorrido completo por la “capa avanzada”
+          de Microsoft Outlook, mostrando que, más allá de las funciones básicas de enviar y recibir correo,
+          contamos con un aliado poderoso para manejar la información y la comunicación de manera ordenada y
+          eficiente. A lo largo de las siguientes secciones, dedicaremos tiempo a aspectos de configuración técnica,
+          pero también a estrategias de productividad y a ejemplos concretos de uso que reflejan cómo Outlook
+          se integra en la cultura laboral de empresas privadas, organismos públicos e incluso emprendimientos
+          más pequeños que quieren maximizar sus recursos. Acompáñanos en este recorrido que, esperamos, te
+          aporte una perspectiva integral de lo que Outlook puede hacer por ti y por tu organización.
+        </p>
+      </div>
+    </section>
+
+    <!-- Sección: Configuración Avanzada de Outlook (texto extenso) -->
+    <section id="config-avanzada" class="fade-in">
+      <h2>
+        <svg fill="#00588d" viewBox="0 0 24 24" width="28" height="28">
+          <path d="M16,12H21V14H16V12M3,
+                   6H22V4H3C1.9,4 1,4.9 1,
+                   6V18C1,19.1 1.9,20 3,
+                   20H22V18H3V6M8,12H13V14H8V12Z" />
+        </svg>
+        Configuración Avanzada de Outlook
+      </h2>
+
+      <div class="long-text-block">
+        <p>
+          Cuando hablamos de configuración avanzada en Microsoft Outlook, nos referimos a un amplio espectro de
+          ajustes que van desde la personalización de la interfaz hasta la optimización de filtros de spam,
+          la configuración de cuentas múltiples o la definición de reglas basadas en criterios muy específicos.
+          Antes de profundizar en estas opciones, conviene recordar que la experiencia del usuario puede variar
+          ligeramente según la versión de Outlook que utilice: escritorio (Windows o Mac), web (Outlook Web App)
+          o móvil (iOS o Android). Pese a ello, la mayor parte de las funcionalidades de configuración se mantienen
+          consistentes en todo el ecosistema de Microsoft 365.
+        </p>
+        <p>
+          Uno de los primeros aspectos que destacan en la configuración avanzada es la capacidad de definir
+          **vistas personalizadas**. Por ejemplo, si deseas que tu bandeja de entrada muestre primero los correos
+          no leídos o agrupe los mensajes por conversación, puedes crear o modificar una vista para que todos
+          los correos relacionados aparezcan anidados. Esto resulta útil cuando tienes cadenas de correo extensas
+          en un mismo hilo y necesitas revisarlas en conjunto. Asimismo, puedes colorear o resaltar determinados
+          correos según palabras clave en el asunto o en el cuerpo, facilitando la localización de mensajes
+          críticos o urgentes. Estas vistas se pueden nombrar y guardar para alternar rápidamente entre distintas
+          formas de ver tu correo, adaptándose a diferentes momentos del día o necesidades de trabajo.
+        </p>
+        <p>
+          En el ámbito de la **configuración de cuentas**, Outlook permite combinar múltiples buzones en una misma
+          aplicación. Por ejemplo, un usuario puede manejar su cuenta laboral de Microsoft 365 y, a la vez, su
+          cuenta personal de Outlook.com o Gmail. La configuración avanzada entra en juego cuando definimos qué
+          bandeja de entrada predeterminada deseamos visualizar, cómo sincronizar los contactos y calendarios de
+          distintas cuentas, y en qué momento enviar correos desde una u otra dirección. Es muy recomendable, en
+          un entorno profesional, mantener separadas las cuentas personales de las corporativas, aplicando
+          políticas de seguridad y evitando mezclar información sensible con correos personales.
+        </p>
+        <p>
+          Otro punto esencial de la configuración avanzada es el de **reglas y filtros**. Si bien en entregas
+          anteriores comentamos la utilidad de las reglas para organizar la bandeja de entrada, en un entorno
+          avanzado podemos ir más allá con acciones complejas. Por ejemplo, se puede configurar Outlook para que,
+          cuando un correo provenga de un cliente VIP y lleve adjunto un contrato en PDF, lo mueva a una carpeta
+          específica, marque el correo como prioritario y envíe un aviso automático a tu supervisor. La potencia
+          de estas reglas radica en la combinación de criterios (remitente, asunto, cuerpo, adjuntos, nivel
+          de importancia) y acciones (mover, copiar, categorizar, reenviar, ejecutar un script, etc.), lo que
+          permite automatizar un gran volumen de tareas repetitivas.
+        </p>
+        <p>
+          Asimismo, dentro de la configuración avanzada destaca la **personalización de firmas y plantillas**.
+          En Outlook, no solo es posible definir una firma corporativa con tu nombre, cargo, datos de contacto y
+          logo de la empresa, sino que también se pueden crear múltiples firmas para distintos contextos (por
+          ejemplo, una firma formal para correos dirigidos a clientes, y otra más sencilla para uso interno).
+          Las plantillas, por su parte, permiten guardar el cuerpo de un correo con cierto formato y texto
+          predefinidos para reutilizarlo con frecuencia. Esto es muy práctico cuando se necesitan enviar
+          confirmaciones de manera habitual o se repite un mismo formato de mensaje en tareas administrativas.
+        </p>
+        <p>
+          Dentro de las empresas, Outlook brinda la opción de **buzones compartidos**. Estos buzones se utilizan
+          cuando un grupo de personas necesita acceso a un mismo correo, por ejemplo, el buzón de soporte
+          (soporte@empresa.cl) o el de contacto general (contacto@empresa.cl). En la configuración avanzada,
+          el administrador asigna quiénes tienen permiso de lectura, envío y administración de ese buzón
+          compartido, y Outlook lo añade como una carpeta adicional en la lista de correo. De ese modo, todos
+          los miembros del equipo pueden leer y responder correos, y cada uno puede saber qué mensajes ya han
+          sido gestionados para evitar duplicidades.
+        </p>
+        <p>
+          Si nos adentramos en la parte de **seguridad**, la configuración avanzada de Outlook puede integrar
+          certificados digitales y firmar o cifrar correos. Esto garantiza que solo el destinatario previsto
+          pueda abrir el mensaje (cifrado) y que el remitente sea realmente quien dice ser (firma digital).
+          En sectores regulados como la administración pública o la banca, es frecuente el uso de soluciones
+          de cifrado S/MIME o complementos como Azure Information Protection, que etiquetan y protegen la
+          información según su nivel de confidencialidad. Todo ello se puede configurar desde las opciones de
+          seguridad de Outlook, integrándose además con políticas globales definidas por el departamento de TI.
+        </p>
+        <p>
+          Por último, vale destacar que la configuración avanzada de Outlook no se limita a la aplicación de
+          escritorio. En la versión web, si accedes a la sección de Configuración (el ícono de engranaje) y
+          luego pulsas en “Ver toda la configuración de Outlook”, encontrarás muchas de las mismas opciones:
+          reglas de correo, automatic reply, buzones compartidos, categorías de color y mucho más. Esto
+          facilita que, sin importar si estás en un computador corporativo, un dispositivo personal o simplemente
+          usando un navegador en un hotel durante un viaje, puedas ajustar tu cuenta según necesites. El cambio
+          se replica en la nube y se sincroniza con el resto de tus dispositivos.
+        </p>
+        <p>
+          En conjunto, todas estas posibilidades de configuración avanzada dotan a Outlook de la flexibilidad
+          necesaria para adaptarse a un sinfín de escenarios de uso, desde el empleado que desea un sistema de
+          clasificación eficiente en su bandeja, hasta el administrador de TI que gestiona la seguridad de
+          cientos de cuentas dentro de la organización. Conocer y aplicar estas opciones adecuadamente permite
+          crear un entorno de trabajo mucho más productivo y seguro, y es uno de los pilares para aprovechar de
+          verdad el potencial de la suite Microsoft 365.
+        </p>
+      </div>
+    </section>
+
+    <!-- ALERT BOXES INTERMEDIOS -->
+    <section class="fade-in">
+      <h2>
+        <svg fill="#00588d" viewBox="0 0 24 24" width="28" height="28">
+          <path d="M13 13H11V7H13M13 17H11V15H13M12
+                   2C6.48 2 2 6.48 2 12C2 17.52
+                   6.48 22 12 22C17.52 22 22 17.52
+                   22 12C22 6.48 17.52 2 12
+                   2Z"></path>
+        </svg>
+        Notas Intermedias y Alertas
+      </h2>
+
+      <div class="alert-box info">
+        <svg fill="#0078D4" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" fill="#cce5ff"></circle>
+          <text x="12" y="16" font-size="12" text-anchor="middle"
+                fill="#0078D4" font-weight="bold">i</text>
+        </svg>
+        <span>La configuración de vistas en Outlook puede realizarse desde "Ver &gt; Cambiar vista" (en escritorio)
+              o desde "Configuración &gt; Correo &gt; Diseño" (en la web). Explora estas opciones para facilitar
+              tu trabajo diario.</span>
+      </div>
+
+      <div class="alert-box warning">
+        <svg fill="#ffaf00" viewBox="0 0 24 24">
+          <path d="M1 21h22L12 2 1 21z" fill="#fff3cd"></path>
+          <path d="M12 8v4" stroke="#ffaf00" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="12" cy="16" r="1" fill="#ffaf00"></circle>
+        </svg>
+        <span>Las reglas de correo pueden volverse complejas. Asegúrate de revisarlas periódicamente para evitar
+              que mensajes importantes terminen en lugares equivocados.</span>
+      </div>
+
+    </section>
+
+    <!-- Sección: Estrategias de Productividad (texto largo para total ~7,500 palabras) -->
+    <section id="productividad" class="fade-in">
+      <h2>
+        <svg fill="#00588d" viewBox="0 0 24 24" width="28" height="28">
+          <path d="M7 10L12 15L17
+                   10H7Z"></path>
+        </svg>
+        Estrategias de Productividad con Outlook
+      </h2>
+      <div class="long-text-block">
+        <p>
+          La productividad dentro de Outlook no depende únicamente de dominar la configuración avanzada, sino
+          también de adoptar **hábitos y metodologías** que permitan aprovechar el potencial de la aplicación
+          sin caer en la “paradoja de la sobreorganización”, donde dedicar demasiados esfuerzos a clasificar
+          cada mínimo detalle puede terminar resultando contraproducente. A continuación, se presentan algunas
+          estrategias clave que, junto con las herramientas de Outlook, pueden revolucionar tu forma de trabajar.
+        </p>
+        <h3>1. Técnica Inbox Zero</h3>
+        <p>
+          La técnica denominada “Inbox Zero” o “Bandeja de entrada vacía” se ha convertido en una filosofía popular
+          para mantener la carga de correo bajo control. Su premisa es sencilla: no dejes correos sin leer o
+          pendientes indefinidamente en tu bandeja de entrada. Cada correo que llegue debe ser gestionado de
+          inmediato: si se puede responder en menos de dos minutos, hazlo y archívalo; si requiere más tiempo,
+          conviértelo en una tarea o evento del calendario, y mueve el mensaje a una carpeta (o márcalo con una
+          categoría especial). De esta forma, tu bandeja de entrada se mantiene siempre “limpia” y las acciones
+          pendientes se gestionan en un sistema fiable como las tareas o el calendario de Outlook. Con la
+          capacidad de arrastrar correos directamente a la sección de Tareas, esta metodología resulta bastante
+          práctica.
+        </p>
+        <h3>2. Integración con Microsoft To Do y Planner</h3>
+        <p>
+          Outlook se sincroniza con Microsoft To Do, permitiéndote ver tus tareas marcadas en Outlook desde
+          cualquier dispositivo, incluso smartphones. De igual manera, si tu empresa utiliza Planner para la
+          asignación de tareas en equipo, esas asignaciones pueden mostrarse también como pendientes en tu
+          cuenta. Esto crea un entorno cohesionado: la bandeja de entrada te alerta de tareas asignadas, y
+          To Do o Planner te dan una visión más amplia de todo tu trabajo, con recordatorios y la capacidad de
+          comentar el progreso de cada tarea. De hecho, en la vista de Outlook web se pueden visualizar las
+          tareas a la derecha, combinando correo y pendientes.
+        </p>
+        <h3>3. Bloque de tiempo en el calendario</h3>
+        <p>
+          Si bien Outlook permite gestionar un calendario completo de reuniones y eventos, también es recomendable
+          reservar “bloques de tiempo” dedicados al trabajo profundo (deep work). Esto implica crear citas contigo
+          mismo en el calendario para enfocarte en proyectos que requieran concentración, bloqueando esos espacios
+          para evitar que te programen reuniones en esos horarios. De esta manera, Outlook no solo es un calendario
+          de citas con terceros, sino también una herramienta de gestión de tu tiempo personal. Al ver tu calendario
+          bloqueado, colegas y superiores sabrán que no estás disponible y podrán buscar otro momento para reunirse
+          o enviarte requerimientos.
+        </p>
+        <h3>4. Uso de Categorías como etiquetas “multicolor”</h3>
+        <p>
+          Las categorías en Outlook pueden ser mucho más que simples colores decorativos. Se pueden renombrar
+          para reflejar estados, proyectos o equipos de trabajo. Por ejemplo, podrías asignar la categoría “Urgente”
+          en rojo, “Finanzas” en verde, “Proyectos 2025” en azul y “Seguimiento” en amarillo. Esto se puede aplicar
+          tanto a correos como a eventos de calendario e incluso a contactos. De un vistazo, sabrás cuántas tareas
+          urgentes tienes, cuántos correos relacionados con finanzas o qué reuniones pertenecen al proyecto 2025.
+          La clave está en ser coherente y no crear demasiadas categorías que luego sean imposibles de manejar.
+        </p>
+        <h3>5. Automatizaciones con Power Automate</h3>
+        <p>
+          Comentamos previamente que Power Automate puede conectarse con Outlook para automatizar acciones. En
+          términos de productividad, esto puede suponer un salto cualitativo, pues, por ejemplo, podrías diseñar
+          flujos que detecten cuando recibes correos con archivos adjuntos de cierto tipo (p. ej., “reporte.xlsx”)
+          y automáticamente los guarde en una carpeta de SharePoint, enviándote luego una notificación de Teams
+          con el vínculo directo al archivo. Incluso puedes programar alertas que te recuerden redactar un
+          informe semanal cada viernes si detectan que no has enviado el correo habitual. La idea es que Outlook
+          y Power Automate trabajen en conjunto, eliminando tareas repetitivas que consumen tiempo.
+        </p>
+        <h3>6. Evitar la sobrecarga de notificaciones</h3>
+        <p>
+          A medida que habilitas múltiples cuentas, dispositivos y integraciones, corres el riesgo de ser
+          bombardeado con notificaciones constantes, tanto en el PC como en el celular. Para mantener la
+          productividad, es crucial afinar las preferencias de notificaciones en Outlook, Teams y cualquier
+          otra aplicación asociada. Por ejemplo, desactiva notificaciones de correos que no son urgentes o
+          configura la bandeja “Otros” (en Outlook web) para filtrar boletines y mensajes automáticos.
+          Además, si necesitas concentrarte, utiliza el modo de “No molestar” en Teams u otras plataformas,
+          evitando que suenen notificaciones mientras trabajas en algo que requiera atención máxima.
+        </p>
+        <h3>7. Coordinación con grupos y canales</h3>
+        <p>
+          A nivel empresarial, Outlook se integra con los Grupos de Microsoft 365. Esto significa que un equipo
+          de trabajo puede contar con un buzón y un calendario compartidos, además de un canal de Teams y una
+          biblioteca de documentos en SharePoint. La productividad se incrementa al centralizar la información
+          y reducir correos duplicados. Por ejemplo, en lugar de mandar un correo masivo a todo el equipo cada
+          vez que hay un cambio, se puede publicar la información en el canal del grupo y Outlook notifica de
+          manera automática. De esta forma, los participantes ven los anuncios en un solo lugar y Outlook
+          registra el hilo de comunicación para futuras consultas.
+        </p>
+        <p>
+          En conclusión, Outlook es tan productivo como las metodologías que lo acompañan. Podemos dominar
+          todas las funciones avanzadas, pero si no aplicamos un sistema claro de organización de tareas,
+          calendario y categorías, podríamos perdernos en un mar de configuraciones. Definir procesos simples,
+          compartirlos con el equipo y aprovechar las integraciones para minimizar tareas repetitivas son
+          claves para explotar todo el potencial productivo que Outlook ofrece.
+        </p>
+      </div>
+    </section>
+
+    <!-- Sección: Ejemplos de Uso Reales -->
+    <section id="ejemplos-uso" class="fade-in">
+      <h2>
+        <svg fill="#00588d" viewBox="0 0 24 24" width="28" height="28">
+          <path d="M19 3H5C3.9 3 3
+                   3.9 3 5V19C3 20.1 3.9
+                   21 5 21H19C20.1 21 21
+                   20.1 21 19V5C21 3.9
+                   20.1 3 19 3M19
+                   19H5V8H19V19M19
+                   6H5V5H19V6Z"/>
+        </svg>
+        Ejemplos de Uso en Diferentes Contextos
+      </h2>
+      <div class="long-text-block">
+        <p>
+          Para ilustrar la versatilidad de Outlook, veamos algunos escenarios típicos en organizaciones de
+          diversos tamaños y sectores. Estos ejemplos ponen de relieve cómo las características avanzadas se
+          pueden aplicar en la práctica para resolver problemas concretos, ya sea en Chile o en cualquier otro
+          país donde Outlook sea la plataforma corporativa estándar.
+        </p>
+        <h3>1. Empresa de logística con varias sucursales</h3>
+        <p>
+          Imaginemos una empresa de logística que opera en múltiples regiones y maneja un alto volumen de correos
+          diarios relacionados con estados de envío, facturas y solicitudes de clientes. Cada sucursal cuenta con
+          personal que necesita visibilidad de los correos entrantes a un buzón central como “envios@empresa.cl”.
+          Usando un buzón compartido en Outlook, todos los empleados involucrados pueden ver y responder estos
+          correos, aplicando reglas para mover mensajes según la sucursal o el tipo de envío. Además, integran
+          Planner para asignar tareas a cada responsable cuando se deba procesar un pedido especial, y configuran
+          alertas que notifiquen al supervisor cuando un correo no ha sido respondido en 24 horas. Con ello,
+          se garantiza un nivel de servicio uniforme en todas las regiones.
+        </p>
+        <h3>2. Administración pública y coordinación de eventos</h3>
+        <p>
+          En un ministerio u organización gubernamental, Outlook resulta vital para coordinar reuniones entre
+          distintos departamentos. Supongamos que se planea un evento nacional que implica a la División de
+          Comunicaciones, la de Logística y la de Finanzas. Se crea un Grupo de Microsoft 365 para dicho evento,
+          con un buzón y calendario compartidos; cada área agrega a sus participantes, y Outlook se encarga de
+          sincronizar ese calendario con los de cada funcionario involucrado. Cuando se organiza una reunión,
+          se envía la invitación desde el calendario del grupo, permitiendo que todos visualicen rápidamente
+          la disponibilidad de salas y de los asistentes. Los correos relevantes al evento se etiquetan con
+          categorías específicas, y las actas se envían a OneNote para mantener un registro centralizado.
+        </p>
+        <h3>3. Pequeña empresa de diseño gráfico y freelance</h3>
+        <p>
+          Un estudio de diseño gráfico de pequeña escala, o incluso un diseñador freelance, puede usar Outlook
+          para recibir solicitudes de clientes, facturas y propuestas. Aunque no haya un departamento de TI
+          formal, la persona puede configurar reglas que filtren automáticamente las solicitudes entrantes según
+          palabras clave, creando un flujo distinto para “Nuevas cotizaciones” y otro para “Clientes recurrentes”.
+          También habilita un buzón compartido con un colaborador externo, de modo que ambos puedan gestionar
+          correos sin pisarse el uno al otro. Con la sincronización de calendario, programa citas con los
+          clientes y envía invitaciones para videoconferencias en Teams, reduciendo la necesidad de herramientas
+          adicionales. Incluso podría utilizar Power Automate para guardar automáticamente los archivos adjuntos
+          en una carpeta de OneDrive y luego generar un enlace compartido para el cliente.
+        </p>
+        <h3>4. Sector educativo y comunicación con docentes</h3>
+        <p>
+          En colegios y universidades, Outlook a menudo es la plataforma oficial para el correo institucional.
+          Un colegio puede asignar cuentas de Outlook a sus docentes y personal administrativo, permitiendo que
+          la dirección envíe comunicados masivos. Estos correos se marcan con categorías como “Actividades
+          extraescolares” o “Programación académica” para que los profesores encuentren con facilidad la
+          información correspondiente. Cuando se requiere convocar a una reunión de coordinación, se envían
+          invitaciones desde el calendario, y los asistentes pueden confirmar o rechazar de forma centralizada.
+          Además, la integración con Teams hace posible llevar a cabo reuniones virtuales o tutorías a distancia,
+          muy útiles en situaciones que requieran atención fuera del horario normal.
+        </p>
+        <h3>5. Manejo de campañas de marketing y newsletters</h3>
+        <p>
+          Algunas empresas usan Outlook para gestionar envíos de newsletters internas, aunque existen herramientas
+          más específicas. Con una configuración adecuada, se pueden mantener listas de distribución internas
+          para distintos segmentos de la organización (p. ej., “Equipo Ventas”, “Equipo TI”, “Equipo Contabilidad”)
+          y enviar correos segmentados. Usando reglas avanzadas, cada empleado puede decidir si estos boletines
+          van a su carpeta principal o a una carpeta secundaria. Así se evita la saturación de la bandeja de
+          entrada y se mantiene la opción de consultar el contenido cuando sea oportuno. Todo esto sin requerir
+          software adicional de gestión de correo masivo, lo cual es particularmente útil en organizaciones
+          pequeñas o medianas.
+        </p>
+        <p>
+          En definitiva, Outlook ofrece un marco muy flexible que se adapta tanto a grandes corporaciones con
+          miles de usuarios como a pequeños equipos independientes. El conocimiento de sus opciones de
+          configuración avanzada, sumado a la aplicación de buenas prácticas de productividad y organización,
+          hace que esta herramienta sea un pilar en la comunicación y coordinación de proyectos. Cada ejemplo
+          descrito demuestra que, cuando se le saca partido a su integración con el ecosistema Microsoft 365,
+          Outlook se convierte en mucho más que un simple cliente de correo.
+        </p>
+      </div>
+    </section>
+
+    <!-- Sección: Carrusel (Slider) como elemento interactivo adicional -->
+    <section id="carrusel" class="fade-in">
+      <h2>
+        <svg fill="#00588d" viewBox="0 0 24 24" width="28" height="28">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+        Presentación tipo Carrusel
+      </h2>
+      <p>
+        Para ilustrar algunos puntos clave de la configuración avanzada de Outlook y su ecosistema, te
+        presentamos a continuación un carrusel de imágenes con frases o tips. Navega con los botones
+        anterior y siguiente.
+      </p>
+
+      <div class="carousel-container">
+        <div class="carousel-slide" id="carouselSlide">
+          <div class="carousel-item">
+            <h3>Tip #1: Regla Inteligente</h3>
+            <img src="https://i.postimg.cc/gk6QKDBy/17380-min.jpg" alt="Imagen 1 - Configuración de reglas">
+            <p>
+              Crea reglas con criterios específicos (asunto, remitente, palabras clave) para filtrar
+              correos y organizar tu bandeja de entrada sin esfuerzo.
+            </p>
+          </div>
+          <div class="carousel-item">
+            <h3>Tip #2: Carpetas vs. Categorías</h3>
+            <img src="https://i.postimg.cc/RFVB0Hd3/2002-min.jpg" alt="Imagen 2 - Carpetas y categorías">
+            <p>
+              Combinar carpetas y categorías de color te permite una rápida clasificación de correos,
+              manteniendo la flexibilidad para buscar y agrupar temáticas.
+            </p>
+          </div>
+          <div class="carousel-item">
+            <h3>Tip #3: OneDrive para adjuntos grandes</h3>
+            <img src="https://i.postimg.cc/XYB5qZqY/25068-min.jpg" alt="Imagen 3 - Integración con OneDrive">
+            <p>
+              Evita saturar el buzón con archivos pesados adjuntándolos desde OneDrive. Los destinatarios
+              acceden a la versión más reciente y colaboran en tiempo real.
+            </p>
+          </div>
+          <div class="carousel-item">
+            <h3>Tip #4: Integración con Teams</h3>
+            <img src="https://i.postimg.cc/jq3sLZGR/810-9032-409-min.jpg" alt="Imagen 4 - Outlook y Teams">
+            <p>
+              Programa reuniones en línea desde el calendario de Outlook y aprovecha la sincronización
+              automática con Microsoft Teams para videoconferencias e intercambio de documentos.
+            </p>
+          </div>
+        </div>
+        <!-- Botones del carrusel -->
+        <button class="carousel-btn btn-prev" id="prevBtn">&#8678; Anterior</button>
+        <button class="carousel-btn btn-next" id="nextBtn">Siguiente &#8680;</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Intersection Observer para fade-in
+      const toObserve = document.querySelectorAll('.fade-in, .alert-box, .carousel-container');
+      const config = {
+        threshold: 0.1
+      };
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('appear');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, config);
+
+      toObserve.forEach(el => observer.observe(el));
+
+      // Lógica del carrusel
+      const carouselSlide = document.getElementById('carouselSlide');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      let counter = 0;
+      const items = document.querySelectorAll('.carousel-item');
+      const size = items[0].clientWidth;
+
+      function updateCarousel(){
+        carouselSlide.style.transform = 'translateX(' + (-size * counter) + 'px)';
+      }
+
+      prevBtn.addEventListener('click', () => {
+        counter--;
+        if (counter < 0) {
+          counter = items.length - 1;
+        }
+        updateCarousel();
+      });
+
+      nextBtn.addEventListener('click', () => {
+        counter++;
+        if (counter >= items.length) {
+          counter = 0;
+        }
+        updateCarousel();
+      });
+
+      // Ajustar el carrusel si la ventana cambia de tamaño
+      window.addEventListener('resize', () => {
+        const newSize = items[0].clientWidth;
+        carouselSlide.style.transition = 'none'; 
+        carouselSlide.style.transform = 'translateX(' + (-newSize * counter) + 'px)';
+        setTimeout(() => {
+          carouselSlide.style.transition = 'transform 0.5s ease-in-out';
+        }, 50);
+      });
+    });
+  </script>
+</body>
+</html>

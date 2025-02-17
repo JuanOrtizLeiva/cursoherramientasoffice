@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Clase 4: Aprobaciones Complejas y Monitoreo de Flujos</title>
+  <style>
+    /* =======================
+       VARIABLES DE COLOR
+       ======================= */
+    :root {
+      --color-primary: #0078D4;        /* Azul principal */
+      --color-secondary: #005fa8;      /* Tonalidad variante para esta clase */
+      --color-bg: #ffffff;             /* Fondo base */
+      --color-bg-alt: #f7f7f7;         /* Fondo alterno */
+      --color-text: #333;              /* Color de texto principal */
+      --header-gradient-start: #0078D4;/* Degradado Header (inicio) */
+      --header-gradient-end: #78C2F3;  /* Degradado Header (fin) */
+    }
+
+    /* =======================
+       RESET BÁSICO
+       ======================= */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth; /* Scroll suave */
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+                   Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    }
+
+    body {
+      background-color: var(--color-bg);
+      color: var(--color-text);
+    }
+
+    /* =======================
+       ENCABEZADO CON "WAVE"
+       ======================= */
+    header {
+      position: relative;
+      background: linear-gradient(
+        to right,
+        var(--header-gradient-start),
+        var(--header-gradient-end)
+      );
+      color: #fff;
+      padding: 4rem 2rem 6rem 2rem;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    /* Forma "wave" con clip-path (Clase 4) */
+    .wave {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      clip-path: polygon(0 55%, 
+                         20% 40%, 
+                         40% 60%, 
+                         60% 45%, 
+                         80% 60%, 
+                         100% 55%, 
+                         100% 100%, 
+                         0 100%);
+      background: linear-gradient(
+        to right,
+        var(--header-gradient-start),
+        var(--header-gradient-end)
+      );
+      z-index: 1;
+    }
+
+    .header-content {
+      position: relative;
+      z-index: 2; /* por encima de la wave */
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    header p {
+      font-size: 1.1rem;
+      line-height: 1.5;
+    }
+
+    /* =======================
+       NAV STICKY
+       ======================= */
+    nav {
+      position: sticky;
+      top: 0;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      z-index: 9999;
+    }
+
+    nav ul {
+      display: flex;
+      justify-content: center;
+      list-style: none;
+    }
+
+    nav ul li a {
+      display: block;
+      padding: 1rem 1.5rem;
+      color: var(--color-primary);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    nav ul li a:hover {
+      color: var(--color-secondary);
+    }
+
+    /* =======================
+       SECCIONES DE CONTENIDO
+       ======================= */
+    section {
+      padding: 3rem 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .bg-alt {
+      background-color: var(--color-bg-alt);
+    }
+
+    section h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    section p {
+      margin-bottom: 1rem;
+      text-align: justify;
+      line-height: 1.6;
+    }
+
+    /* =======================
+       ALERT-BOXES
+       ======================= */
+    .alert-box {
+      border-left: 6px solid;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      border-radius: 4px;
+      display: flex;
+      align-items: flex-start;
+    }
+    .alert-box i {
+      margin-right: 0.75rem;
+      font-style: normal; /* simulamos icono */
+      font-weight: bold;
+      line-height: 1.2;
+    }
+
+    /* Info */
+    .alert-info {
+      background-color: #e3f2fd;
+      border-color: #90caf9;
+      color: #0d47a1;
+    }
+    .alert-info i::before {
+      content: "[i]";
+    }
+
+    /* Warning */
+    .alert-warning {
+      background-color: #fff4e5;
+      border-color: #ffcc80;
+      color: #e65100;
+    }
+    .alert-warning i::before {
+      content: "[!]";
+    }
+
+    /* Success */
+    .alert-success {
+      background-color: #e8f5e9;
+      border-color: #a5d6a7;
+      color: #1b5e20;
+    }
+    .alert-success i::before {
+      content: "[✓]";
+    }
+
+    /* Alert */
+    .alert-alert {
+      background-color: #fce4ec;
+      border-color: #f48fb1;
+      color: #880e4f;
+    }
+    .alert-alert i::before {
+      content: "[x]";
+    }
+
+    /* =======================
+       ANIMACIONES (FADE-IN)
+       ======================= */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .fade-in-active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* =======================
+       TABS (CLASE 4)
+       ======================= */
+    .tabs-container {
+      margin-top: 2rem;
+    }
+    .tab-buttons {
+      display: flex;
+      margin-bottom: 1rem;
+    }
+    .tab-buttons button {
+      background-color: var(--color-primary);
+      border: none;
+      color: #fff;
+      padding: 0.6rem 1rem;
+      margin-right: 1rem;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+    .tab-buttons button:hover {
+      background-color: var(--color-secondary);
+    }
+    .tab-buttons button.active {
+      background-color: var(--color-secondary);
+    }
+    .tab-content {
+      display: none;
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 1rem;
+    }
+    .tab-content.active {
+      display: block;
+    }
+
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header>
+    <div class="wave"></div>
+    <div class="header-content">
+      <h1>Clase 4: Aprobaciones Complejas y Monitoreo de Flujos</h1>
+      <p>
+        En esta clase profundizaremos en las aprobaciones avanzadas dentro de
+        Power Automate, así como en técnicas para supervisar y optimizar los
+        flujos en tiempo real. Veremos cómo manejar múltiples aprobadores,
+        bifurcaciones de decisiones y buenas prácticas de monitoreo.
+      </p>
+    </div>
+  </header>
+
+  <!-- NAVEGACIÓN STICKY -->
+  <nav>
+    <ul>
+      <li><a href="#introduccion">Introducción</a></li>
+      <li><a href="#tipos-aprobaciones">Tipos de Aprobaciones</a></li>
+      <li><a href="#configuracion-avanzada">Configuración Avanzada</a></li>
+      <li><a href="#monitoreo">Supervisión y Monitoreo</a></li>
+      <li><a href="#tabs-ejemplo">Ejemplo Interactivo</a></li>
+      <li><a href="#conclusiones">Conclusiones</a></li>
+    </ul>
+  </nav>
+
+  <!-- SECCIÓN 1: INTRODUCCIÓN -->
+  <section id="introduccion" class="fade-in">
+    <h2>Introducción a las Aprobaciones Avanzadas</h2>
+    <p>
+      Uno de los elementos más potentes de Power Automate es el componente de
+      aprobaciones, que permite gestionar solicitudes, revisiones de documentos
+      o peticiones de forma automática. Hasta ahora, hemos visto casos sencillos
+      de aprobaciones individuales; no obstante, en escenarios empresariales más
+      complejos pueden intervenir múltiples aprobadores o incluso varias ramas
+      de aprobación en paralelo.
+    </p>
+    <p>
+      En organizaciones chilenas, esto resulta especialmente útil para
+      tramitar contratos, licitaciones, autorizaciones de compra, propuestas
+      económicas y otros procesos que a menudo involucran revisiones de
+      distintos cargos. A continuación, exploraremos los tipos de aprobaciones
+      y cómo configurarlas de manera eficiente.
+    </p>
+    <div class="alert-box alert-info">
+      <i></i>
+      <div>
+        <strong>Tip:</strong><br />
+        Antes de diseñar un flujo con varias aprobaciones, mapear el proceso de
+        decisión en un diagrama te ayudará a visualizar las rutas y asegurarte
+        de no omitir pasos importantes.
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 2: TIPOS DE APROBACIONES -->
+  <section id="tipos-aprobaciones" class="bg-alt fade-in">
+    <h2>1. Tipos de Aprobaciones en Power Automate</h2>
+    <p>
+      Power Automate ofrece distintos modelos de aprobación para adaptarse
+      a situaciones diversas. Estos son algunos de los más relevantes:
+    </p>
+    <ul style="margin-bottom:1rem; padding-left:1.5rem;">
+      <li>
+        <strong>Aprobación única (First to respond):</strong> Basta con que
+        un solo aprobador acepte o rechace la solicitud para que el flujo
+        avance o se detenga.
+      </li>
+      <li>
+        <strong>Aprobación por unanimidad (Everyone must approve):</strong>
+        Todos los aprobadores deben emitir su veredicto. Útil cuando cada
+        voz tiene el mismo peso en la decisión.
+      </li>
+      <li>
+        <strong>Aprobación paralela:</strong> Permite enviar solicitudes de
+        aprobación a varios usuarios simultáneamente, reduciendo el tiempo
+        total de espera. Ideal para grandes equipos.
+      </li>
+      <li>
+        <strong>Aprobación escalonada (multi-stage):</strong> La decisión
+        fluye a través de diferentes niveles jerárquicos. Por ejemplo,
+        primero el jefe de área, luego la gerencia y finalmente el director.
+      </li>
+      <li>
+        <strong>Aprobación personalizable:</strong> Utiliza condiciones
+        dentro de tu flujo para asignar aprobadores según criterios
+        específicos (monto de la solicitud, tipo de proyecto, etc.).
+      </li>
+    </ul>
+    <p>
+      Dependiendo de tu contexto (sector público vs. privado, gran
+      empresa vs. pyme), deberás escoger el tipo más adecuado o combinar
+      varios. En una licitación pública, por ejemplo, es frecuente requerir
+      aprobaciones paralelas de varias divisiones, mientras que en una
+      pyme podría ser suficiente con la decisión de la gerencia.
+    </p>
+
+    <div class="alert-box alert-warning">
+      <i></i>
+      <div>
+        <strong>Precaución:</strong><br />
+        Si tu flujo involucra altos montos o datos confidenciales, asegúrate
+        de que los usuarios aprobadores tengan las credenciales y permisos
+        adecuados. Un mal manejo de estos accesos podría derivar en
+        incidentes de seguridad.
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 3: CONFIGURACIÓN AVANZADA DE FLUJOS -->
+  <section id="configuracion-avanzada" class="fade-in">
+    <h2>2. Configuración Avanzada de Aprobaciones</h2>
+    <p>
+      Una vez seleccionado el tipo de aprobación, es hora de configurar tu
+      flujo. A continuación, se describen algunas prácticas avanzadas para
+      asegurarte de que el proceso sea robusto y flexible:
+    </p>
+    <ol style="margin-bottom:1rem; padding-left:1.5rem;">
+      <li>
+        <strong>Uso de Plantillas:</strong> Power Automate ofrece
+        plantillas prediseñadas para aprobaciones complejas. Emplearlas
+        como base y personalizarlas ahorra tiempo y reduce riesgos de
+        errores.
+      </li>
+      <li>
+        <strong>Notificaciones específicas:</strong> Configura correos o
+        alertas en Teams con texto diferente según la etapa de aprobación.
+        De esta forma, cada aprobador sabrá en qué punto del proceso se
+        encuentra.
+      </li>
+      <li>
+        <strong>Re-intentos y re-asignaciones:</strong> Considera
+        introducir lógicas de reintento cuando algún aprobador no
+        responda en determinado plazo. También es común permitir la
+        re-asignación de la aprobación a otro usuario en caso de vacaciones
+        o ausencia prolongada.
+      </li>
+      <li>
+        <strong>Comentarios obligatorios:</strong> Al habilitar comentarios
+        como requisito para aprobar o rechazar, obtendrás trazabilidad y
+        justificaciones claras en cada etapa del flujo.
+      </li>
+      <li>
+        <strong>Historial centralizado:</strong> Guarda todas las
+        respuestas (quién aprobó, cuándo y bajo qué condiciones) en un
+        repositorio accesible, como SharePoint o Dataverse, para fines de
+        auditoría.
+      </li>
+    </ol>
+    <p>
+      Con estas prácticas, tu organización se asegura de que cada
+      aprobación o rechazo quede debidamente documentado, y de que los
+      involucrados estén informados en todo momento.
+    </p>
+
+    <div class="alert-box alert-success">
+      <i></i>
+      <div>
+        <strong>Consejo de trazabilidad:</strong><br />
+        Para procesos críticos, considera generar un archivo PDF automático
+        con el registro de la aprobación (quién, cuándo, qué se aprobó).
+        Esto puede ser vital para auditorías o revisiones posteriores.
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 4: SUPERVISIÓN Y MONITOREO -->
+  <section id="monitoreo" class="bg-alt fade-in">
+    <h2>3. Supervisión y Monitoreo de Flujos</h2>
+    <p>
+      Las aprobaciones complejas pueden fallar en puntos inesperados:
+      conexiones interrumpidas, credenciales expiradas o reglas lógicas
+      mal configuradas. Por ello, es esencial implementar un sistema de
+      monitoreo proactivo que detecte errores y actúe con rapidez.
+    </p>
+    <p>
+      <strong>Monitoreo integrado en Power Automate:</strong>  
+      Dentro del portal de Power Automate, cada flujo dispone de un panel
+      con historial de ejecuciones, mostrando si fueron exitosas o si
+      hubo fallos. Ahí puedes revisar el detalle de cada paso y hasta
+      re-ejecutar el flujo manualmente con los mismos datos de entrada.
+    </p>
+    <p>
+      <strong>Alertas automáticas:</strong>  
+      Configura alertas en caso de fallo: por ejemplo, que se envíe un
+      correo a un responsable de TI o al creador del flujo cuando se
+      detecte un error recurrente. De esta manera, podrás intervenir
+      antes de que el problema escale.
+    </p>
+    <p>
+      <strong>Métricas de rendimiento:</strong>  
+      Si manejas un gran volumen de aprobaciones diarias, es útil medir
+      tiempos de respuesta promedio, cuántas solicitudes se encuentran en
+      espera y cuántas se han completado. Estas métricas te ayudan a
+      ajustar la capacidad y a predecir cuellos de botella.
+    </p>
+    <div class="alert-box alert-alert">
+      <i></i>
+      <div>
+        <strong>¡Advertencia!</strong><br />
+        No monitorear tus flujos puede llevar a un estancamiento de
+        aprobaciones o a que errores graves pasen desapercibidos. Asegúrate
+        de revisar periódicamente los reportes y las notificaciones de tu
+        entorno de Power Automate.
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 5: EJEMPLO INTERACTIVO - TABS -->
+  <section id="tabs-ejemplo" class="fade-in">
+    <h2>4. Ejemplo Interactivo (Tabs)</h2>
+    <p>
+      En esta sección, te mostraremos un ejemplo de distintos flujos de
+      aprobación avanzada a través de un sistema de pestañas (tabs).  
+      Haz clic en cada pestaña para ver una descripción breve de sus
+      características.
+    </p>
+    <div class="tabs-container">
+      <div class="tab-buttons">
+        <button class="tab-btn" data-tab="tab1">Paralelo</button>
+        <button class="tab-btn" data-tab="tab2">Escalonado</button>
+        <button class="tab-btn" data-tab="tab3">Condicional</button>
+      </div>
+      <div id="tab1" class="tab-content">
+        <h3>Aprobación Paralela</h3>
+        <p>
+          Envía la solicitud de aprobación a varios usuarios de forma
+          simultánea. El flujo no continuará hasta que todos (o el primero
+          en responder, dependiendo de la configuración) emitan su voto.
+          Ideal para situaciones donde varios departamentos deben aprobar
+          a la vez, reduciendo significativamente el tiempo total de
+          espera.
+        </p>
+      </div>
+      <div id="tab2" class="tab-content">
+        <h3>Aprobación Escalonada</h3>
+        <p>
+          Aquí, la aprobación sube “escalones” en la jerarquía. Primero, un
+          coordinador o jefe de área da el visto bueno; al aprobarlo,
+          asciende a otro nivel (gerencia) y luego a un nivel directivo.
+          Cada etapa es imprescindible y, si alguna falla, todo el proceso
+          se detiene. Adecuado para decisiones de alto impacto donde cada
+          nivel añade una capa de validación.
+        </p>
+      </div>
+      <div id="tab3" class="tab-content">
+        <h3>Aprobación Condicional</h3>
+        <p>
+          En esta modalidad, las aprobaciones se bifurcan según criterios.
+          Por ejemplo, si el monto solicitado supera un cierto umbral, se
+          requiere la firma de un gerente; de lo contrario, basta con la
+          aprobación del supervisor inmediato. Esto permite personalizar el
+          flujo en función de reglas de negocio, optimizando el proceso y
+          evitando aprobares innecesarias.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 6: CONCLUSIONES -->
+  <section id="conclusiones" class="fade-in bg-alt">
+    <h2>5. Conclusiones de la Clase 4</h2>
+    <p>
+      Las aprobaciones complejas son pieza clave en muchas organizaciones
+      públicas y privadas en Chile. Al dominar las configuraciones avanzadas,
+      podrás diseñar procesos ágiles y confiables, donde cada paso queda
+      registrado y optimizado para facilitar la toma de decisiones.
+    </p>
+    <p>
+      Paralelamente, el monitoreo continuo de tus flujos asegura que cualquier
+      anomalía sea detectada a tiempo, evitando cuellos de botella y
+      garantizando una ejecución fluida. Así, tu rol como administrativo
+      evoluciona, aportando soluciones que impactan directamente la eficiencia
+      y la competitividad de la empresa.
+    </p>
+    <p>
+      En la próxima clase nos enfocaremos en casos prácticos donde
+      combinaremos aprobaciones avanzadas, monitoreo en tiempo real y
+      conectores externos, ilustrando flujos de punta a punta (end-to-end)
+      para un mejor entendimiento. ¡Prepárate para el siguiente nivel de
+      automatización!
+    </p>
+  </section>
+
+  <!-- SCRIPT: Intersection Observer (fade-in) + Tabs -->
+  <script>
+    // ANIMACIÓN FADE-IN CON INTERSECTION OBSERVER
+    document.addEventListener("DOMContentLoaded", function() {
+      const options = { threshold: 0.1 };
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('fade-in-active');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, options);
+
+      document.querySelectorAll('.fade-in').forEach(el => {
+        observer.observe(el);
+      });
+    });
+
+    // TABS INTERACTIVOS
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // remover la clase 'active' de todos los botones
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        // remover la clase 'active' de todas las pestañas
+        tabContents.forEach(tab => tab.classList.remove('active'));
+
+        // Agregar 'active' al botón clicado
+        button.classList.add('active');
+        // Mostrar el contenido correspondiente
+        const tabId = button.getAttribute('data-tab');
+        document.getElementById(tabId).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

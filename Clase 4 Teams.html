@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Guía Avanzada de Microsoft Teams - Parte 4 (Carrusel con Fuentes)</title>
+  <style>
+    :root {
+      /* Variables principales de color */
+      --color-primary: #0078D4;
+      /* Color-secondary renovado para esta entrega */
+      --color-secondary: #0059ac;
+      --color-bg: #ffffff;
+      --color-bg-alt: #f3f8fa;
+      --color-text: #333;
+      /* Color extra para íconos decorativos */
+      --icon-color: #f44336; /* Tono rojizo vivo */
+
+      /* Paleta para alert-boxes */
+      --info-bg: #d9ecff;   
+      --warning-bg: #fff4e5; 
+      --success-bg: #d3f9d8;
+      --alert-bg: #ffe4e6;   
+      --info-border: #90c2f8;
+      --warning-border: #ffc078;
+      --success-border: #8ce99a;
+      --alert-border: #ff8787;
+    }
+
+    /* Reset básico y tipografía */
+    * {
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    header {
+      position: relative;
+      background: linear-gradient(to right, var(--color-primary), #78C2F3);
+      color: #fff;
+      padding: 4rem 2rem 6rem;
+      text-align: center;
+      overflow: hidden;
+    }
+    header h1 {
+      font-size: 2.3rem;
+      margin-bottom: 1rem;
+    }
+    header p {
+      font-size: 1.1rem;
+      max-width: 900px;
+      margin: 0.5rem auto 0 auto;
+    }
+
+    /* Nueva forma de wave (clip-path) */
+    .wave {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 140px;
+      background-color: var(--color-bg);
+      clip-path: polygon(0 25%, 100% 0%, 100% 100%, 0 100%);
+    }
+
+    /* Navegación sticky */
+    nav {
+      position: sticky;
+      top: 0;
+      background-color: #fff;
+      display: flex;
+      gap: 1rem;
+      padding: 0.5rem 1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      z-index: 99;
+    }
+    nav a {
+      text-decoration: none;
+      color: var(--color-primary);
+      font-weight: 500;
+      transition: color 0.2s ease-in-out;
+    }
+    nav a:hover {
+      color: var(--color-secondary);
+    }
+
+    /* Secciones */
+    section {
+      padding: 3rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .bg-alt {
+      background-color: var(--color-bg-alt);
+    }
+    .section-gradient {
+      /* Sección con fondo degradado para darle un aspecto más llamativo */
+      background: linear-gradient(135deg, #e1f1fa, #f8fbfd);
+      padding: 3rem 2rem;
+    }
+
+    section h2 {
+      font-size: 1.85rem;
+      margin-bottom: 1.2rem;
+      display: inline-block;
+    }
+    section h2 svg {
+      width: 1.3em;
+      height: 1.3em;
+      fill: var(--icon-color);
+      margin-right: 0.4rem;
+      vertical-align: middle;
+    }
+    section p {
+      margin-bottom: 1rem;
+      text-align: justify;
+    }
+
+    /* Alert boxes */
+    .alert-box {
+      border-left: 4px solid;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      border-radius: 4px;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      opacity: 0; /* Para la animación con Intersection Observer */
+      transform: translateY(20px);
+    }
+    .alert-icon {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+    }
+    .alert-icon svg {
+      fill: var(--icon-color);
+    }
+    .alert-content {
+      flex: 1;
+    }
+    .info {
+      background-color: var(--info-bg);
+      border-color: var(--info-border);
+    }
+    .warning {
+      background-color: var(--warning-bg);
+      border-color: var(--warning-border);
+    }
+    .success {
+      background-color: var(--success-bg);
+      border-color: var(--success-border);
+    }
+    .alert {
+      background-color: var(--alert-bg);
+      border-color: var(--alert-border);
+    }
+
+    /* Fade-in general para secciones y alertas */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .fade-in.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Imagen genérica */
+    .image-wrapper {
+      margin: 2rem 0;
+      text-align: center;
+    }
+    .image-wrapper img {
+      max-width: 90%;
+      height: auto;
+      border-radius: 6px;
+    }
+
+    /* Carousel (carrusel) para un elemento interactivo */
+    .carousel-container {
+      position: relative;
+      overflow: hidden;
+      max-width: 800px;
+      margin: 2rem auto 0 auto;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      background-color: #fff;
+    }
+    .carousel-track {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+    }
+    .carousel-slide {
+      min-width: 100%;
+      background-color: #fff;
+      display: flex;
+      flex-direction: column; /* Para que la imagen y el texto vayan en columna */
+      align-items: center;
+    }
+    .carousel-slide img {
+      width: 100%;
+      max-height: 400px;
+      object-fit: cover;
+      display: block;
+    }
+    .slide-content {
+      padding: 1rem;
+      text-align: left;
+      width: 90%;
+      max-width: 700px;
+    }
+    .slide-content h3 {
+      margin-bottom: 0.5rem;
+      font-size: 1.2rem;
+      color: var(--color-primary);
+    }
+    .slide-content p {
+      margin-bottom: 0.5rem;
+      color: var(--color-text);
+      line-height: 1.5;
+    }
+    /* Estilo para la fuente / referencia */
+    .slide-source {
+      font-size: 0.9rem;
+      color: #555;
+      margin-top: 0.5rem;
+    }
+
+    /* Botones de control del carrusel */
+    .carousel-nav {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 1rem;
+      margin-top: 0.5rem;
+    }
+    .carousel-button {
+      background-color: var(--color-primary);
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s;
+    }
+    .carousel-button:hover {
+      background-color: var(--color-secondary);
+    }
+
+    /* Asegurar espacio al final */
+    .spacer-bottom {
+      height: 3rem;
+    }
+
+    /* Ajustes responsivos */
+    @media (max-width: 768px) {
+      .carousel-slide img {
+        max-height: 250px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header con wave -->
+  <header>
+    <h1>Guía Avanzada de Microsoft Teams - Parte 4</h1>
+    <p>Administración, Seguridad y Estrategias de Trabajo Híbrido</p>
+    <div class="wave"></div>
+  </header>
+
+  <!-- Barra de navegación sticky -->
+  <nav>
+    <a href="#admin-seguridad">Admin &amp; Seguridad</a>
+    <a href="#gobernanza-teams">Gobernanza en Teams</a>
+    <a href="#trabajo-hibrido">Trabajo Híbrido</a>
+    <a href="#carrusel">Carrusel</a>
+  </nav>
+
+  <!-- Sección sobre Administración y Seguridad -->
+  <section id="admin-seguridad" class="fade-in">
+    <h2>
+      <svg aria-hidden="true" viewBox="0 0 512 512"><path d="M192 96c0-35.3 28.7-64 64-64s64 28.7 64 64v32h64V96c0-70.7-57.3-128-128-128S128 25.3 128 96v32h64V96zM256 448c-70.7 0-128-57.3-128-128V224h256v96c0 70.7-57.3 128-128 128z"></path></svg>
+      Administración y Seguridad en Microsoft Teams
+    </h2>
+    <p>
+      Una vez que las organizaciones en Chile han adoptado Microsoft Teams de forma general, 
+      el paso siguiente consiste en reforzar los aspectos de <strong>administración y seguridad</strong>. 
+      Esto implica configurar políticas de acceso, habilitar la autenticación multifactor (MFA), 
+      y aprovechar herramientas como el <em>Centro de Administración de Teams</em> en Microsoft 365.
+    </p>
+    <p>
+      En el <strong>Centro de Administración de Teams</strong>, los administradores pueden:
+      <ul>
+        <li>Gestionar equipos y canales, revisando la creación de nuevos equipos por parte de los usuarios.</li>
+        <li>Configurar políticas de mensajería (definir si se permiten menciones a @Equipo, @Canal, etc.).</li>
+        <li>Controlar la colaboración externa (invitados) y la federación con dominios externos.</li>
+        <li>Activar o desactivar funcionalidades específicas (como la grabación de reuniones o las apps de terceros).</li>
+      </ul>
+      Para grandes empresas, se recomienda un enfoque por <strong>roles administrativos</strong>, 
+      asignando permisos especializados (por ejemplo, un admin de voz, un admin de reuniones, etc.).
+    </p>
+    <p>
+      En términos de <strong>seguridad</strong>, resulta crucial habilitar:
+      <ul>
+        <li><strong>MFA (Multi-Factor Authentication)</strong>: reduce la probabilidad de accesos no autorizados.</li>
+        <li><strong>Conditional Access</strong>: permitir el inicio de sesión solo desde ubicaciones o dispositivos confiables.</li>
+        <li><strong>Políticas de retención y eDiscovery</strong>: para cumplir con regulaciones y poder recuperar información ante auditorías.</li>
+      </ul>
+      Asimismo, se recomienda usar <em>etiquetas de confidencialidad</em> (Sensitivity Labels) en documentos, 
+      de manera que, al compartirlos por Teams, se respete el nivel de protección requerido.
+    </p>
+
+    <div class="alert-box warning">
+      <div class="alert-icon">
+        <svg viewBox="0 0 512 512"><path d="M256 8C119 8 8 119 8 256c0 137 111 248 248 248s248-111 248-248C504 119 393 8 256 8zm0 110c23.2 0 42 18.8 42 42s-18.8 42-42 42-42-18.8-42-42 18.8-42 42-42zm56 246c0 6.6-5.4 12-12 12h-88c-6.6 0-12-5.4-12-12v-28c0-6.6 5.4-12 12-12h12v-61h-12c-6.6 0-12-5.4-12-12v-28c0-6.6 5.4-12 12-12h60c6.6 0 12 5.4 12 12v89h12c6.6 0 12 5.4 12 12v28z"></path></svg>
+      </div>
+      <div class="alert-content">
+        <strong>Atención:</strong> Desactivar la creación libre de equipos (o restringirla a ciertos usuarios) 
+        evita la proliferación caótica de “Team” y protege la estructura de colaboración, 
+        sobre todo en empresas con cientos o miles de empleados.
+      </div>
+    </div>
+
+    <p>
+      Por otra parte, el uso de <strong>Microsoft Defender for Office 365</strong> (si está licenciado) 
+      puede añadir capas de protección contra malware y phishing en archivos compartidos a través de Teams. 
+      Dado que en Chile la ciberseguridad es un tema cada vez más sensible, 
+      muchas organizaciones optan por revisar y configurar estas opciones con consultores especializados 
+      antes de un despliegue masivo.
+    </p>
+
+    <p>
+      Para la <strong>auditoría</strong>, el Centro de Cumplimiento (Compliance Center) de Microsoft 365 
+      ofrece registros de acciones en Teams: quién crea canales, quién elimina mensajes, etc. 
+      Esto resulta útil en investigaciones internas, cumplimiento de leyes o incidentes de seguridad. 
+      En caso de requerir datos para un juicio o auditoría, eDiscovery permite exportar chats y archivos vinculados.
+    </p>
+    <div class="image-wrapper">
+      <img src="https://i.postimg.cc/pX024xfQ/dsc-1384-795-min.jpg" alt="Imagen de centro de administración de Teams">
+    </div>
+  </section>
+
+  <!-- Sección sobre Gobernanza en Teams -->
+  <section id="gobernanza-teams" class="section-gradient fade-in">
+    <h2>
+      <svg aria-hidden="true" viewBox="0 0 512 512"><path d="M466.5 83.7l-21.4-21.4C435.1 52.3 427 48 418.3 48H93.7C85 48 76.9 52.3 67 62.3l-21.4 21.4C39.3 92.9 35 101 35 109.7v292.6c0 8.7 4.3 16.8 10.6 22.8l21.4 21.4c9.9 9.9 18.1 14.3 26.7 14.3h324.6c8.7 0 16.8-4.3 22.8-10.6l21.4-21.4c9.9-9.9 14.3-18.1 14.3-26.7V109.7c0-8.7-4.3-16.8-10.6-22.8zM256 392c-79.4 0-144-64.6-144-144S176.6 104 256 104s144 64.6 144 144-64.6 144-144 144z"></path></svg>
+      Gobernanza en Microsoft Teams
+    </h2>
+    <p>
+      La <strong>gobernanza</strong> en Microsoft Teams consiste en el conjunto de reglas, procesos y configuraciones 
+      que garantizan un uso ordenado y seguro de la plataforma. Sin una gobernanza clara, 
+      las compañías pueden enfrentar problemas de duplicación de equipos, canales inactivos, fugas de información 
+      o confusión generalizada entre los usuarios.
+    </p>
+    <p>
+      Un plan de gobernanza típico incluye:
+      <ol>
+        <li><strong>Normas de nomenclatura</strong> para equipos y canales (por ejemplo, “Dpto-Marketing-Eventos2023”).</li>
+        <li><strong>Directrices de expiración y archivado</strong>: 
+            establecer un periodo tras el cual los equipos inactivos se archivan o eliminan automáticamente.</li>
+        <li><strong>Control de invitados externos</strong>: definir si se permite compartir con usuarios de dominios no corporativos y bajo qué condiciones.</li>
+        <li><strong>Clasificación de la información</strong>: uso de etiquetas (“Público”, “Confidencial”, etc.) para canales y documentos.</li>
+        <li><strong>Supervisión y reporting</strong>: revisar periódicamente métricas de uso, cantidad de equipos activos, cumplimiento de políticas.</li>
+      </ol>
+      En Chile, muchas organizaciones grandes aplican estos lineamientos para evitar “sprawl” 
+      (dispersión incontrolada) y cumplir con regulaciones locales.
+    </p>
+    <p>
+      Microsoft 365 ofrece herramientas como <em>Azure Active Directory Premium</em> para automatizar la membresía 
+      de equipos basados en atributos (por ejemplo, agregar automáticamente a todos los empleados de “Ventas” 
+      en un equipo de Teams). Esto reduce la labor manual de administrar usuarios, 
+      pero requiere una correcta definición de grupos y propiedades en Azure AD.
+    </p>
+
+    <div class="alert-box info">
+      <div class="alert-icon">
+        <svg viewBox="0 0 512 512"><path d="M256 32C114.7 32 0 146.7 0 288c0 123.7 100.3 224 224 224h64c123.7 0 224-100.3 224-224 0-141.3-114.7-256-256-256zm0 96a48 48 0 11-48 48 48 48 0 0148-48zm82.3 302.7a12 12 0 01-12 11.3H181.7a12 12 0 01-12-12v-11.4a12 12 0 0112-12h27.1V272h-27.1a12 12 0 01-12-12v-11.4a12 12 0 0112-12h90.6a12 12 0 0112 11.3l4.4 160z"></path></svg>
+      </div>
+      <div class="alert-content">
+        <strong>Tip de Gobernanza:</strong> Crea un “Equipo Modelo” con pestañas y ajustes predefinidos (Planner, OneNote, etc.), 
+        y reprodúcelo como plantilla cada vez que arranque un nuevo proyecto.
+      </div>
+    </div>
+
+    <p>
+      Con estas prácticas, las empresas en Chile pueden escalar el uso de Teams de forma ordenada, 
+      manteniendo la información segura y accesible para quienes la necesiten. 
+      La gobernanza no es un proyecto estático, sino una disciplina continua que requiere ajustes 
+      conforme cambian las necesidades y crece la madurez digital.
+    </p>
+  </section>
+
+  <!-- Sección sobre Trabajo Híbrido -->
+  <section id="trabajo-hibrido" class="bg-alt fade-in">
+    <h2>
+      <svg aria-hidden="true" viewBox="0 0 512 512"><path d="M384 64h-48V16c0-8.8-7.2-16-16-16H192c-8.8 0-16 7.2-16 16v48h-48c-70.7 0-128 57.3-128 128v128c0 70.7 57.3 128 128 128h16v32c0 17.7 14.3 32 32 32h48v32c0 17.7 14.3 32 32 32h64c17.7 0 32-14.3 32-32v-32h48c17.7 0 32-14.3 32-32v-32h16c70.7 0 128-57.3 128-128V192c0-70.7-57.3-128-128-128zm-64 384H192v-64h128v64zm96-96c0 17.7-14.3 32-32 32H128c-35.3 0-64-28.7-64-64V192c0-35.3 28.7-64 64-64h256c35.3 0 64 28.7 64 64v128z"></path></svg>
+      Estrategias de Trabajo Híbrido con Teams
+    </h2>
+    <p>
+      Tras la experiencia de teletrabajo extendido en Chile, muchas empresas han optado por modelos <strong>híbridos</strong>, 
+      combinando trabajo remoto y presencial. Microsoft Teams se convierte en el puente esencial 
+      para unir a quienes están en la oficina con quienes se conectan desde casa u otras ubicaciones.
+    </p>
+    <p>
+      Algunas <strong>mejores prácticas</strong> para el trabajo híbrido incluyen:
+      <ul>
+        <li><strong>Salas de reuniones equipadas</strong>: contar con cámaras y micrófonos de calidad en la oficina, 
+            para que los participantes remotos vean y escuchen claramente la sala física.</li>
+        <li><strong>Reuniones inclusivas</strong>: designar a un moderador para dar la palabra tanto a presentes 
+            como a los que estén conectados por Teams. Usar la función “Levantar la mano” en grupos numerosos.</li>
+        <li><strong>Organización del calendario</strong>: planificar días específicos de trabajo presencial 
+            para reuniones estratégicas, y utilizar Teams para el resto de la colaboración diaria.</li>
+        <li><strong>Uso de canales de comunicación asíncrona</strong>: no todo requiere videollamada. 
+            Habilitar espacios de discusión en canales y chats, aprovechando la mensajería y los hilos.</li>
+        <li><strong>Flexibilidad y respeto a la desconexión</strong>: clarificar horarios y fomentar el uso del estado “Fuera de línea” 
+            para que los empleados no estén permanentemente conectados.</li>
+      </ul>
+      Estas medidas refuerzan la productividad y el bienestar del equipo, evitando la saturación de videoconferencias.
+    </p>
+
+    <div class="alert-box success">
+      <div class="alert-icon">
+        <svg viewBox="0 0 512 512"><path d="M173.9 439.4l-166.4-166.4c-4.7-4.7-4.7-12.3 0-17l28.3-28.3c4.7-4.7 12.3-4.7 17 0L192 312.7l265.5-265.6c4.7-4.7 12.3-4.7 17 0l28.3 28.3c4.7 4.7 4.7 12.3 0 17L190.9 439.4c-4.7 4.7-12.3 4.7-17 0z"></path></svg>
+      </div>
+      <div class="alert-content">
+        <strong>Ejemplo real:</strong> Varias multinacionales en Chile establecieron días fijos de “reunión presencial” 
+        para asuntos críticos y el resto de la semana usan Teams intensivamente, sin afectar la continuidad del negocio.
+      </div>
+    </div>
+
+    <p>
+      Con la evolución de la tecnología, también emergen funciones como <em>Microsoft Teams Rooms</em>, 
+      diseñadas para salas de conferencia modernizadas, y la potencial integración de IA que mejore 
+      el seguimiento de diálogos y la traducción en tiempo real. Esto potenciará aún más el trabajo híbrido, 
+      haciéndolo cada vez más natural.
+    </p>
+  </section>
+
+  <!-- Sección Carrusel (nuevo elemento interactivo) -->
+  <section id="carrusel" class="fade-in">
+    <h2>
+      <svg aria-hidden="true" viewBox="0 0 512 512"><path d="M248 8C111 8 0 119 0 256s111 248 248 248c27.1 0 53.1-4.8 77.4-13.6 12.4-4.7 19.5-18.6 14.8-31-4.7-12.4-18.6-19.5-31-14.8-18.5 7-38.4 10.4-61.1 10.4C134.6 455 56 376.4 56 276S134.6 97 236 97s180 78.6 180 179c0 17.3-2.2 34.6-6.7 50.9-3.9 12.8 2.6 26.6 15.4 30.5s26.6-2.6 30.5-15.4c5.8-18.9 8.8-38.6 8.8-66C464 119 353 8 248 8z"></path></svg>
+      Carrusel Interactivo
+    </h2>
+    <p>
+      A continuación, se muestra un <em>carrusel de imágenes y descripciones</em> sobre implementaciones destacadas de Teams en Chile. 
+      Usa las flechas para navegar. Los botones se ubican debajo de las imágenes, 
+      evitando superponerse con el contenido principal.
+    </p>
+
+    <div class="carousel-container">
+      <div class="carousel-track" id="carouselTrack">
+        
+        <!-- Slide 1 -->
+        <div class="carousel-slide">
+          <img src="https://i.postimg.cc/g0McFpbb/graphicstock-back-view-photo-of-young-woman-worker-sitting-in-office-while-using-laptop-computer_rOE.jpg" alt="Implementación de Teams en un Banco de Chile">
+          <div class="slide-content">
+            <h3>Banco de Chile - Migración Masiva</h3>
+            <p>
+              El Banco adoptó Teams para más de 12.000 empleados, 
+              integrando telefonía corporativa en la nube (Phone System) y permitiendo trabajo remoto fluido 
+              durante la crisis sanitaria.
+            </p>
+            <p>
+              También se habilitó la colaboración externa con clientes y proveedores, 
+              reforzando los mecanismos de seguridad y autenticación.
+            </p>
+            <p class="slide-source">
+              <em>Fuente:</em> 
+              <a href="https://news.microsoft.com/es-xl/" target="_blank" rel="noopener">
+                NEWS.MICROSOFT.COM
+              </a> / 
+              <a href="" target="_blank" rel="noopener">
+                </a>
+            </p>
+          </div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="carousel-slide">
+          <img src="https://i.postimg.cc/t4Hkx1vD/GR46A6_1.jpg" alt="Trabajo Híbrido en con IA Copilot">
+          <div class="slide-content">
+            <h3>IA Copilot</h3>
+            <p>
+              La compañía energética realizó pruebas con Microsoft 365 Copilot, 
+              incluyendo Teams, para generar minutas automáticas de reuniones y resúmenes de conversaciones, 
+              ahorrando horas de trabajo administrativo.
+            </p>
+            <p>
+              Además, implementaron configuraciones de Teams Rooms en sus salas de juntas, 
+              impulsando la participación de personal en faenas distantes.
+            </p>
+            <p class="slide-source">
+              <em>Fuente:</em> 
+              <a href="https://news.microsoft.com/es-xl/colbun-ia-copilot" target="_blank" rel="noopener">
+                NEWS.MICROSOFT.COM
+              </a> / 
+              <a href="" target="_blank" rel="noopener">
+                Colbún
+              </a>
+            </p>
+          </div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="carousel-slide">
+          <img src="https://i.postimg.cc/RZkzx0Nt/dsc-1813-353-min.jpg" alt="Escuelas Públicas usando Teams">
+          <div class="slide-content">
+            <h3>Mineduc - Escuelas Públicas</h3>
+            <p>
+              En Educación se firmó convenios para ofrecer Office 365 (Teams incluido) 
+              a miles de escuelas públicas y subvencionadas, 
+              facilitando el aprendizaje remoto durante la pandemia y más allá.
+            </p>
+            <p>
+              Hoy, docentes y alumnos siguen usando Teams para proyectos colaborativos, 
+              reforzando la inclusión digital en regiones alejadas.
+            </p>
+            <p class="slide-source">
+              <em>Fuente:</em> 
+              <a href="https://www.mineduc.cl/" target="_blank" rel="noopener">
+                MINEDUC.CL
+              </a>
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="carousel-nav">
+      <button class="carousel-button" id="prevButton">&laquo; Anterior</button>
+      <button class="carousel-button" id="nextButton">Siguiente &raquo;</button>
+    </div>
+  </section>
+
+  <div class="spacer-bottom"></div>
+
+  <script>
+    // Intersection Observer para la animación fade-in
+    const observedElements = document.querySelectorAll('.fade-in, .alert-box');
+    const observerConfig = { threshold: 0.1 };
+    const io = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('show');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, observerConfig);
+    observedElements.forEach(el => io.observe(el));
+
+    // Lógica del carrusel
+    const track = document.getElementById('carouselTrack');
+    const slides = Array.from(track.children);
+    const prevButton = document.getElementById('prevButton');
+    const nextButton = document.getElementById('nextButton');
+
+    let currentSlideIndex = 0;
+
+    function updateCarouselPosition() {
+      const slideWidth = slides[0].getBoundingClientRect().width;
+      track.style.transform = `translateX(-${currentSlideIndex * slideWidth}px)`;
+    }
+
+    // Ajustar posición del carrusel al cambiar el tamaño de la ventana
+    window.addEventListener('resize', () => {
+      updateCarouselPosition();
+    });
+
+    prevButton.addEventListener('click', () => {
+      currentSlideIndex = (currentSlideIndex === 0)
+        ? slides.length - 1
+        : currentSlideIndex - 1;
+      updateCarouselPosition();
+    });
+
+    nextButton.addEventListener('click', () => {
+      currentSlideIndex = (currentSlideIndex + 1) % slides.length;
+      updateCarouselPosition();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Clase 5: Casos de Éxito e Implementación Avanzada de Power Automate</title>
+  <style>
+    /* =======================
+       VARIABLES DE COLOR
+       ======================= */
+    :root {
+      --color-primary: #0078D4;         /* Azul principal */
+      --color-secondary: #004e9c;       /* Tonalidad variante para esta clase */
+      --color-bg: #ffffff;              /* Fondo base */
+      --color-bg-alt: #fafafa;          /* Fondo alterno */
+      --color-text: #333;               /* Color de texto principal */
+      --header-gradient-start: #0078D4; /* Degradado Header (inicio) */
+      --header-gradient-end: #78C2F3;   /* Degradado Header (fin) */
+    }
+
+    /* =======================
+       RESET BÁSICO
+       ======================= */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth; /* Scroll suave */
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+                   Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    }
+
+    body {
+      background-color: var(--color-bg);
+      color: var(--color-text);
+    }
+
+    /* =======================
+       ENCABEZADO CON "WAVE"
+       ======================= */
+    header {
+      position: relative;
+      background: linear-gradient(
+        to right,
+        var(--header-gradient-start),
+        var(--header-gradient-end)
+      );
+      color: #fff;
+      padding: 4rem 2rem 6rem 2rem;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    /* Forma "wave" con clip-path (Clase 5) */
+    .wave {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      clip-path: polygon(
+        0 52%, 
+        20% 48%, 
+        40% 58%, 
+        60% 42%, 
+        80% 58%, 
+        100% 52%, 
+        100% 100%, 
+        0 100%
+      );
+      background: linear-gradient(
+        to right,
+        var(--header-gradient-start),
+        var(--header-gradient-end)
+      );
+      z-index: 1;
+    }
+
+    .header-content {
+      position: relative;
+      z-index: 2; /* por encima de la wave */
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    header p {
+      font-size: 1.1rem;
+      line-height: 1.5;
+    }
+
+    /* =======================
+       NAV STICKY
+       ======================= */
+    nav {
+      position: sticky;
+      top: 0;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      z-index: 9999;
+    }
+
+    nav ul {
+      display: flex;
+      justify-content: center;
+      list-style: none;
+    }
+
+    nav ul li a {
+      display: block;
+      padding: 1rem 1.5rem;
+      color: var(--color-primary);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    nav ul li a:hover {
+      color: var(--color-secondary);
+    }
+
+    /* =======================
+       SECCIONES DE CONTENIDO
+       ======================= */
+    section {
+      padding: 3rem 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .bg-alt {
+      background-color: var(--color-bg-alt);
+    }
+
+    section h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    section p {
+      margin-bottom: 1rem;
+      text-align: justify;
+      line-height: 1.6;
+    }
+
+    /* =======================
+       ALERT-BOXES
+       ======================= */
+    .alert-box {
+      border-left: 6px solid;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      border-radius: 4px;
+      display: flex;
+      align-items: flex-start;
+    }
+    .alert-box i {
+      margin-right: 0.75rem;
+      font-style: normal; /* simulamos icono */
+      font-weight: bold;
+      line-height: 1.2;
+    }
+
+    /* Info */
+    .alert-info {
+      background-color: #e3f2fd;
+      border-color: #90caf9;
+      color: #0d47a1;
+    }
+    .alert-info i::before {
+      content: "[i]";
+    }
+
+    /* Warning */
+    .alert-warning {
+      background-color: #fff4e1;
+      border-color: #ffe082;
+      color: #e65100;
+    }
+    .alert-warning i::before {
+      content: "[!]";
+    }
+
+    /* Success */
+    .alert-success {
+      background-color: #e8f5e9;
+      border-color: #a5d6a7;
+      color: #1b5e20;
+    }
+    .alert-success i::before {
+      content: "[✓]";
+    }
+
+    /* Alert */
+    .alert-alert {
+      background-color: #fce4ec;
+      border-color: #f48fb1;
+      color: #880e4f;
+    }
+    .alert-alert i::before {
+      content: "[x]";
+    }
+
+    /* =======================
+       ANIMACIONES (FADE-IN)
+       ======================= */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .fade-in-active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* =======================
+       ACCORDION (CLASE 5)
+       ======================= */
+    .accordion-container {
+      margin-top: 2rem;
+    }
+
+    .accordion-item {
+      background-color: #fff;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .accordion-header {
+      padding: 1rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: var(--color-primary);
+      color: #fff;
+      border-radius: 4px;
+    }
+
+    .accordion-header:hover {
+      background-color: var(--color-secondary);
+    }
+
+    .accordion-content {
+      display: none; /* Se mostrará con JS */
+      padding: 1rem;
+      background-color: #fff;
+      color: var(--color-text);
+    }
+
+    .accordion-header i {
+      font-style: normal;
+      font-weight: bold;
+    }
+
+    .rotate {
+      transform: rotate(90deg);
+      transition: transform 0.3s;
+    }
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header>
+    <div class="wave"></div>
+    <div class="header-content">
+      <h1>Clase 5: Casos de Éxito e Implementación Avanzada de Power Automate</h1>
+      <p>
+        En este último encuentro, revisaremos ejemplos concretos de empresas
+        e instituciones chilenas que han llevado la automatización al máximo
+        nivel con Power Automate, y compartiremos recomendaciones para una
+        adopción escalable y sustentable a largo plazo. ¡Prepárate para
+        conocer prácticas de vanguardia!
+      </p>
+    </div>
+  </header>
+
+  <!-- NAVEGACIÓN STICKY -->
+  <nav>
+    <ul>
+      <li><a href="#introduccion">Introducción</a></li>
+      <li><a href="#preparacion">Preparación Avanzada</a></li>
+      <li><a href="#migracion">Migración y Escalabilidad</a></li>
+      <li><a href="#exitos">Ejemplos de Éxito en Chile</a></li>
+      <li><a href="#accordion">Casos de Estudio</a></li>
+      <li><a href="#conclusiones">Conclusiones</a></li>
+    </ul>
+  </nav>
+
+  <!-- SECCIÓN 1: INTRODUCCIÓN -->
+  <section id="introduccion" class="fade-in">
+    <h2>Introducción y Objetivos</h2>
+    <p>
+      A lo largo de las clases anteriores hemos explorado los fundamentos de
+      Power Automate, pasando por la creación de flujos básicos, la
+      configuración de aprobaciones complejas y la integración con diversos
+      servicios. Ahora, daremos el paso final hacia la implementación
+      avanzada y la exhibición de casos de éxito.
+    </p>
+    <p>
+      El objetivo es que, al finalizar esta lectura, cuentes con la
+      perspectiva necesaria para embarcarte en proyectos de gran envergadura,
+      ya sea en el sector público o en empresas privadas, aprovechando al
+      máximo las capacidades de la plataforma y evitando los errores más
+      comunes en la fase de escalamiento.
+    </p>
+
+    <div class="alert-box alert-info">
+      <i></i>
+      <div>
+        <strong>Recuerda:</strong><br/>
+        La verdadera fuerza de Power Automate radica en su facilidad de
+        integración con otras herramientas de Microsoft y aplicaciones de
+        terceros. No temas experimentar y combinar servicios para descubrir
+        nuevos usos dentro de tu organización.
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 2: PREPARACIÓN PARA LA IMPLEMENTACIÓN AVANZADA -->
+  <section id="preparacion" class="bg-alt fade-in">
+    <h2>1. Preparación para la Implementación Avanzada</h2>
+    <p>
+      Antes de emprender proyectos ambiciosos, es fundamental asegurar que
+      tu organización cuente con los pilares adecuados para soportar la
+      automatización a gran escala. Entre los factores a considerar destacan:
+    </p>
+    <ul style="margin-bottom:1rem; padding-left:1.5rem;">
+      <li>
+        <strong>Cultura y capacitación:</strong> Asegúrate de que el
+        personal entienda los beneficios de la automatización y reciba
+        capacitación apropiada. Muchas iniciativas fallan porque los
+        empleados ven los flujos como algo ajeno o temen que reemplacen
+        su trabajo.
+      </li>
+      <li>
+        <strong>Recursos técnicos:</strong> Verifica que tengas suficientes
+        licencias de Power Automate o Power Platform, y que tu equipo de TI
+        esté preparado para integrar APIs, administrar conectores y
+        manejar la seguridad.
+      </li>
+      <li>
+        <strong>Gobernanza de datos:</strong> Definir quién tendrá acceso
+        a cuáles flujos, así como los niveles de permisos. Una mala
+        gestión puede derivar en riesgos de seguridad y filtraciones
+        de información.
+      </li>
+      <li>
+        <strong>Plan de adopción progresivo:</strong> Inicia con flujos
+        pilotos en áreas donde el retorno de inversión sea más evidente.
+        Demuestra éxitos tempranos y amplía gradualmente el alcance
+        hacia otras unidades de negocio.
+      </li>
+    </ul>
+    <p>
+      Con esta base, tendrás un entorno listo para proyectos avanzados,
+      evitando que problemas organizativos obstaculicen la implementación
+      técnica de los flujos.  
+      <strong>
+        Recuerda involucrar a los líderes de cada área para asegurar el
+        compromiso y la difusión de buenas prácticas.
+      </strong>
+    </p>
+  </section>
+
+  <!-- SECCIÓN 3: MIGRACIÓN Y ESCALABILIDAD -->
+  <section id="migracion" class="fade-in">
+    <h2>2. Migración y Escalabilidad</h2>
+    <p>
+      Un reto frecuente en organizaciones que ya cuentan con procesos
+      heredados (legacy) o flujos en otras plataformas es la
+      <em>migración</em>. Power Automate facilita la importación y
+      exportación de flujos, permitiendo replicar configuraciones y
+      personalizar entornos (desarrollo, pruebas, producción). Sin
+      embargo, hay consideraciones clave:
+    </p>
+    <ol style="margin-bottom:1rem; padding-left:1.5rem;">
+      <li>
+        <strong>Inventario de flujos existentes:</strong> Lista todas las
+        automatizaciones activas en tu organización, identificando
+        dependencias y priorizando las más críticas.
+      </li>
+      <li>
+        <strong>Compatibilidad de conectores:</strong> Verifica si los
+        servicios que utilizas (bases de datos, ERPs, aplicaciones
+        internas) tienen conectores nativos o si debes desarrollar
+        conectores personalizados.
+      </li>
+      <li>
+        <strong>Testing intensivo:</strong> Antes de “apagar” el sistema
+        antiguo, ejecuta escenarios de prueba en Power Automate para
+        asegurar que todos los pasos se cumplan según lo esperado.
+      </li>
+      <li>
+        <strong>Estrategia de escalabilidad:</strong> Al expandir tu
+        catálogo de flujos, mantén un control de versiones y un sistema de
+        monitoreo centralizado para no perder visibilidad sobre qué se
+        está ejecutando y cuándo.
+      </li>
+    </ol>
+    <p>
+      En grandes compañías, la migración puede requerir varios meses de
+      planificación y ejecución. Por otro lado, en pymes o instituciones
+      de menor envergadura, la adopción ágil puede completarse en pocas
+      semanas, siempre y cuando se cuente con el apoyo necesario.
+    </p>
+
+    <div class="alert-box alert-warning">
+      <i></i>
+      <div>
+        <strong>¡Atención!</strong><br/>
+        No olvides contemplar los costos de licenciamiento en tu plan de
+        escalamiento. Algunos conectores y características avanzadas
+        pueden requerir licencias adicionales o planes premium.
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 4: EJEMPLOS DE ÉXITO EN CHILE -->
+  <section id="exitos" class="bg-alt fade-in">
+    <h2>3. Ejemplos de Éxito en Empresas Chilenas</h2>
+    <p>
+      Para ilustrar el impacto real de Power Automate, revisemos algunos
+      casos de organizaciones en Chile que han logrado mejoras
+      significativas al implementar la plataforma:
+    </p>
+    <ul style="margin-bottom:1rem; padding-left:1.5rem;">
+      <li>
+        <strong>Empresa de Retail (Santiago):</strong> Automatizó la
+        reposición de stock en tiendas al integrar sensores IoT con
+        Power Automate. Cuando un sensor detecta que un producto baja de
+        cierto nivel, se genera automáticamente una orden de reposición
+        y se notifica a logística. Esto redujo en un 40% las quiebras de
+        stock y mejoró la satisfacción del cliente.
+      </li>
+      <li>
+        <strong>Municipalidad (Región Metropolitana):</strong> Digitalizó
+        varios trámites ciudadanos, como solicitudes de patentes y
+        permisos de circulación. Los formularios en línea se validan
+        con Power Automate, que luego asigna los casos a funcionarios
+        específicos y notifica al solicitante por email y SMS. La
+        velocidad de respuesta se duplicó en comparación con el proceso
+        tradicional en papel.
+      </li>
+      <li>
+        <strong>Hospital Público (Región de Valparaíso):</strong>
+        Implementó flujos para coordinar cirugías y camas disponibles.
+        Cada vez que ingresa un paciente con cierta patología, el flujo
+        alerta al departamento correspondiente y bloquea un pabellón en
+        el calendario compartido. Se han minimizado los conflictos de
+        programación y se mejoró la gestión de camas críticas.
+      </li>
+      <li>
+        <strong>Pyme de Servicios Financieros:</strong> Reemplazó una
+        serie de macros en Excel por flujos en Power Automate, integrando
+        a la vez Microsoft Teams y SharePoint. Los empleados ahora
+        reportan ahorros de hasta 2 horas diarias al no tener que
+        ejecutar procesos manuales o consolidar datos repetidamente.
+      </li>
+    </ul>
+    <p>
+      Estos éxitos demuestran la diversidad de sectores que pueden
+      beneficiarse, y cómo la automatización impulsa la eficiencia y la
+      innovación en la gestión administrativa y operativa.
+    </p>
+  </section>
+
+  <!-- SECCIÓN 5: CASOS DE ESTUDIO (ACCORDION) -->
+  <section id="accordion" class="fade-in">
+    <h2>4. Casos de Estudio (Accordion Interactivo)</h2>
+    <p>
+      A continuación, presentamos tres ejemplos detallados, cada uno con
+      su <strong>desafío</strong>, <strong>solución</strong> y
+      <strong>resultado</strong>. Despliega cada uno para conocer más.
+    </p>
+    <div class="accordion-container">
+      <!-- ITEM 1 -->
+      <div class="accordion-item">
+        <div class="accordion-header">
+          <h3>1. Transformación Digital en un Ministerio</h3>
+          <i>+</i>
+        </div>
+        <div class="accordion-content">
+          <p>
+            <strong>Desafío:</strong> Un ministerio chileno manejaba un
+            alto volumen de solicitudes de los ciudadanos a través de
+            formularios en papel, lo que dificultaba la trazabilidad y
+            generaba demoras en la respuesta.
+          </p>
+          <p>
+            <strong>Solución:</strong> Implementaron un formulario web
+            integrado a Power Automate. Al enviarse cada solicitud, el
+            flujo validaba automáticamente los datos, asignaba la petición
+            al departamento correspondiente y generaba un número de
+            seguimiento. El ciudadano recibía notificaciones sobre el
+            estado de su requerimiento por correo electrónico.
+          </p>
+          <p>
+            <strong>Resultado:</strong> Se redujo en un 60% el tiempo de
+            procesamiento de las solicitudes, aumentó la transparencia y se
+            habilitó una base de datos central para futuras consultas o
+            auditorías.
+          </p>
+        </div>
+      </div>
+      <!-- ITEM 2 -->
+      <div class="accordion-item">
+        <div class="accordion-header">
+          <h3>2. Orquestación Compleja en una Empresa de Energía</h3>
+          <i>+</i>
+        </div>
+        <div class="accordion-content">
+          <p>
+            <strong>Desafío:</strong> La compañía requería coordinar
+            mantenimientos preventivos con múltiples proveedores,
+            notificando a su vez a las comunidades vecinas sobre posibles
+            cortes de suministro. El proceso previo era manual, lento y
+            propenso a errores.
+          </p>
+          <p>
+            <strong>Solución:</strong> Diseñaron un flujo en Power Automate
+            que, cada cierto tiempo, revisaba la base de datos de equipos
+            en operación y programaba mantenimientos según la fecha de
+            instalación y el tipo de equipamiento. Luego, enviaba
+            alertas a los proveedores involucrados y avisos a las juntas
+            vecinales a través de correo y SMS, todo orquestado desde un
+            panel central.
+          </p>
+          <p>
+            <strong>Resultado:</strong> Reducción del 35% en costos de
+            mantenimiento (al evitar sobre-mantenimiento), mayor
+            confiabilidad de la red eléctrica y mejoras en la comunicación
+            con las comunidades.
+          </p>
+        </div>
+      </div>
+      <!-- ITEM 3 -->
+      <div class="accordion-item">
+        <div class="accordion-header">
+          <h3>3. Integración con AI Builder en una Clínica Privada</h3>
+          <i>+</i>
+        </div>
+        <div class="accordion-content">
+          <p>
+            <strong>Desafío:</strong> La recepción de exámenes e informes
+            médicos generaba una sobrecarga de trabajo manual: el personal
+            debía digitalizarlos y categorizar los datos clínicos en
+            diferentes sistemas.
+          </p>
+          <p>
+            <strong>Solución:</strong> Con AI Builder, el flujo de Power
+            Automate reconocía texto y campos relevantes de cada informe
+            escaneado, para luego almacenar la información en un sistema
+            interno de gestión y notificar al médico tratante. En casos
+            urgentes (detectados por palabras clave), se generaba una
+            alerta inmediata en Microsoft Teams.
+          </p>
+          <p>
+            <strong>Resultado:</strong> Eliminación casi total de tareas
+            repetitivas en la recepción, menores tiempos de espera para
+            pacientes y trazabilidad completa de cada examen hasta su
+            derivación final.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 6: CONCLUSIONES -->
+  <section id="conclusiones" class="bg-alt fade-in">
+    <h2>5. Conclusiones de la Clase 5</h2>
+    <p>
+      Power Automate ha demostrado ser una herramienta versátil y poderosa
+      para modernizar procesos tanto en el sector público como en el
+      privado en Chile. Con las implementaciones avanzadas, la escalabilidad
+      y la integración con servicios externos (incluso AI Builder), tu
+      organización puede mantenerse a la vanguardia en productividad y
+      eficiencia.
+    </p>
+    <p>
+      Al concluir este ciclo de 5 clases, esperamos que cuentes con una
+      visión integral que te permita:
+    </p>
+    <ul style="margin-bottom:1rem; padding-left:1.5rem;">
+      <li>Diseñar flujos básicos y avanzados acorde a las necesidades de tu empresa.</li>
+      <li>Configurar aprobaciones complejas y monitorear cada etapa de manera proactiva.</li>
+      <li>Integrar Teams y servicios de terceros para potenciar la colaboración.</li>
+      <li>Abordar aspectos legales y de seguridad, esenciales en el contexto chileno.</li>
+      <li>Escalar hacia proyectos de gran alcance, sustentados en una cultura organizacional afín a la innovación.</li>
+    </ul>
+    <p>
+      ¡Muchas gracias por acompañarnos en este recorrido! Te invitamos a
+      seguir profundizando en la comunidad de Microsoft Power Platform y a
+      compartir tus logros de automatización para inspirar a más
+      profesionales y organizaciones a transformar su día a día.
+    </p>
+
+    <div class="alert-box alert-success">
+      <i></i>
+      <div>
+        <strong>Felicidades:</strong><br/>
+        Has completado este programa de clases. Ahora, tu siguiente paso
+        es poner en práctica los conocimientos adquiridos y crear tus
+        primeros flujos avanzados. ¡Éxito en tu camino de automatización
+        inteligente!
+      </div>
+    </div>
+  </section>
+
+  <!-- SCRIPT: Intersection Observer (fade-in) + Accordion -->
+  <script>
+    // ANIMACIÓN FADE-IN CON INTERSECTION OBSERVER
+    document.addEventListener("DOMContentLoaded", function() {
+      const options = { threshold: 0.1 };
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('fade-in-active');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, options);
+
+      document.querySelectorAll('.fade-in').forEach(el => {
+        observer.observe(el);
+      });
+    });
+
+    // ACCORDION INTERACTIVO
+    const accordionHeaders = document.querySelectorAll('.accordion-header');
+    accordionHeaders.forEach(header => {
+      header.addEventListener('click', () => {
+        const content = header.nextElementSibling;
+        const icon = header.querySelector('i');
+
+        // Cerrar otros acordeones abiertos
+        document.querySelectorAll('.accordion-content').forEach(c => {
+          if (c !== content) {
+            c.style.display = 'none';
+          }
+        });
+        document.querySelectorAll('.accordion-header i').forEach(ic => {
+          if (ic !== icon) {
+            ic.classList.remove('rotate');
+          }
+        });
+
+        // Alternar el acordeón actual
+        if (content.style.display === 'block') {
+          content.style.display = 'none';
+          icon.classList.remove('rotate');
+        } else {
+          content.style.display = 'block';
+          icon.classList.add('rotate');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

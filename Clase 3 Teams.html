@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Guía de Microsoft Teams en Chile - Parte 3</title>
+  <style>
+    :root {
+      /* Variables de color */
+      --color-primary: #0078D4;
+      /* Escogemos otro tono para var(--color-secondary) en esta tercera entrega */
+      --color-secondary: #0068b7;
+      --color-bg: #ffffff;
+      --color-bg-alt: #fafafa;
+      --color-text: #333;
+
+      /* Color de íconos (nueva variable) */
+      --icon-color: #ff5722; /* Un tono más vivo para los íconos */
+
+      /* Paleta para alert-boxes */
+      --info-bg: #d9ecff;    /* azul claro */
+      --warning-bg: #fff4e5; /* anaranjado suave */
+      --success-bg: #d3f9d8; /* verde pastel */
+      --alert-bg: #ffe4e6;   /* rosado pastel */
+      --info-border: #90c2f8;
+      --warning-border: #ffc078;
+      --success-border: #8ce99a;
+      --alert-border: #ff8787;
+    }
+
+    /* Reset básico y tipografía */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    header {
+      position: relative;
+      background: linear-gradient(to right, var(--color-primary), #78C2F3);
+      color: #fff;
+      padding: 4rem 2rem 6rem;
+      text-align: center;
+      overflow: hidden;
+    }
+    header h1 {
+      font-size: 2.3rem;
+      margin-bottom: 1rem;
+    }
+    header p {
+      font-size: 1.1rem;
+      max-width: 900px;
+      margin: 0.5rem auto 0 auto;
+    }
+
+    /* Nueva forma de wave */
+    .wave {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 140px;
+      background-color: var(--color-bg);
+      /* Polígono distinto en cada entrega */
+      clip-path: polygon(0 0, 100% 20%, 100% 100%, 0 100%);
+    }
+
+    /* Navegación sticky */
+    nav {
+      position: sticky;
+      top: 0;
+      background-color: #fff;
+      display: flex;
+      gap: 1rem;
+      padding: 0.5rem 1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      z-index: 99;
+    }
+    nav a {
+      text-decoration: none;
+      color: var(--color-primary);
+      font-weight: 500;
+      transition: color 0.2s ease-in-out;
+    }
+    nav a:hover {
+      color: var(--color-secondary);
+    }
+
+    /* Secciones alternando fondos */
+    section {
+      padding: 3rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .bg-alt {
+      background-color: var(--color-bg-alt);
+    }
+    section h2 {
+      font-size: 1.85rem;
+      margin-bottom: 1.2rem;
+      display: inline-block;
+    }
+    section h2 svg {
+      width: 1.3em;
+      height: 1.3em;
+      fill: var(--icon-color); /* Usamos la nueva variable de color para los íconos */
+      margin-right: 0.4rem;
+      vertical-align: middle;
+    }
+    section p {
+      margin-bottom: 1rem;
+      text-align: justify;
+    }
+
+    /* Alert boxes */
+    .alert-box {
+      border-left: 4px solid;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      border-radius: 4px;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      opacity: 0; /* Para Intersection Observer (fade-in) */
+      transform: translateY(20px);
+    }
+    .alert-icon {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+    }
+    .alert-icon svg {
+      fill: var(--icon-color);
+    }
+    .alert-content {
+      flex: 1;
+    }
+    .info {
+      background-color: var(--info-bg);
+      border-color: var(--info-border);
+    }
+    .warning {
+      background-color: var(--warning-bg);
+      border-color: var(--warning-border);
+    }
+    .success {
+      background-color: var(--success-bg);
+      border-color: var(--success-border);
+    }
+    .alert {
+      background-color: var(--alert-bg);
+      border-color: var(--alert-border);
+    }
+
+    /* Fade-in general para secciones y alertas */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .fade-in.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Imagen genérica */
+    .image-wrapper {
+      margin: 2rem 0;
+      text-align: center;
+    }
+    .image-wrapper img {
+      max-width: 90%;
+      height: auto;
+      border-radius: 6px;
+    }
+
+    /* Sección "¿Sabías que...?" con tarjetas giratorias (flip-cards) */
+    .flip-cards-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+    .flip-card {
+      background-color: transparent;
+      width: 300px;
+      height: 200px;
+      perspective: 1000px; /* Para el efecto 3D */
+    }
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.8s;
+      transform-style: preserve-3d;
+      cursor: pointer;
+    }
+    .flip-card:hover .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+    .flip-card-front,
+    .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      color: #fff;
+    }
+    .flip-card-front {
+      background-color: var(--color-secondary);
+    }
+    .flip-card-back {
+      background-color: #f45b69;
+      transform: rotateY(180deg);
+    }
+
+    .flip-card-front h4,
+    .flip-card-back h4 {
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+    }
+
+    /* Asegurar espacio al final */
+    .spacer-bottom {
+      height: 3rem;
+    }
+
+    /* Pequeños ajustes responsivos */
+    @media (max-width: 768px) {
+      .flip-cards-container {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header con wave -->
+  <header>
+    <h1>Guía de Microsoft Teams - Parte 3</h1>
+    <p>Integración con Microsoft 365, Casos de Uso y Consideraciones Legales en Chile</p>
+    <div class="wave"></div>
+  </header>
+
+  <!-- Barra de navegación sticky -->
+  <nav>
+    <a href="#integracion-m365">Integración M365</a>
+    <a href="#casos-de-uso">Casos de Uso</a>
+    <a href="#normativas">Normativas y Regulaciones</a>
+    <a href="#sabias-que">¿Sabías que...?</a>
+  </nav>
+
+  <!-- Sección Integración con Microsoft 365 -->
+  <section id="integracion-m365" class="fade-in">
+    <h2>
+      <svg aria-hidden="true" viewBox="0 0 512 512"><path d="M448 64H64C28.7 64 0 92.7 0 128v256c0 35.3 28.7 64 64 64h128l28.6 57.2c4.2 8.4 17 8.4 21.2 0l28.6-57.2H448c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64z"></path></svg>
+      Integración con Microsoft 365
+    </h2>
+
+    <p>
+      Una de las grandes fortalezas de Microsoft Teams es su <strong>profunda integración</strong> 
+      con otras aplicaciones y servicios de la suite <em>Microsoft 365</em> (antes Office 365). Esto incluye:
+      Outlook (correo/calendario), SharePoint/OneDrive (almacenamiento en la nube), Planner/To Do (gestión de tareas), 
+      Power BI (analítica de datos), OneNote (notas), Forms (encuestas) y mucho más. Teams actúa como un “hub” 
+      donde convergen estas herramientas, permitiendo a los usuarios trabajar en proyectos sin necesidad de saltar 
+      entre múltiples aplicaciones.
+    </p>
+
+    <p>
+      Desde el momento en que se crea un equipo en Teams, el sistema genera automáticamente:
+      <ul>
+        <li>Un sitio de <strong>SharePoint</strong> para almacenar archivos y documentos.</li>
+        <li>Un <strong>Grupo de Outlook</strong> (correo compartido, libreta de direcciones).</li>
+        <li>Un <strong>planner</strong> (opcional) para la gestión de tareas.</li>
+        <li>Un espacio en <strong>OneDrive</strong> para archivos de chats privados.</li>
+      </ul>
+      Gracias a esta arquitectura, la información se mantiene sincronizada y segura en la nube corporativa, 
+      facilitando la colaboración y el cumplimiento de políticas de TI.
+    </p>
+
+    <p>
+      Además, la <strong>sincronización con Outlook</strong> permite programar reuniones 
+      sin salir del correo electrónico. Por ejemplo, un usuario puede crear un evento en el calendario de Outlook, 
+      hacer clic en “Reunión de Teams” y automáticamente se adjunta el enlace de videoconferencia. 
+      Esto agiliza la coordinación y reduce fricciones, pues cada persona puede seguir usando la herramienta que 
+      prefiere (algunos usuarios trabajan más tiempo en Outlook, otros se manejan casi por completo en Teams).
+    </p>
+
+    <div class="alert-box info">
+      <div class="alert-icon">
+        <svg viewBox="0 0 512 512"><path d="M256 48C141.1 48 48 141.1 48 256s93.1 208 208 208 208-93.1 208-208S370.9 48 256 48zm0 96c26.5 0 48 21.5 48 48s-21.5 48-48 48-48-21.5-48-48 21.5-48 48-48zm64 272H192c-8.8 0-16-7.2-16-16v-32c0-8.8 7.2-16 16-16h16v-59.6c-18.6-6.6-32-24.4-32-45.1 0-26.5 21.5-48 48-48s48 21.5 48 48c0 20.6-13.4 38.4-32 45.1V368h16c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16z"></path></svg>
+      </div>
+      <div class="alert-content">
+        <strong>Información:</strong> Teams, Outlook y OneDrive comparten un mismo núcleo de autenticación 
+        (Azure Active Directory), garantizando que la experiencia de inicio de sesión sea unificada 
+        y los permisos se sincronicen automáticamente.
+      </div>
+    </div>
+
+    <p>
+      <strong>Gestión de documentos</strong>: El almacenamiento en la pestaña “Archivos” de cada canal 
+      se respalda en <em>SharePoint</em>. En chats privados, los archivos se suben a <em>OneDrive</em>. 
+      Esta integración ayuda a que todos los documentos estén centralizados y versionados. 
+      Un usuario que desee ver opciones avanzadas de SharePoint puede hacerlo con el botón “Abrir en SharePoint” 
+      desde la pestaña Archivos de Teams.
+    </p>
+
+    <p>
+      <strong>Tareas y Planner</strong>: Dentro de Teams, la app “Tareas” (Tasks by Planner and To Do) 
+      muestra tanto las tareas de Planner asignadas a un equipo como las tareas personales de To Do. 
+      Así, si un compañero te asigna una tarea en el plan de tu canal, la verás no solo en Planner, 
+      sino también en tu lista personal. Esta convergencia ahorra tiempo y refuerza la organización.
+    </p>
+
+    <p>
+      <strong>Uso del calendario y sincronización con Outlook</strong>: 
+      Cada reunión programada en Teams genera (o se vincula a) un evento en tu calendario de Outlook, 
+      garantizando que la disponibilidad se refleje en ambas aplicaciones. 
+      Si tu estado en Outlook está como “En reunión”, en Teams aparecerás automáticamente como Ocupado.
+    </p>
+
+    <p>
+      Para el día a día, esta integración significa que tu entorno de trabajo digital gira en torno a Teams, 
+      mientras que los servicios subyacentes (SharePoint, Exchange Online, OneDrive, Planner) sostienen 
+      el funcionamiento colaborativo. El usuario final se beneficia de la sencillez de una plataforma unificada, 
+      mientras que el área de TI aprovecha el control centralizado de la suite Microsoft 365.
+    </p>
+
+    <div class="image-wrapper">
+      <img src="https://i.postimg.cc/C5Fqvmwv/Canva_-_Working_in_a_group-min.jpg" alt="Captura representando la integración con Microsoft 365">
+    </div>
+  </section>
+
+  <!-- Sección Casos de Uso en Chile -->
+  <section id="casos-de-uso" class="bg-alt fade-in">
+    <h2>
+      <svg aria-hidden="true" viewBox="0 0 512 512"><path d="M256 8C119 8 8 119 8 256c0 137 111 248 248 248s248-111 248-248C504 119 393 8 256 8zm-29.2 408.5c-6.2 5.5-15.9 4.8-21.4-1.4L74.1 267c-5.5-6.2-4.8-15.9 1.4-21.4l21.4-19.2c6.2-5.5 15.9-4.8 21.4 1.4l95.9 108.8 202.3-189c6.2-5.8 15.9-5.4 21.4.8l18.8 19.9c5.5 5.8 5.2 14.9-.7 20.4l-243.6 227z"></path></svg>
+      Casos de Uso en Empresas y Sector Público de Chile
+    </h2>
+
+    <p>
+      La adopción de Microsoft Teams en Chile se ha dado en diversos ámbitos: <strong>empresas privadas</strong>, 
+      <strong>organismos gubernamentales</strong>, e incluso <strong>instituciones educativas</strong>. 
+      La flexibilidad de Teams permite desde un uso básico de mensajería y videollamadas, 
+      hasta integraciones avanzadas con telefonía corporativa y soluciones de inteligencia artificial.
+    </p>
+    <p>
+      <strong>Sector financiero:</strong> Varios de los principales bancos chilenos, 
+      como Banco de Chile y otras entidades, migraron masivamente a Microsoft 365, 
+      habilitando a miles de trabajadores con Teams, Exchange y OneDrive. 
+      En algunos casos, integraron la telefonía corporativa dentro de Teams (Phone System), 
+      permitiendo a los empleados recibir llamadas en su número fijo desde la app de Teams, 
+      ya sea en el computador o el celular. Esto facilitó el trabajo remoto y redujo costos de infraestructura.
+    </p>
+    <p>
+      <strong>Sector energético y minero:</strong> Empresas como Colbún y Codelco usan Teams 
+      para conectar a sus equipos distribuidos en distintas faenas. Destaca la adopción de 
+      <em>Microsoft 365 Copilot</em> en Colbún, donde se probó la capacidad de Teams de generar resúmenes automáticos 
+      de reuniones y minutas, aprovechando la inteligencia artificial para agilizar la gestión de proyectos.
+    </p>
+    <p>
+      <strong>Retail y grandes corporaciones:</strong> Durante la pandemia, Falabella, Cencosud, 
+      y otras empresas de gran tamaño optaron por Teams para mantener a sus colaboradores en contacto. 
+      Con esquemas híbridos (teletrabajo parcial), las videollamadas y la mensajería en tiempo real 
+      transformaron la cultura interna, reduciendo la dependencia del correo electrónico. 
+      Además, la integración con Planner y la app de Tareas ayudó en la coordinación de múltiples proyectos de retail.
+    </p>
+    <p>
+      <strong>Sector público y gobierno:</strong> Numerosos ministerios y municipios chilenos 
+      adoptaron Teams para reuniones remotas y gestión de documentos. Instituciones como 
+      el Ministerio de Educación (Mineduc) proporcionaron acceso gratuito a Office 365 
+      (incluyendo Teams) a miles de escuelas, facilitando la enseñanza virtual. 
+      Otros organismos han usado Teams para concejos municipales, coordinación de planes regionales, 
+      e incluso telemedicina en ciertos servicios de salud, 
+      siempre cumpliendo con las normas de privacidad de datos.
+    </p>
+
+    <div class="alert-box success">
+      <div class="alert-icon">
+        <svg viewBox="0 0 512 512"><path d="M173.9 439.4l-166.4-166.4c-4.7-4.7-4.7-12.3 0-17l28.3-28.3c4.7-4.7 12.3-4.7 17 0l120.8 120.8 265.5-265.7c4.7-4.7 12.3-4.7 17 0l28.3 28.3c4.7 4.7 4.7 12.3 0 17L190.9 439.4c-4.7 4.7-12.3 4.7-17 0z"></path></svg>
+      </div>
+      <div class="alert-content">
+        <strong>Éxito en adopción:</strong> En algunas municipalidades, se realizaron concejos virtuales 
+        transmitidos a la comunidad, cumpliendo las normas de transparencia y permitiendo la participación ciudadana.
+      </div>
+    </div>
+
+    <p>
+      <strong>ONGs y fundaciones:</strong> Organizaciones como Innovacien y Fundación Descúbreme usaban Teams 
+      incluso antes de 2020, para conectar equipos de distintas regiones. Durante la crisis sanitaria, 
+      su experiencia previa facilitó el cambio al teletrabajo, continuando sus labores sociales sin interrupciones.
+    </p>
+    <p>
+      En general, los <em>principales beneficios</em> observados en estos casos de uso incluyen: 
+      mejor comunicación interna, disminución de la dependencia del correo electrónico, 
+      flexibilidad para trabajar desde cualquier ubicación, y mayor resiliencia ante contingencias (como desastres naturales).
+    </p>
+    <p>
+      Por supuesto, también han surgido <em>desafíos</em>: capacitación acelerada, resistencia al cambio en algunos empleados, 
+      problemas de conectividad (especialmente en zonas rurales), y la necesidad de implementar políticas claras de seguridad 
+      y privacidad para proteger datos sensibles de clientes o ciudadanos.
+    </p>
+  </section>
+
+  <!-- Sección Normativas y Regulaciones -->
+  <section id="normativas" class="fade-in">
+    <h2>
+      <svg aria-hidden="true" viewBox="0 0 512 512"><path d="M160 0H64C28.65 0 0 28.65 0 64v96c0 35.35 28.65 64 64 64h96c35.35 0 64-28.65 64-64V64c0-35.35-28.65-64-64-64zm288 0h-96c-35.35 0-64 28.65-64 64v96c0 35.35 28.65 64 64 64h96c35.35 0 64-28.65 64-64V64c0-35.35-28.7-64-64-64zM160 288H64c-35.35 0-64 28.65-64 64v96c0 35.3 28.65 64 64 64h96c35.3 0 64-28.7 64-64v-96c0-35.35-28.65-64-64-64zm288 0h-96c-35.3 0-64 28.7-64 64v96c0 35.3 28.7 64 64 64h96c35.3 0 64-28.7 64-64v-96c0-35.35-28.65-64-64-64z"></path></svg>
+      Normativas y Regulaciones Generales en Chile
+    </h2>
+
+    <p>
+      Al implementar Teams en el entorno corporativo chileno (o en entidades públicas), 
+      es importante considerar la <strong>legislación local</strong> relacionada con:
+      <em>seguridad de la información</em>, <em>protección de datos personales</em>, 
+      y <em>cumplimiento sectorial</em> (por ejemplo, banca, salud, educación).
+    </p>
+    <p>
+      <strong>Protección de datos personales (Ley N°19.628):</strong> 
+      Esta ley establece las obligaciones para quienes traten datos personales (nombre, RUT, email, etc.). 
+      Si a través de Teams se manejan datos de colaboradores o clientes, 
+      la empresa es responsable de protegerlos, evitar accesos no autorizados y dar uso legítimo a la información. 
+      Además, Chile avanza hacia una nueva ley de protección de datos que se asemejaría al GDPR europeo, 
+      incrementando sanciones y exigencias de transparencia.
+    </p>
+    <p>
+      <strong>Seguridad de la información:</strong> Microsoft Teams cifra las comunicaciones en tránsito y almacenamiento, 
+      cumpliendo estándares como ISO 27001, SOC, etc. Sin embargo, las organizaciones deben configurar adecuadamente 
+      aspectos como control de acceso, autenticación multifactor y políticas de retención, 
+      para cumplir posibles requisitos de la <em>CMF</em> (Comisión para el Mercado Financiero) u otros entes reguladores.
+    </p>
+    <p>
+      <strong>Normativas sectoriales:</strong>  
+      - En el sector bancario, la CMF exige que la contratación de servicios cloud pase por un proceso de evaluación de riesgo.  
+      - En salud, los datos de pacientes son especialmente sensibles, por lo que se recomienda habilitar funciones 
+        de cifrado y restringir la compartición con invitados externos.  
+      - En educación, Mineduc impulsó la adopción de Office 365 garantizando la gratuidad para colegios públicos 
+        y validando la adecuada protección de la información de estudiantes.
+    </p>
+
+    <div class="alert-box warning">
+      <div class="alert-icon">
+        <svg viewBox="0 0 512 512"><path d="M256 8C119 8 8 119 8 256c0 137 111 248 248 248s248-111 248-248C504 119 393 8 256 8zM256 136c23.2 0 42 18.8 42 42s-18.8 42-42 42-42-18.8-42-42 18.8-42 42-42zm56 246c0 6.6-5.4 12-12 12h-88c-6.6 0-12-5.4-12-12v-28c0-6.6 5.4-12 12-12h12v-61h-12c-6.6 0-12-5.4-12-12v-28c0-6.6 5.4-12 12-12h60c6.6 0 12 5.4 12 12v89h12c6.6 0 12 5.4 12 12v28z"></path></svg>
+      </div>
+      <div class="alert-content">
+        <strong>Atención:</strong> Las empresas deben informar a sus usuarios 
+        si monitorearán chats o grabaciones de reuniones, respetando la ley laboral y el derecho a la privacidad.
+      </div>
+    </div>
+
+    <p>
+      <strong>Ley de Teletrabajo:</strong> 
+      En Chile, la Ley N°21.220 regula el trabajo a distancia, garantizando que los trabajadores tengan derecho 
+      a la desconexión digital. Teams, al facilitar la comunicación constante, puede generar sobrecarga si no se establecen límites. 
+      Se recomienda definir horarios y usar el estado “No molestar” para apoyar el cumplimiento de este derecho.
+    </p>
+    <p>
+      <strong>Transparencia en el sector público:</strong> 
+      En organismos gubernamentales, las sesiones o reuniones que por ley sean públicas deben ser accesibles. 
+      Algunas municipalidades usan Teams para transmitir sus concejos en vivo o compartir grabaciones. 
+      Esto cumple con la Ley de Transparencia y acceso a la información pública.
+    </p>
+    <p>
+      <em>En resumen</em>, Microsoft Teams cumple con estándares internacionales de seguridad y privacidad, 
+      pero recae en cada organización la configuración apropiada y el cumplimiento de las leyes locales. 
+      Para la mayoría de empresas chilenas, el uso de Teams (parte de Microsoft 365) se considera una opción confiable, 
+      siempre y cuando se apliquen buenas prácticas y se respeten las regulaciones de cada sector.
+    </p>
+  </section>
+
+  <!-- Sección "¿Sabías que...?" con tarjetas giratorias -->
+  <section id="sabias-que" class="bg-alt fade-in">
+    <h2>
+      <svg aria-hidden="true" viewBox="0 0 512 512"><path d="M308 96h-40.9l-12.5-25C249.8 64.4 245.9 64 242 64h-28c-3.9 0-7.8.4-11.4 7L190 96H150c-30.9 0-54.3 29.1-45.4 58.8l42.2 140.8c6 20.1 24.4 34.3 45.4 34.3H320c20.9 0 39.3-14.2 45.4-34.3l42.2-140.8C416.3 125.1 392.9 96 362 96h-54zM192 384c-35.3 0-64 28.7-64 64 0 35.3 44.2 64 64 64h128c19.8 0 32-28.7 32-64 0-35.3-28.7-64-64-64z"></path></svg>
+      ¿Sabías que…?
+    </h2>
+    <p>
+      En esta sección presentamos <strong>tarjetas interactivas</strong> que giran al pasar el cursor 
+      (o hacer clic en dispositivos táctiles). Descubrirás datos curiosos sobre Microsoft Teams en el contexto chileno.
+    </p>
+
+    <div class="flip-cards-container">
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <h4>Dato Curioso #1</h4>
+            <p>Haz hover o clic</p>
+          </div>
+          <div class="flip-card-back">
+            <h4>Conexión Chile-Europa</h4>
+            <p>
+              Varios usuarios de Teams en Chile colaboran con sedes europeas en tiempo real.  
+              SharePoint y OneDrive facilitan el intercambio ágil de documentos con sucursales en distintos husos horarios.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <h4>Dato Curioso #2</h4>
+            <p>Haz hover o clic</p>
+          </div>
+          <div class="flip-card-back">
+            <h4>Uso en Educación</h4>
+            <p>
+              Se estima que más de 2.000 escuelas chilenas han utilizado Teams para clases virtuales, 
+              especialmente en zonas extremas donde la conectividad terrestre es limitada.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <h4>Dato Curioso #3</h4>
+            <p>Haz hover o clic</p>
+          </div>
+          <div class="flip-card-back">
+            <h4>Reemplazo de PBX</h4>
+            <p>
+              Algunas empresas nacionales han migrado sus antiguas centrales telefónicas (PBX) a la función Phone System 
+              de Teams, reduciendo drásticamente costos de mantención.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <h4>Dato Curioso #4</h4>
+            <p>Haz hover o clic</p>
+          </div>
+          <div class="flip-card-back">
+            <h4>Copilot en Acción</h4>
+            <p>
+              La IA Copilot de Microsoft 365 ya se ha testeado en Chile para resumir reuniones de directorio, 
+              ahorrando horas de redacción de minutas y facilitando la colaboración ejecutiva.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="spacer-bottom"></div>
+
+  <script>
+    // Intersection Observer para fade-in
+    const elementsToObserve = document.querySelectorAll('.fade-in, .alert-box');
+    const config = { threshold: 0.1 };
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('show');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, config);
+
+    elementsToObserve.forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>

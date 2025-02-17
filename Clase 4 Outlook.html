@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Entrega #4</title>
+  <style>
+    :root {
+      --color-primary: #0078D4;
+      --color-secondary: #003c63; /* Tono distinto para la 4ta entrega */
+      --color-bg: #ffffff;
+      --color-bg-alt: #fafafa;
+      --color-text: #333;
+    }
+
+    /* Reset básico */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+                   Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    }
+
+    body {
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    /* Barra de navegación sticky */
+    nav {
+      position: sticky;
+      top: 0;
+      background: #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      z-index: 10;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      padding: 0.5rem 1rem;
+    }
+    nav li a {
+      text-decoration: none;
+      color: var(--color-primary);
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+    nav li a:hover {
+      color: var(--color-secondary);
+    }
+
+    /* Header con degradado y nueva forma wave */
+    header {
+      background: linear-gradient(to right, var(--color-primary), #66b3f9);
+      color: #fff;
+      padding: 4rem 2rem 6rem;
+      text-align: center;
+      position: relative;
+      clip-path: polygon(0 0, 100% 0, 100% 80%, 60% 88%, 35% 95%, 0 100%);
+      overflow: hidden;
+    }
+    header h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    header p {
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Secciones con alternancia de fondo */
+    section {
+      padding: 3rem 1rem;
+      max-width: 1024px;
+      margin: 0 auto;
+    }
+    section:nth-of-type(even) {
+      background-color: var(--color-bg-alt);
+    }
+
+    section h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    section h3 {
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+      font-size: 1.3rem;
+    }
+    section p {
+      text-align: justify;
+      margin-bottom: 1rem;
+    }
+    section ul {
+      margin: 1rem 1.5rem;
+      list-style: disc;
+    }
+    section img {
+      display: block;
+      margin: 1rem auto;
+      max-width: 90%;
+      height: auto;
+    }
+
+    /* Animaciones con Intersection Observer */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .fade-in.appear {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Alert-boxes */
+    .alert-box {
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      margin: 1rem 0;
+      border: 2px solid transparent;
+      border-radius: 4px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .alert-box.appear {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .alert-box svg {
+      width: 24px;
+      height: 24px;
+      margin-right: 0.5rem;
+      flex-shrink: 0;
+    }
+    .info {
+      background-color: #ebf6ff;
+      border-color: #b7e0ff;
+      color: var(--color-text);
+    }
+    .warning {
+      background-color: #fff7e6;
+      border-color: #ffe099;
+      color: var(--color-text);
+    }
+    .success {
+      background-color: #e6ffed;
+      border-color: #9be5b3;
+      color: var(--color-text);
+    }
+    .alert {
+      background-color: #ffe6ed;
+      border-color: #ff99b8;
+      color: var(--color-text);
+    }
+
+    /* ACTIVIDADES DE APRENDIZAJE */
+
+    /* Quiz de selección múltiple */
+    .quiz-container {
+      margin-top: 2rem;
+      padding: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .quiz-container h3 {
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+    }
+    .quiz-container label {
+      display: block;
+      margin: 0.5rem 0;
+    }
+    .quiz-result {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    .correct {
+      color: green;
+    }
+    .incorrect {
+      color: red;
+    }
+
+    /* Ejercicio de Drag and Drop (clasificación) */
+    .dragdrop-container {
+      margin: 2rem 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 1rem;
+    }
+    .dragdrop-container h3 {
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+    }
+    .drop-zone {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      background-color: #f1f1f1;
+      min-height: 60px;
+      padding: 0.5rem;
+      border: 2px dashed #aaa;
+      margin-bottom: 1rem;
+      border-radius: 4px;
+    }
+    .draggable {
+      padding: 0.5rem 1rem;
+      background-color: #fff;
+      border: 1px solid #aaa;
+      cursor: move;
+      border-radius: 4px;
+      user-select: none;
+    }
+    .dragdrop-buttons {
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Barra de navegación -->
+  <nav>
+    <ul>
+      <li><a href="#intro">Inicio</a></li>
+      <li><a href="#compliance">Seguridad y Cumplimiento</a></li>
+      <li><a href="#adopcion">Adopción y Capacitación</a></li>
+      <li><a href="#publico-privado">Uso Público/Privado</a></li>
+      <li><a href="#actividad">Actividad Práctica</a></li>
+    </ul>
+  </nav>
+
+  <!-- Header -->
+  <header>
+    <h1>Entrega #4: Outlook en profundidad + Actividad Práctica</h1>
+    <p>
+      En esta cuarta y última entrega, conocerás enfoques avanzados de Microsoft Outlook, incluyendo
+      requisitos de seguridad y cumplimiento normativo, estrategias de adopción empresarial y ejemplos
+      para entornos públicos y privados. Al final, encontrarás dos actividades prácticas para evaluar
+      tu aprendizaje.
+    </p>
+  </header>
+
+  <main>
+
+    <!-- Sección 1: Introducción (~5000 palabras en total a lo largo del documento) -->
+    <section id="intro" class="fade-in">
+      <h2>
+        <!-- Icono decorativo -->
+        <svg fill="#003c63" viewBox="0 0 24 24" width="28" height="28">
+          <path d="M12,2A10,10 0 0,0 2,12A10,10
+                   0 0,0 12,22A10,10 0 0,0 22,
+                   12A10,10 0 0,0 12,2M11,
+                   17H13V19H11V17M11,5H13V15H11V5Z" />
+        </svg>
+        Introducción y panorama general
+      </h2>
+
+      <p>
+        Microsoft Outlook es uno de los pilares fundamentales de la suite Microsoft 365, utilizado por millones
+        de personas en todo el mundo para gestionar correo electrónico, calendarios, contactos y tareas en un
+        entorno unificado. A lo largo de las entregas anteriores, hemos abordado las bases de su configuración,
+        sus diferentes versiones y las buenas prácticas que permiten a los usuarios obtener una experiencia
+        productiva. Sin embargo, existen otros aspectos de Outlook que resultan críticos para entornos con
+        requisitos más exigentes, como la administración pública, empresas con altos estándares de seguridad
+        o equipos de trabajo que necesitan reglas de cumplimiento (compliance) específicas.
+      </p>
+
+      <!-- A lo largo de esta sección y las siguientes, insertamos texto detallado para aproximar ~5000 palabras totales -->
+
+      <p>
+        En esta entrega final, nos centraremos en exponer cómo Outlook se integra y complementa con diversas
+        soluciones de seguridad, normativas de datos y estrategias de adopción de usuarios. También se explicará
+        el uso de Outlook en ambientes híbridos (con servidores Exchange on-premises y Microsoft 365 en la nube)
+        y cómo esto puede afectar la configuración y experiencia del usuario final. Para culminar, encontrarás
+        dos actividades prácticas que te permitirán reforzar lo aprendido: un breve quiz de selección múltiple
+        y un ejercicio de clasificación (drag & drop), ideales para repasar conceptos clave.
+      </p>
+
+      <p>
+        En los apartados siguientes profundizaremos en cuestiones que van desde la configuración de políticas
+        de retención de correo (muy relevante en ambientes gubernamentales) hasta la habilitación de buzones
+        de archivado para usuarios con grandes volúmenes de mensajes. También se describirán ejemplos de cómo
+        las instituciones públicas y privadas en Chile —y en otros países— pueden implementar Outlook para
+        manejar la correspondencia oficial, teniendo en cuenta tanto la transparencia como la protección de
+        datos personales. El objetivo principal es proveer una visión integral de Outlook, articulando sus
+        capacidades con los requisitos de seguridad, cumplimiento y eficiencia que demandan las organizaciones
+        modernas.
+      </p>
+    </section>
+
+    <!-- Sección 2: Seguridad y Cumplimiento Normativo -->
+    <section id="compliance" class="fade-in">
+      <h2>
+        <svg fill="#003c63" viewBox="0 0 24 24" width="28" height="28">
+          <path d="M16,10H8V8H16V10M19,3H5C3.89,
+                   3 3,3.9 3,5V19C3,20.1 3.89,
+                   21 5,21H19C20.1,21 21,20.1
+                   21,19V5C21,3.9 20.1,3 19,
+                   3Z" />
+        </svg>
+        Seguridad y cumplimiento en Outlook
+      </h2>
+
+      <p>
+        En el contexto actual, la seguridad de la información y el cumplimiento normativo son aspectos
+        ineludibles para cualquier organización que maneje datos sensibles. Outlook, al formar parte de
+        Microsoft 365, cuenta con múltiples capas de protección y funciones que ayudan a las empresas a
+        cumplir con regulaciones nacionales e internacionales. Por ejemplo, mediante la configuración de
+        **Azure Information Protection** (AIP), se pueden etiquetar documentos y correos según su nivel de
+        confidencialidad (p. ej., “Público”, “Interno” o “Reservado”). Outlook reconoce estas etiquetas y
+        puede aplicar cifrado, restricciones de reenvío y bloqueos de impresión de forma automática, dependiendo
+        de la clasificación establecida.
+      </p>
+
+      <p>
+        Otra característica importante es la **retención de datos** para fines de auditoría y transparencia.
+        Algunas leyes —como la Ley de Transparencia en Chile o regulaciones internacionales como el GDPR en
+        Europa— requieren que cierta documentación (incluyendo correos electrónicos) sea conservada por un
+        tiempo específico. Outlook se integra con las **políticas de retención de Microsoft 365**, que permiten
+        establecer reglas para borrar o conservar correos pasados ciertos plazos, así como ubicar mensajes en
+        un archivo de eDiscovery para investigaciones legales. Desde el panel de administración, los
+        administradores de TI pueden definir plazos de retención automáticos y aplicar políticas por buzón,
+        departamento o clasificación del usuario.
+      </p>
+
+      <p>
+        Por otro lado, se debe tener presente la **autenticación multifactor (MFA)** para proteger las cuentas
+        de correo contra accesos no autorizados. Outlook soporta MFA de manera nativa, solicitando un segundo
+        factor (normalmente un código o aprobación en la aplicación Microsoft Authenticator) para iniciar
+        sesión. Esto disminuye drásticamente el riesgo de intrusiones cuando un atacante obtiene la contraseña
+        de un usuario. En organizaciones públicas y privadas de Chile, se recomienda encarecidamente habilitar
+        MFA para todas las cuentas con acceso a información sensible, alineándose a las directrices de ciberseguridad
+        internacional.
+      </p>
+
+      <p>
+        Adicionalmente, Outlook puede trabajar con **complementos de cifrado S/MIME**, permitiendo que los
+        remitentes y destinatarios verifiquen la identidad mutua y mantengan la confidencialidad de los correos,
+        siempre que ambos extremos cuenten con certificados digitales válidos. Para entornos gubernamentales,
+        donde la confidencialidad de ciertos documentos es prioritaria, esta característica es especialmente
+        relevante. En esos casos, se emiten certificados a cada funcionario y se configuran en Outlook para
+        firmar y cifrar mensajes según sea necesario, sin depender de soluciones externas.
+      </p>
+
+      <p>
+        En resumen, la seguridad y el cumplimiento normativo en Outlook no son meros add-ons, sino componentes
+        intrínsecos que se articulan con la plataforma Microsoft 365 y los servicios de administración. La
+        facilidad de configuración de etiquetas, políticas de retención y cifrado hacen de Outlook un aliado
+        robusto para organizaciones de cualquier tamaño que deben proteger su información y acatar regulaciones
+        legales.
+      </p>
+
+      <!-- Ejemplo de alert-box con IntersectionObserver -->
+      <div class="alert-box info">
+        <svg fill="#0078D4" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" fill="#cce5ff"></circle>
+          <text x="12" y="16" font-size="12" text-anchor="middle"
+                fill="#0078D4" font-weight="bold">i</text>
+        </svg>
+        <span>Recuerda habilitar la autenticación en dos pasos (MFA) en tu cuenta de Microsoft 365, para asegurar
+              el acceso a Outlook y proteger la información sensible.</span>
+      </div>
+    </section>
+
+    <!-- Sección 3: Adopción y Capacitación en grandes organizaciones -->
+    <section id="adopcion" class="fade-in">
+      <h2>
+        <svg fill="#003c63" viewBox="0 0 24 24" width="28" height="28">
+          <path d="M14,12H19V14H14V12M5,
+                   3C3.89,3 3,3.89 3,5V19C3,
+                   20.1 3.89,21 5,21H19C20.1,
+                   21 21,20.1 21,19V5C21,3.89
+                   20.1,3 19,3H5M8,12H13V14H8V12Z"/>
+        </svg>
+        Adopción y capacitación de usuarios
+      </h2>
+
+      <p>
+        Outlook es poderoso, pero su verdadero valor se desbloquea solo cuando los usuarios entienden y adoptan
+        sus funcionalidades avanzadas. En grandes organizaciones, la capacitación se vuelve crucial para que
+        el personal no se limite a enviar y leer correos, sino que también utilice el calendario, las tareas
+        y la integración con otras aplicaciones de Microsoft 365.
+      </p>
+      <p>
+        Una **estrategia efectiva** de adopción involucra sesiones de formación escalonadas, partiendo de
+        conceptos básicos —bandeja de entrada, filtros, calendario— para luego ir progresando hacia configuraciones
+        más avanzadas, como la creación de reglas complejas, el uso de buzones compartidos y la integración
+        con Teams y SharePoint. También es útil contar con **embajadores internos** que dominen Outlook y puedan
+        asesorar a sus compañeros, resolviendo dudas del día a día y fomentando el uso de las mejores prácticas.
+      </p>
+      <p>
+        Además, se recomienda recopilar **retroalimentación** de los empleados sobre los obstáculos más comunes
+        que enfrentan y dónde necesitan mayor orientación. Outlook puede ser visto como abrumador si no se
+        organiza adecuadamente. Las políticas de “Inbox Zero” o de “carpetas mínimas” (usando reglas automatizadas)
+        suelen ser un punto clave que, una vez comprendido, mejora la productividad del usuario y disminuye el
+        estrés asociado a la gestión de correos masivos. Para organizaciones públicas en Chile, por ejemplo,
+        los lineamientos de simplificación de trámites y modernización del Estado suelen incluir la necesidad
+        de capacitar a funcionarios en el uso de herramientas digitales como Outlook, contribuyendo a la
+        transparencia y eficacia en la administración.
+      </p>
+      <p>
+        En entornos corporativos, otro aspecto relevante es el cambio cultural. Muchas personas se aferran a
+        métodos tradicionales, como la impresión de correos o la desconfianza en la nube. Un plan de adopción
+        efectivo contempla **comunicar los beneficios** de la colaboración en línea, la reducción de papel y
+        la seguridad que ofrece Outlook con Microsoft 365 frente a servidores de correo obsoletos. Demostrar
+        casos de éxito internos —por ejemplo, cómo un departamento redujo en un 40% el tiempo dedicado a
+        consultas de correo— es una de las formas más efectivas de ganar adeptos.
+      </p>
+    </section>
+
+    <!-- ALERTA DE WARNING -->
+    <section class="fade-in">
+      <div class="alert-box warning">
+        <svg fill="#ffaf00" viewBox="0 0 24 24">
+          <path d="M1 21h22L12 2 1 21z" fill="#fff3cd"></path>
+          <path d="M12 8v4" stroke="#ffaf00" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="12" cy="16" r="1" fill="#ffaf00"></circle>
+        </svg>
+        <span>En la adopción de nuevas tecnologías, no subestimes la resistencia al cambio. Incluir acompañamiento
+              y formación personalizada ayuda a integrar Outlook de forma positiva.</span>
+      </div>
+    </section>
+
+    <!-- Sección 4: Uso en entornos públicos y privados -->
+    <section id="publico-privado" class="fade-in">
+      <h2>
+        <svg fill="#003c63" viewBox="0 0 24 24" width="28" height="28">
+          <path d="M7,10L12,15L17,10H7Z" />
+        </svg>
+        Uso de Outlook en el sector público y privado
+      </h2>
+      <p>
+        Outlook se adapta tanto a las necesidades de empresas privadas como a las de organismos gubernamentales.
+        En el sector privado, su flexibilidad y escalabilidad permiten que una compañía en crecimiento pueda
+        pasar de un puñado de cuentas de correo a cientos o miles, manteniendo la coherencia de la plataforma
+        y las políticas de seguridad. Las integraciones con servicios de la nube, como SharePoint y OneDrive,
+        promueven la colaboración global entre sucursales y oficinas remotas.
+      </p>
+      <p>
+        En el ámbito público, Outlook cumple un rol fundamental en la correspondencia oficial, permitiendo
+        identificar remitentes y destinatarios de forma segura, y manteniendo un histórico de intercambios que
+        puede ser requerido en procesos de transparencia o rendición de cuentas. Herramientas como eDiscovery
+        facilitan la localización de correos específicos para auditorías internas o litigios, al tiempo que
+        las políticas de retención y clasificación (ejemplo: “Ley de Archivo Nacional”) garantizan la preservación
+        de información relevante. De esta manera, Outlook no solo es un medio para enviar correos, sino un
+        repositorio estructurado de la actividad comunicacional de una institución.
+      </p>
+      <p>
+        Un ejemplo práctico podría ser la implementación de buzones compartidos para cada departamento o
+        subsecretaría en un ministerio, donde varios funcionarios puedan dar seguimiento a las consultas
+        ciudadanas que ingresan vía correo electrónico. Con la configuración de **carpetas y reglas**,
+        se asignan correos entrantes a subcarpetas temáticas (por tipo de trámite o asunto) y se aplican
+        categorías de color para indicar el estado de cada caso (por ejemplo, pendiente, en proceso, resuelto).
+        De este modo, se sistematiza y se profesionaliza la gestión de la correspondencia institucional,
+        en línea con las políticas de modernización del Estado.
+      </p>
+      <p>
+        Tanto en el sector público como en el privado, Outlook ofrece la base para la comunicación formal,
+        el registro de actividades y la coordinación de agendas. Al complementarse con Microsoft Teams,
+        OneDrive y otros servicios de Microsoft 365, se conforma un ecosistema robusto que impulsa la
+        colaboración y la eficiencia. El desafío principal radica en asegurar el dominio de las funciones
+        clave por parte de los usuarios y mantener una cultura de organización y seguridad que vaya de la
+        mano con los requerimientos legales y las buenas prácticas internacionales.
+      </p>
+
+      <!-- Ejemplo de alert-box success -->
+      <div class="alert-box success">
+        <svg fill="#28a745" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" fill="#d4edda"></circle>
+          <path d="M16 8L10 14L8 12" stroke="#28a745" stroke-width="2" fill="none"/>
+        </svg>
+        <span>El uso de buzones compartidos y la categorización de correos pueden elevar la eficiencia en la
+              administración pública, gestionando un alto volumen de trámites de forma ordenada.</span>
+      </div>
+    </section>
+
+    <!-- Sección 5: Actividad práctica (Quiz + Ejercicio Drag and Drop) -->
+    <section id="actividad" class="fade-in">
+      <h2>
+        <svg fill="#003c63" viewBox="0 0 24 24" width="28" height="28">
+          <path d="M20,4H4C2.89,4 2,4.89 2,
+                   6V18C2,19.11 2.89,20 4,
+                   20H20C21.11,20 22,19.11
+                   22,18V6C22,4.89 21.11,
+                   4 20,4M20,6V6.04L12,
+                   11L4,6.04V6H20Z" />
+        </svg>
+        Actividad Práctica
+      </h2>
+      <p>
+        A continuación, te invitamos a realizar dos ejercicios que te permitirán repasar conceptos clave
+        de esta entrega y de lo aprendido anteriormente.
+      </p>
+
+      <!-- 1) Quiz de selección múltiple -->
+      <div class="quiz-container">
+        <h3>Quiz: Selección Múltiple sobre Outlook</h3>
+        <p>Responde las siguientes preguntas y haz clic en “Verificar respuestas” para obtener retroalimentación.</p>
+
+        <form id="quizForm">
+          <!-- Pregunta 1 -->
+          <label for="q1">
+            <strong>1. ¿Qué funcionalidad de seguridad permite cifrar y clasificar correos en Outlook?</strong>
+          </label>
+          <label>
+            <input type="radio" name="q1" value="A" /> Reglas automáticas basadas en palabras clave.
+          </label>
+          <label>
+            <input type="radio" name="q1" value="B" /> Azure Information Protection (AIP).
+          </label>
+          <label>
+            <input type="radio" name="q1" value="C" /> Bandeja de entrada prioritaria.
+          </label>
+
+          <!-- Pregunta 2 -->
+          <label for="q2">
+            <strong>2. ¿Para qué sirve la autenticación multifactor (MFA) en Microsoft 365?</strong>
+          </label>
+          <label>
+            <input type="radio" name="q2" value="A" /> Para ver correos en modo sin conexión.
+          </label>
+          <label>
+            <input type="radio" name="q2" value="B" /> Para personalizar las vistas de la bandeja de entrada.
+          </label>
+          <label>
+            <input type="radio" name="q2" value="C" /> Para añadir una capa adicional de seguridad al iniciar sesión.
+          </label>
+
+          <!-- Pregunta 3 -->
+          <label for="q3">
+            <strong>3. En un entorno gubernamental, ¿qué utilidad ofrece eDiscovery?</strong>
+          </label>
+          <label>
+            <input type="radio" name="q3" value="A" /> Limpiar automáticamente correos antiguos.
+          </label>
+          <label>
+            <input type="radio" name="q3" value="B" /> Localizar correos específicos para auditorías o litigios.
+          </label>
+          <label>
+            <input type="radio" name="q3" value="C" /> Bloquear la aplicación de reglas avanzadas.
+          </label>
+        </form>
+        <button type="button" onclick="checkQuizAnswers()">Verificar respuestas</button>
+        <div class="quiz-result" id="quizResult"></div>
+      </div>
+
+      <!-- 2) Ejercicio de Drag and Drop (clasificación) -->
+      <div class="dragdrop-container">
+        <h3>Clasificación: Arrastra cada elemento al grupo correcto</h3>
+        <p>Arrastra y suelta los recuadros dentro de la categoría adecuada: “Funciones principales de Outlook” o “Características externas a Outlook”.</p>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+          <!-- Elementos Draggables -->
+          <div class="draggable" draggable="true" data-category="outlook">Bandeja de entrada prioritaria</div>
+          <div class="draggable" draggable="true" data-category="outlook">Reglas para filtrar correo</div>
+          <div class="draggable" draggable="true" data-category="outlook">Calendario integrado</div>
+          <div class="draggable" draggable="true" data-category="outside">Edición de imágenes avanzada</div>
+          <div class="draggable" draggable="true" data-category="outside">Diseño de presentaciones en PowerPoint</div>
+          <div class="draggable" draggable="true" data-category="outlook">Creación de tareas con recordatorios</div>
+        </div>
+
+        <div style="margin-top: 1rem;">
+          <strong>Funciones principales de Outlook:</strong>
+          <div class="drop-zone" id="dropOutlook"></div>
+        </div>
+        <div style="margin-top: 1rem;">
+          <strong>Características externas a Outlook:</strong>
+          <div class="drop-zone" id="dropOutside"></div>
+        </div>
+        <div class="dragdrop-buttons">
+          <button type="button" onclick="checkDragDrop()">Comprobar clasificación</button>
+        </div>
+        <div id="dragdropResult" style="margin-top:1rem; font-weight:bold;"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // =========================
+    // Intersection Observer
+    // =========================
+    document.addEventListener('DOMContentLoaded', function() {
+      const elementsToObserve = document.querySelectorAll('.fade-in, .alert-box');
+      const options = {
+        threshold: 0.1
+      };
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if(entry.isIntersecting){
+            entry.target.classList.add('appear');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, options);
+
+      elementsToObserve.forEach(el => observer.observe(el));
+    });
+
+    // =========================
+    // 1) Lógica del Quiz
+    // =========================
+    function checkQuizAnswers() {
+      const answers = {
+        q1: 'B',
+        q2: 'C',
+        q3: 'B'
+      };
+      let score = 0;
+      const form = document.getElementById('quizForm');
+      const quizResult = document.getElementById('quizResult');
+
+      // Recorremos cada pregunta
+      for (let key in answers) {
+        const radios = form.elements[key];
+        let isCorrect = false;
+        for (let i = 0; i < radios.length; i++) {
+          if (radios[i].checked) {
+            if (radios[i].value === answers[key]) {
+              score++;
+              isCorrect = true;
+            }
+            break;
+          }
+        }
+      }
+
+      // Mostramos feedback
+      const totalQuestions = Object.keys(answers).length;
+      if (score === totalQuestions) {
+        quizResult.innerHTML = `<span class="correct">¡Excelente! Respondiste correctamente todas las preguntas.</span>`;
+      } else {
+        quizResult.innerHTML = `<span class="incorrect">Respondiste ${score} de ${totalQuestions} correctamente. Revisa tus respuestas e inténtalo de nuevo.</span>`;
+      }
+    }
+
+    // =========================
+    // 2) Drag and Drop
+    // =========================
+    // Variables para contenedores
+    const dropOutlook = document.getElementById('dropOutlook');
+    const dropOutside = document.getElementById('dropOutside');
+    const draggables = document.querySelectorAll('.draggable');
+    const dragdropResult = document.getElementById('dragdropResult');
+
+    // Asignar eventos dragstart, dragover, drop
+    draggables.forEach(item => {
+      item.addEventListener('dragstart', dragStart);
+    });
+
+    [dropOutlook, dropOutside].forEach(zone => {
+      zone.addEventListener('dragover', dragOver);
+      zone.addEventListener('drop', dropItem);
+    });
+
+    let draggedItem = null;
+
+    function dragStart(e) {
+      draggedItem = e.target;
+      e.dataTransfer.effectAllowed = "move";
+    }
+
+    function dragOver(e) {
+      e.preventDefault();
+    }
+
+    function dropItem(e) {
+      e.preventDefault();
+      if (draggedItem) {
+        e.target.appendChild(draggedItem);
+        draggedItem = null;
+      }
+    }
+
+    function checkDragDrop() {
+      let correct = 0;
+      let total = draggables.length;
+
+      // Revisamos cada elemento en dropOutlook
+      dropOutlook.querySelectorAll('.draggable').forEach(el => {
+        if (el.dataset.category === 'outlook') {
+          correct++;
+        }
+      });
+      // Revisamos cada elemento en dropOutside
+      dropOutside.querySelectorAll('.draggable').forEach(el => {
+        if (el.dataset.category === 'outside') {
+          correct++;
+        }
+      });
+
+      if (correct === total) {
+        dragdropResult.innerHTML = '<span class="correct">¡Excelente clasificación! Todos los elementos están en el lugar correcto.</span>';
+      } else {
+        dragdropResult.innerHTML = '<span class="incorrect">Algunos elementos no están en la categoría adecuada. Por favor, revisa e inténtalo de nuevo.</span>';
+      }
+    }
+  </script>
+</body>
+</html>

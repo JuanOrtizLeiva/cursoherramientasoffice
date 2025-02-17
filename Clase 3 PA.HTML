@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Clase 3: Integraciones y Expansión de Power Automate (Versión Botón Expandible)</title>
+  <style>
+    /* =======================
+       VARIABLES DE COLOR
+       ======================= */
+    :root {
+      --color-primary: #0078D4;           /* Azul principal */
+      --color-secondary: #003b70;         /* Tonalidad variante para esta clase */
+      --color-bg: #ffffff;                /* Fondo base */
+      --color-bg-alt: #fafafa;            /* Fondo alterno */
+      --color-text: #333;                 /* Color de texto principal */
+      --header-gradient-start: #0078D4;   /* Degradado Header (inicio) */
+      --header-gradient-end: #78C2F3;     /* Degradado Header (fin) */
+    }
+
+    /* =======================
+       RESET BÁSICO
+       ======================= */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth; /* Scroll suave */
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+                   Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    }
+
+    body {
+      background-color: var(--color-bg);
+      color: var(--color-text);
+    }
+
+    /* =======================
+       ENCABEZADO CON "WAVE"
+       ======================= */
+    header {
+      position: relative;
+      background: linear-gradient(
+        to right,
+        var(--header-gradient-start),
+        var(--header-gradient-end)
+      );
+      color: #fff;
+      padding: 4rem 2rem 6rem 2rem;
+      text-align: center;
+      overflow: hidden;
+      /* Sin z-index para evitar stacking issues */
+    }
+
+    /* Forma "wave" con clip-path (Clase 3) */
+    .wave {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      clip-path: polygon(0 40%, 
+                         25% 55%, 
+                         50% 45%, 
+                         75% 60%, 
+                         100% 40%, 
+                         100% 100%, 
+                         0 100%);
+      background: linear-gradient(
+        to right,
+        var(--header-gradient-start),
+        var(--header-gradient-end)
+      );
+    }
+
+    .header-content {
+      position: relative;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    header p {
+      font-size: 1.1rem;
+      line-height: 1.5;
+    }
+
+    /* =======================
+       NAV STICKY
+       ======================= */
+    nav {
+      position: sticky;
+      top: 0;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      /* No z-index para evitar solapamiento con contenido */
+    }
+
+    nav ul {
+      display: flex;
+      justify-content: center;
+      list-style: none;
+    }
+
+    nav ul li a {
+      display: block;
+      padding: 1rem 1.5rem;
+      color: var(--color-primary);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    nav ul li a:hover {
+      color: var(--color-secondary);
+    }
+
+    /* =======================
+       SECCIONES DE CONTENIDO
+       ======================= */
+    section {
+      padding: 3rem 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .bg-alt {
+      background-color: var(--color-bg-alt);
+    }
+
+    section h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    section p {
+      margin-bottom: 1rem;
+      text-align: justify;
+      line-height: 1.6;
+    }
+
+    /* =======================
+       ALERT-BOXES
+       ======================= */
+    .alert-box {
+      border-left: 6px solid;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      border-radius: 4px;
+      display: flex;
+      align-items: flex-start;
+    }
+    .alert-box i {
+      margin-right: 0.75rem;
+      font-style: normal; /* simulamos icono */
+      font-weight: bold;
+      line-height: 1.2;
+    }
+
+    /* Info */
+    .alert-info {
+      background-color: #e3f2fd;
+      border-color: #90caf9;
+      color: #0d47a1;
+    }
+    .alert-info i::before {
+      content: "[i]";
+    }
+
+    /* Warning */
+    .alert-warning {
+      background-color: #fff4e1;
+      border-color: #ffe082;
+      color: #e65100;
+    }
+    .alert-warning i::before {
+      content: "[!]";
+    }
+
+    /* Success */
+    .alert-success {
+      background-color: #e8f5e9;
+      border-color: #a5d6a7;
+      color: #1b5e20;
+    }
+    .alert-success i::before {
+      content: "[✓]";
+    }
+
+    /* Alert */
+    .alert-alert {
+      background-color: #fce4ec;
+      border-color: #f48fb1;
+      color: #880e4f;
+    }
+    .alert-alert i::before {
+      content: "[x]";
+    }
+
+    /* =======================
+       ANIMACIONES (FADE-IN)
+       ======================= */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .fade-in-active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* =======================
+       BOTÓN EXPANDIBLE
+       ======================= */
+    .btn-primary {
+      background-color: var(--color-primary);
+      border: none;
+      color: #fff;
+      padding: 0.8rem 1.2rem;
+      font-size: 1rem;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+    .btn-primary:hover {
+      background-color: var(--color-secondary);
+    }
+
+    /* Contenedor expandible oculto por defecto */
+    .expandable-content {
+      display: none;
+      margin-top: 1rem;
+      background-color: #f9fcff; /* color suave para destacar */
+      border: 3px solid var(--color-primary);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+    .expandable-content h3 {
+      margin-top: 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header>
+    <div class="wave"></div>
+    <div class="header-content">
+      <h1>Clase 3: Integraciones y Expansión de Power Automate</h1>
+      <p>
+        En esta sesión exploraremos cómo potenciar tus flujos con más
+        conectores, integraciones con Microsoft 365 y servicios de terceros.  
+        Además, te mostraremos un ejemplo práctico de orquestación con
+        Microsoft Teams y cómo tener en cuenta aspectos legales en Chile
+        relacionados con datos y privacidad.
+      </p>
+    </div>
+  </header>
+
+  <!-- NAVEGACIÓN STICKY -->
+  <nav>
+    <ul>
+      <li><a href="#introduccion">Introducción</a></li>
+      <li><a href="#teams-integration">Integración con Teams</a></li>
+      <li><a href="#servicios-terceros">Servicios de Terceros</a></li>
+      <li><a href="#asuntos-legales">Asuntos Legales en Chile</a></li>
+      <li><a href="#boton-expandible">Ejemplo Interactivo</a></li>
+      <li><a href="#conclusion">Conclusiones</a></li>
+    </ul>
+  </nav>
+
+  <!-- SECCIÓN 1: INTRODUCCIÓN -->
+  <section id="introduccion" class="fade-in">
+    <h2>Introducción a las Integraciones</h2>
+    <p>
+      Power Automate es aún más potente cuando se conecta con diversas
+      aplicaciones y servicios. Ya vimos la importancia de triggers, acciones
+      y condiciones, pero a medida que construyes flujos más complejos,
+      necesitarás integrar herramientas como Microsoft Teams, Excel,
+      OneDrive, SharePoint e incluso sistemas externos (Slack, Google Drive,
+      SAP, etc.).
+    </p>
+    <p>
+      En esta clase aprenderás a identificar qué integraciones son clave para
+      tu organización y cómo empezar a aprovecharlas. También revisaremos
+      consideraciones legales específicas de Chile, pues al mover datos entre
+      plataformas, necesitas cumplir con la normativa local.
+    </p>
+
+    <div class="alert-box alert-info">
+      <i></i>
+      <div>
+        <strong>Recordatorio:</strong><br/>
+        Antes de conectar aplicaciones externas, asegúrate de tener las
+        credenciales necesarias y de que tu cuenta Power Automate tenga los
+        permisos adecuados para leer/escribir datos.
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 2: INTEGRACIÓN CON TEAMS -->
+  <section id="teams-integration" class="bg-alt fade-in">
+    <h2>1. Integración con Microsoft Teams</h2>
+    <p>
+      Microsoft Teams se ha convertido en una herramienta esencial para la
+      colaboración en muchas empresas, especialmente tras la adopción del
+      teletrabajo. Con Power Automate, puedes aprovechar la conectividad con
+      Teams para agilizar notificaciones y coordinación de tareas. Entre los
+      usos más comunes encontramos:
+    </p>
+    <ul style="margin-bottom:1rem; padding-left:1.5rem;">
+      <li>
+        <strong>Notificaciones de canal:</strong> Cuando se produce un
+        evento en SharePoint o se recibe un formulario en Microsoft Forms, tu
+        flujo puede notificar automáticamente a un canal de Teams,
+        asegurando que los responsables se enteren al instante.
+      </li>
+      <li>
+        <strong>Creación de tareas en Planner:</strong> Desde Teams, tu
+        equipo puede consultar y gestionar tareas creadas por Power Automate,
+        manteniendo todo en un solo lugar.
+      </li>
+      <li>
+        <strong>Mensajes directos:</strong> Ante eventos específicos
+        (aprobaciones urgentes, alertas críticas), tu flujo puede enviar
+        mensajes privados a usuarios dentro de Teams para una respuesta rápida.
+      </li>
+    </ul>
+    <p>
+      Además, si tu organización utiliza Teams como canal principal de
+      comunicación, integrar Power Automate ayuda a centralizar la información
+      y reducir el uso excesivo de correos electrónicos. Por ejemplo, un
+      administrativo podría automatizar el envío de informes diarios de
+      actividad directamente al canal de su equipo en Teams, en lugar de
+      saturar las bandejas de entrada individuales.
+    </p>
+  </section>
+
+  <!-- SECCIÓN 3: SERVICIOS DE TERCEROS -->
+  <section id="servicios-terceros" class="fade-in">
+    <h2>2. Conectores y Servicios de Terceros</h2>
+    <p>
+      Power Automate ofrece cientos de conectores que van más allá del
+      ecosistema Microsoft, permitiendo la comunicación con aplicaciones de
+      terceros: Slack, Google Drive, Dropbox, Mailchimp, Twitter, Salesforce,
+      y muchos más.
+    </p>
+    <p>
+      <strong>¿Por qué integrar servicios de terceros?</strong>  
+      Muchas empresas cuentan con soluciones mixtas (p. ej., usan Microsoft
+      365 pero también Slack o G Suite para ciertos equipos). Al conectar
+      todos estos servicios, logras flujos de trabajo verdaderamente
+      transversales, evitando la duplicación de datos y mejorando la
+      colaboración.
+    </p>
+    <ul style="margin-bottom:1rem; padding-left:1.5rem;">
+      <li>
+        <em>Slack + Power Automate:</em> Enviar un mensaje a un canal de
+        Slack cuando un archivo se sube a OneDrive.
+      </li>
+      <li>
+        <em>Google Drive + Power Automate:</em> Copiar automáticamente
+        archivos nuevos de Drive a SharePoint.
+      </li>
+      <li>
+        <em>Twitter + Power Automate:</em> Monitorear menciones y generar
+        alertas internas si hay un reclamo o comentario relevante sobre la
+        empresa.
+      </li>
+    </ul>
+    <p>
+      Estas integraciones requieren que cada conector esté habilitado y que
+      se proporcionen las credenciales adecuadas. También es recomendable
+      revisar la <em>letra chica</em> de los planes de licencias de Power
+      Automate, pues algunos conectores premium podrían requerir licencias
+      adicionales.
+    </p>
+
+    <div class="alert-box alert-success">
+      <i></i>
+      <div>
+        <strong>Consejo de escalabilidad:</strong><br/>
+        Empieza con flujos simples que unan dos o tres servicios. A medida
+        que la empresa confíe en Power Automate, podrás crear flujos más
+        sofisticados, integrando distintos departamentos y herramientas.
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 4: ASUNTOS LEGALES EN CHILE -->
+  <section id="asuntos-legales" class="bg-alt fade-in">
+    <h2>3. Asuntos Legales en Chile</h2>
+    <p>
+      Toda organización que maneje datos personales en Chile debe cumplir con
+      la Ley N° 19.628 sobre Protección de la Vida Privada, la cual exige
+      cuidado en el tratamiento de la información y la adopción de medidas
+      para evitar usos indebidos o no autorizados.
+    </p>
+    <p>
+      <strong>¿Por qué es relevante para Power Automate?</strong>  
+      Si un flujo transfiere datos personales (nombres, RUT, direcciones,
+      etc.) entre sistemas, los administradores deben asegurar el
+      consentimiento expreso de las personas y el resguardo de dichos datos
+      en todo momento. Esto incluye:
+    </p>
+    <ul style="margin-bottom:1rem; padding-left:1.5rem;">
+      <li>
+        Mantener la trazabilidad de quién accede a la información y con qué
+        fin.
+      </li>
+      <li>
+        Asegurar que los conectores empleados tengan cifrado en tránsito y
+        en reposo.
+      </li>
+      <li>
+        Configurar adecuadamente los permisos de usuarios y grupos que
+        gestionan los flujos.
+      </li>
+      <li>
+        Revisar las políticas de privacidad de cada servicio de terceros
+        integrado.
+      </li>
+    </ul>
+    <p>
+      Para entidades públicas, es esencial complementar esto con normas de
+      transparencia y regulaciones específicas, garantizando que los
+      procedimientos automatizados no contradigan los marcos legales.
+    </p>
+
+    <div class="alert-box alert-warning">
+      <i></i>
+      <div>
+        <strong>¡Cuidado!</strong><br/>
+        Ignorar la normativa sobre protección de datos puede derivar en
+        sanciones legales. Siempre consulta al área legal o de cumplimiento
+        (compliance) antes de automatizar procesos sensibles.
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 5: EJEMPLO INTERACTIVO (BOTÓN EXPANDIBLE EN VEZ DE MODAL) -->
+  <section id="boton-expandible" class="fade-in">
+    <h2>4. Ejemplo Interactivo (Botón Expandible)</h2>
+    <p>
+      En lugar de usar un modal, aquí encontrarás un botón que, al pulsarlo,
+      mostrará u ocultará un bloque de contenido sobre la
+      <strong>Orquestación Avanzada</strong> (Teams + AI Builder + Excel).
+      Haz clic para ver más detalles:
+    </p>
+    <button id="expandBtn" class="btn-primary">Ver Orquestación Avanzada</button>
+
+    <!-- Contenido que se mostrará/ocultará -->
+    <div id="expandableContent" class="expandable-content">
+      <h3>Orquestación Avanzada: Teams + AI Builder + Excel</h3>
+      <p>
+        Imagina que un cliente envía una imagen de un documento a tu canal
+        de Teams. Al recibir esa imagen, Power Automate la procesa con
+        <strong>AI Builder</strong> para extraer texto y validar datos
+        relevantes. Luego, el flujo inserta estos datos en Excel o
+        SharePoint y notifica automáticamente al encargado de área.
+        <strong>¿El resultado?</strong> Se reduce el tiempo manual de
+        registro de información, evitando además posibles errores de
+        tipeo o transcripción.
+      </p>
+      <p>
+        Si la información procesada cumple ciertos criterios (por ejemplo,
+        un valor mayor a un monto específico), Power Automate puede abrir
+        un hilo en Teams solicitando aprobación de un supervisor o
+        incluso enviar una alerta a un canal de incidencias. Todo esto
+        ocurre sin que el administrativo deba mover un dedo, más allá de
+        revisar las notificaciones.
+      </p>
+      <p>
+        Este tipo de flujo avanzado demuestra el potencial de combinar
+        <em>inteligencia artificial</em>, <em>colaboración en Teams</em> y
+        <em>almacenamiento de datos</em> de manera ágil y escalable.
+      </p>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 6: CONCLUSIONES -->
+  <section id="conclusion" class="bg-alt fade-in">
+    <h2>5. Conclusiones de la Clase 3</h2>
+    <p>
+      Al integrar Power Automate con Teams y servicios de terceros, verás
+      cómo se expanden las posibilidades de automatización en tu empresa. Al
+      mismo tiempo, es crucial respetar la normativa de protección de datos
+      en Chile y adoptar buenas prácticas de seguridad.
+    </p>
+    <p>
+      En la próxima clase, nos enfocaremos en <strong>escenarios de
+      aprobación compleja</strong> y <strong>monitoreo de flujos</strong> para
+      detectar errores y optimizar procesos en tiempo real. ¡Sigue
+      explorando estas potentes herramientas para aumentar la eficiencia de
+      tu organización!
+    </p>
+
+    <div class="alert-box alert-alert">
+      <i></i>
+      <div>
+        <strong>Recuerda:</strong><br/>
+        Siempre revisa los planes de licenciamiento disponibles y las
+        políticas internas de tu organización antes de implementar
+        automatizaciones masivas.
+      </div>
+    </div>
+  </section>
+
+  <!-- SCRIPT: Intersection Observer (fade-in) + Botón Expandible -->
+  <script>
+    // 1. ANIMACIÓN FADE-IN CON INTERSECTION OBSERVER
+    document.addEventListener("DOMContentLoaded", function() {
+      const options = { threshold: 0.1 };
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('fade-in-active');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, options);
+
+      document.querySelectorAll('.fade-in').forEach(el => {
+        observer.observe(el);
+      });
+    });
+
+    // 2. BOTÓN EXPANDIBLE (Reemplazo del Modal)
+    const expandBtn = document.getElementById("expandBtn");
+    const expandableContent = document.getElementById("expandableContent");
+
+    let isExpanded = false;
+    expandBtn.addEventListener("click", () => {
+      isExpanded = !isExpanded;
+      expandableContent.style.display = isExpanded ? "block" : "none";
+      expandBtn.textContent = isExpanded
+        ? "Cerrar Orquestación Avanzada"
+        : "Ver Orquestación Avanzada";
+    });
+  </script>
+</body>
+</html>

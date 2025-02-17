@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Guía de Microsoft Teams en Chile - Parte 2</title>
+  <style>
+    :root {
+      /* Variables de color */
+      --color-primary: #0078D4;
+      /* Color-secondary variando ligeramente en cada entrega */
+      --color-secondary: #005a9e;
+      --color-bg: #ffffff;
+      --color-bg-alt: #f7f7f7;
+      --color-text: #333;
+
+      /* Paleta para alert-boxes */
+      --info-bg: #d9ecff; 
+      --warning-bg: #fff4e5; 
+      --success-bg: #d3f9d8; 
+      --alert-bg: #ffe4e6; 
+      --info-border: #90c2f8;
+      --warning-border: #ffc078;
+      --success-border: #8ce99a;
+      --alert-border: #ff8787;
+    }
+
+    /* Reset básico y tipografía */
+    * {
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      line-height: 1.6;
+      overflow-x: hidden; 
+    }
+
+    header {
+      position: relative;
+      background: linear-gradient(to right, var(--color-primary), #78C2F3);
+      color: #fff;
+      padding: 4rem 2rem 6rem;
+      text-align: center;
+      overflow: hidden;
+    }
+    header h1 {
+      font-size: 2.2rem;
+      margin-bottom: 1rem;
+    }
+    header p {
+      font-size: 1.1rem;
+      max-width: 800px;
+      margin: 0.5rem auto 0 auto;
+    }
+
+    /* Nueva forma de wave con clip-path */
+    .wave {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 120px;
+      background-color: var(--color-bg);
+      clip-path: polygon(0 0%, 100% 25%, 100% 100%, 0 100%);
+    }
+
+    /* Navegación sticky */
+    nav {
+      position: sticky;
+      top: 0;
+      background-color: #fff;
+      display: flex;
+      gap: 1rem;
+      padding: 0.5rem 1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      z-index: 99;
+    }
+    nav a {
+      text-decoration: none;
+      color: var(--color-primary);
+      font-weight: 500;
+      transition: color 0.2s ease-in-out;
+    }
+    nav a:hover {
+      color: var(--color-secondary);
+    }
+
+    /* Secciones alternando fondos */
+    section {
+      padding: 3rem 2rem;
+    }
+    .bg-alt {
+      background-color: var(--color-bg-alt);
+    }
+    section h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      position: relative;
+      display: inline-block;
+    }
+    section h2 svg {
+      width: 1.2em;
+      height: 1.2em;
+      fill: var(--color-primary);
+      margin-right: 0.3rem;
+      vertical-align: middle;
+    }
+    section p {
+      margin-bottom: 1rem;
+      text-align: justify;
+    }
+
+    /* Alert boxes */
+    .alert-box {
+      border-left: 4px solid;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      border-radius: 4px;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      opacity: 0; /* Para animación fade-in con Intersection Observer */
+      transform: translateY(20px);
+    }
+    .alert-icon {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+    }
+    .alert-content {
+      flex: 1;
+    }
+    .info {
+      background-color: var(--info-bg);
+      border-color: var(--info-border);
+    }
+    .warning {
+      background-color: var(--warning-bg);
+      border-color: var(--warning-border);
+    }
+    .success {
+      background-color: var(--success-bg);
+      border-color: var(--success-border);
+    }
+    .alert {
+      background-color: var(--alert-bg);
+      border-color: var(--alert-border);
+    }
+
+    /* Fade-in general */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .fade-in.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Imagen genérica */
+    .image-wrapper {
+      margin: 2rem 0;
+      text-align: center;
+    }
+    .image-wrapper img {
+      max-width: 90%;
+      height: auto;
+      border-radius: 6px;
+    }
+
+    /* Elemento interactivo: Tabs */
+    .tabs-container {
+      margin-top: 2rem;
+    }
+    .tab-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .tab-buttons button {
+      background-color: var(--color-primary);
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.3s;
+      font-size: 1rem;
+    }
+    .tab-buttons button:hover {
+      background-color: var(--color-secondary);
+    }
+    .tab-buttons button.active {
+      background-color: var(--color-secondary);
+    }
+    .tab-content {
+      display: none; /* Por defecto oculta */
+      background-color: #fff;
+      padding: 1rem;
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .tab-content.show {
+      display: block;
+    }
+
+    .spacer-bottom {
+      height: 3rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header con wave -->
+  <header>
+    <h1>Guía de Microsoft Teams - Parte 2</h1>
+    <p>Uso y Buenas Prácticas para optimizar la colaboración en tu organización.</p>
+    <div class="wave"></div>
+  </header>
+
+  <!-- Barra de navegación sticky -->
+  <nav>
+    <a href="#uso-practicas">Uso y Buenas Prácticas</a>
+    <a href="#chats-canales">Chats y Canales</a>
+    <a href="#reuniones-videollamadas">Reuniones</a>
+    <a href="#archivos">Archivos</a>
+    <a href="#productividad">Productividad</a>
+  </nav>
+
+  <!-- Sección Uso y Buenas Prácticas -->
+  <section id="uso-practicas" class="fade-in">
+    <h2>
+      <!-- Ícono decorativo -->
+      <svg aria-hidden="true" viewBox="0 0 512 512"><path fill="currentColor" d="M256 48C141.132 48 48 141.132 48 256s93.132 208 208 208 208-93.132 208-208S370.868 48 256 48zM256 402c-18.615 0-34-15.385-34-34s15.385-34 34-34 34 15.385 34 34-15.385 34-34 34zm54-154.846c-5.341 3.449-10 9.792-10 16.039v20.923c0 10.349-8.397 18.846-18.846 18.846h-50.308c-10.449 0-18.846-8.497-18.846-18.846v-32.598c0-7.002 2.889-13.722 7.93-18.63l40.616-38.557c3.427-3.257 8.505-4.686 13.348-3.784 4.649.874 8.516 3.936 10.082 8.074l10.07 24.928c2.89 7.185-.39 15.299-7.265 18.768z"></path></svg>
+      Uso y Buenas Prácticas
+    </h2>
+    <p>
+      Una vez instalado y configurado Microsoft Teams, el siguiente paso es sacarle el máximo provecho 
+      a sus funcionalidades diarias: chats, canales, reuniones, archivos y más. A continuación, revisaremos 
+      las prácticas recomendadas para una comunicación efectiva y una mejor organización del trabajo en equipo.
+    </p>
+    <div class="alert-box info">
+      <div class="alert-icon">
+        <!-- Ícono info -->
+        <svg viewBox="0 0 512 512"><path fill="currentColor" d="M256 32C114.61 32 32 114.61 32 256s82.61 224 224 224 224-82.61 224-224S397.39 32 256 32zm0 96a48 48 0 11-48 48 48 48 0 0148-48zm69.72 308.53a12 12 0 01-12 11.47H198.35a12 12 0 01-12-12v-11.26a12 12 0 0112-12h27.1v-88h-27.1a12 12 0 01-12-12v-11.31a12 12 0 0112-12h100.43a12 12 0 0112 11.63l4.54 176z"></path></svg>
+      </div>
+      <div class="alert-content">
+        <strong>Información:</strong> Minimizar el uso del correo electrónico en la colaboración interna y 
+        priorizar Teams puede agilizar la comunicación y evitar la dispersión de información.
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección Chats y Canales -->
+  <section id="chats-canales" class="bg-alt fade-in">
+    <h2>
+      <svg aria-hidden="true" viewBox="0 0 512 512"><path fill="currentColor" d="M448 0H64C28.65 0 0 28.65 0 64v224c0 35.35 28.65 64 64 64h52v84c0 9.41 10.75 14.62 18.33 9.36L256 352h192c35.35 0 64-28.65 64-64V64c0-35.35-28.65-64-64-64z"></path></svg>
+      Chats y Canales
+    </h2>
+    <p>
+      Teams ofrece <strong>chats privados o grupales</strong> para comunicaciones rápidas, y <strong>canales</strong> 
+      dentro de cada equipo para conversaciones abiertas y organizadas por tema. 
+      La recomendación general es usar chats para temas puntuales y reservados, 
+      y canales para la información que deba ser visible a todos los miembros de un proyecto.
+    </p>
+    <p>
+      En Chile, muchas empresas optan por centralizar toda la colaboración interna en Teams, 
+      dejando el correo para comunicaciones externas o formales. Además, conviene mantener ordenados 
+      los canales (p. ej., por proyecto o área de trabajo) evitando duplicar temas similares. 
+      <em>Fijar</em> o <em>anclar</em> los canales más relevantes ayuda a un acceso rápido, 
+      y así no se saturan los colaboradores con canales irrelevantes.
+    </p>
+    <p>
+      Recuerda usar <strong>@menciones</strong> para dirigirte a una persona o equipo en particular, 
+      pero hazlo con moderación para evitar sobrecarga de notificaciones. 
+      Del mismo modo, usar reacciones (👍, ❤️, etc.) en lugar de mensajes cortos de confirmación reduce el ruido en las conversaciones.
+    </p>
+    <div class="alert-box success">
+      <div class="alert-icon">
+        <!-- Ícono success -->
+        <svg viewBox="0 0 512 512"><path fill="currentColor" d="M173.898 439.404l-166.4-166.4c-4.685-4.686-4.685-12.284 0-16.97l28.284-28.284c4.686-4.686 12.284-4.686 16.97 0L192 312.69 459.248 45.444c4.686-4.686 12.284-4.686 16.97 0l28.284 28.284c4.685 4.686 4.685 12.284 0 16.97l-319.6 319.6c-4.686 4.687-12.284 4.687-16.97.006z"></path></svg>
+      </div>
+      <div class="alert-content">
+        <strong>Tip:</strong> Usa las respuestas encadenadas en canales (clic en “Responder”) para mantener 
+        la conversación sobre un tema dentro de un mismo hilo, evitando mezclar varios temas en un solo espacio.
+      </div>
+    </div>
+
+    <div class="image-wrapper">
+      <img src="https://i.postimg.cc/76mq1VhM/810-8681-546-min.jpg" alt="Ejemplo de canales de Teams organizados por proyecto">
+    </div>
+  </section>
+
+  <!-- Sección Reuniones y Videollamadas -->
+  <section id="reuniones-videollamadas" class="fade-in">
+    <h2>
+      <svg aria-hidden="true" viewBox="0 0 512 512"><path fill="currentColor" d="M336.2 64H175.8C78.9 64 0 142.9 0 239.8s78.9 175.8 175.8 175.8h160.4C433.1 415.6 512 336.7 512 239.8S433.1 64 336.2 64zM256 336.2c-53.1 0-96.4-43.3-96.4-96.4S202.9 143.4 256 143.4s96.4 43.3 96.4 96.4-43.3 96.4-96.4 96.4z"></path></svg>
+      Reuniones y Videollamadas
+    </h2>
+    <p>
+      Teams integra videoconferencias, permitiendo <strong>reuniones agendadas</strong> o <em>ad-hoc</em>. 
+      Es recomendable programar las reuniones desde el Calendario de Teams o directamente desde Outlook (agregando el enlace de Teams).
+      Durante la videollamada, se pueden usar <em>filtros de fondo</em> para difuminarlo o personalizarlo, 
+      y aprovechar el chat lateral para compartir enlaces o documentos.
+    </p>
+    <p>
+      Para una buena experiencia, <strong>revisa el audio y video</strong> antes de conectarte, 
+      activa la cámara si la política de la organización lo permite y mantén el micrófono en silencio si no estás hablando 
+      (especialmente en reuniones grandes). 
+      Es muy útil usar la reacción de “levantar la mano” (✋) para pedir la palabra sin interrumpir.
+    </p>
+    <p>
+      En caso de reuniones largas o capacitaciones, se recomienda la <strong>grabación</strong> (avisando a los participantes). 
+      Esto facilita que aquellos ausentes puedan revisar más tarde la sesión. 
+      La grabación se almacena en la nube (OneDrive/SharePoint), disponible para los participantes según permisos.
+    </p>
+    <div class="alert-box warning">
+      <div class="alert-icon">
+        <!-- Ícono warning -->
+        <svg viewBox="0 0 512 512"><path fill="currentColor" d="M256 8C119.033 8 8 119.033 8 256c0 136.967 111.034 248 248 248 136.966 0 248-111.033 248-248C504 119.033 392.966 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 238c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-28c0-6.627 5.373-12 12-12h12v-48h-12c-6.627 0-12-5.373-12-12v-28c0-6.627 5.373-12 12-12h60c6.627 0 12 5.373 12 12v88h12c6.627 0 12 5.373 12 12v28z"></path></svg>
+      </div>
+      <div class="alert-content">
+        <strong>Atención:</strong> Si invitas a personas externas a la organización, 
+        revisa las configuraciones de admisión y comparte el enlace de la reunión con anticipación.
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección Archivos -->
+  <section id="archivos" class="bg-alt fade-in">
+    <h2>
+      <svg aria-hidden="true" viewBox="0 0 512 512"><path fill="currentColor" d="M464 128H272l-64-64H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48z"></path></svg>
+      Compartición y Gestión de Archivos
+    </h2>
+    <p>
+      Todos los archivos compartidos en un canal se almacenan en la carpeta de SharePoint asociada, 
+      y los documentos de chats privados se guardan en OneDrive del remitente. Esto garantiza que los archivos 
+      estén en la nube, disponibles para todos los miembros con permisos y se sincronicen en tiempo real.
+    </p>
+    <p>
+      Una práctica recomendada es <strong>compartir enlaces</strong> a documentos en lugar de adjuntar copias, 
+      evitando la proliferación de versiones. Teams soporta la coedición de documentos de Office: 
+      varias personas pueden editar simultáneamente un Word o Excel directamente en Teams.
+    </p>
+    <p>
+      <strong>Estructura de carpetas</strong>: Mantener una estructura simple de carpetas dentro de cada canal 
+      facilita la búsqueda. Confiar en la potente herramienta de búsqueda de Teams (y SharePoint) puede ahorrar tiempo 
+      y ayuda a encontrar rápidamente archivos por nombre o contenido.
+    </p>
+    <div class="alert-box alert">
+      <div class="alert-icon">
+        <!-- Icono alert -->
+        <svg viewBox="0 0 512 512"><path fill="currentColor" d="M256 512c141.385 0 256-114.615 256-256S397.385 0 256 0 0 114.615 0 256s114.615 256 256 256zm0-112c-17.673 0-32-14.327-32-32 0-17.673 14.327-32 32-32 17.672 0 32 14.327 32 32 0 17.673-14.328 32-32 32zm44.373-238.101l-6.518 104c-.234 3.754-3.37 6.681-7.129 6.681h-61.452c-3.759 0-6.895-2.927-7.129-6.681l-6.518-104c-.268-4.265 3.089-7.899 7.353-7.899h74.066c4.264 0 7.62 3.634 7.328 7.899z"></path></svg>
+      </div>
+      <div class="alert-content">
+        <strong>Alerta:</strong> Si trabajas con información sensible, configura políticas de retención 
+        y etiquetas de confidencialidad para proteger documentos críticos.
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección Consejos de Productividad -->
+  <section id="productividad" class="fade-in">
+    <h2>
+      <svg aria-hidden="true" viewBox="0 0 512 512"><path fill="currentColor" d="M256 72c4.4 0 8 3.6 8 8v25.1c92.3 4.2 167.9 79.8 172.1 172.1H462c4.4 0 8 3.6 8 8v40c0 4.4-3.6 8-8 8h-25.1c-4.2 92.3-79.8 167.9-172.1 172.1V462c0 4.4-3.6 8-8 8h-40c-4.4 0-8-3.6-8-8v-25.1c-92.3-4.2-167.9-79.8-172.1-172.1H50c-4.4 0-8-3.6-8-8v-40c0-4.4 3.6-8 8-8h25.1c4.2-92.3 79.8-167.9 172.1-172.1V80c0-4.4 3.6-8 8-8h40m0-40h-40c-26.5 0-48 21.5-48 48v6.3C89.2 96.3 16 183.2 16 286v40c0 26.5 21.5 48 48 48h6.3C96.3 422.8 183.2 496 286 496h40c26.5 0 48-21.5 48-48v-6.3c110.8-13.4 183.9-100.3 183.9-203.7v-40c0-26.5-21.5-48-48-48h-6.3C415.7 89.2 328.8 16 226 16z"></path></svg>
+      Consejos de Productividad
+    </h2>
+    <p>
+      <strong>Estados y disponibilidad:</strong> Actualiza tu estado a “No molestar” en momentos de concentración 
+      o durante reuniones importantes. Así evitas interrupciones. 
+      Del mismo modo, respeta los estados de tus compañeros (si están en “ocupado”, evita distraerlos con consultas triviales).
+    </p>
+    <p>
+      <strong>Comandos rápidos:</strong> En la barra de búsqueda de Teams, los <em>/comandos</em> aceleran tareas 
+      como cambiar de estado, buscar archivos o personas, etc. Por ejemplo, <code>/ausente</code> 
+      cambia tu estado a Ausente rápidamente.
+    </p>
+    <p>
+      <strong>Mensajes guardados:</strong> Guarda mensajes importantes (con “...” &gt; Guardar mensaje) para leerlos o revisitarlos después. 
+      Accede a ellos desde tu perfil en “Mensajes guardados”.
+    </p>
+    <p>
+      <strong>Personalización de notificaciones:</strong> Ajusta las notificaciones para evitar distracciones. 
+      Activa alertas solo cuando te mencionen o respondan tus hilos de interés.
+    </p>
+    <p>
+      <strong>Integraciones:</strong> Agrega pestañas de Planner, OneNote o Power BI dentro de un canal para centralizar 
+      la información del equipo. Puedes ver tareas, notas y dashboards sin salir de Teams.
+    </p>
+    <div class="image-wrapper">
+      <img src="https://i.postimg.cc/tgwnj9pV/Canva_-_Man_Standing_Beside_People_Sitting_Beside_Table_With_Laptops-min.jpg" alt="Ejemplo de configuraciones de notificaciones">
+    </div>
+
+    <div class="tabs-container fade-in">
+      <h3>Explora más consejos en estas pestañas:</h3>
+      <div class="tab-buttons">
+        <button class="active" onclick="openTab(event, 'tab1')">Uso Diario</button>
+        <button onclick="openTab(event, 'tab2')">Integraciones</button>
+        <button onclick="openTab(event, 'tab3')">Gestión de Notificaciones</button>
+      </div>
+      <div id="tab1" class="tab-content show">
+        <p><strong>Uso Diario:</strong> Prioriza la comunicación en canales, utiliza hilos y reacciones 
+          para mantener orden y reduce el spam de “OK” o “Entendido”. El calendario sincronizado con Outlook te ayudará 
+          a no perder citas importantes.</p>
+      </div>
+      <div id="tab2" class="tab-content">
+        <p><strong>Integraciones:</strong> Agrega aplicaciones como Forms para encuestas rápidas, Planner para 
+          gestionar tareas, o Power BI para ver indicadores en tiempo real. Centralizar todo en Teams evita saltar 
+          entre múltiples herramientas.</p>
+      </div>
+      <div id="tab3" class="tab-content">
+        <p><strong>Gestión de Notificaciones:</strong> Ajustar alertas por canal y tipo de mensaje 
+          te permitirá enfocarte en lo realmente relevante. Desactiva notificaciones de canales de información general 
+          y activa notificaciones para proyectos críticos.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="spacer-bottom"></div>
+
+  <!-- Scripts -->
+  <script>
+    // Intersection Observer para animaciones fade-in
+    const faders = document.querySelectorAll('.fade-in, .alert-box');
+    const options = { threshold: 0.1 };
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          entry.target.classList.add('show');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, options);
+
+    faders.forEach(el => {
+      observer.observe(el);
+    });
+
+    // Tabs interactivas
+    const tabButtons = document.querySelectorAll('.tab-buttons button');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    function openTab(evt, tabId) {
+      // Remover la clase 'active' de todos los botones
+      tabButtons.forEach(btn => btn.classList.remove('active'));
+      // Ocultar todo el contenido
+      tabContents.forEach(content => content.classList.remove('show'));
+
+      // Añadir la clase 'active' al botón actual
+      evt.currentTarget.classList.add('active');
+      // Mostrar el contenido correspondiente
+      document.getElementById(tabId).classList.add('show');
+    }
+  </script>
+</body>
+</html>

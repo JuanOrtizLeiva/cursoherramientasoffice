@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Guía de Microsoft Teams en Chile - Parte 1</title>
+  <!--
+    NOTA: Este archivo HTML es autónomo. 
+    Incluye estilos (CSS) e interactividad (JS) sin recurrir a archivos externos.
+  -->
+  <style>
+    :root {
+      /* Variables de color */
+      --color-primary: #0078D4;
+      /* En cada entrega variará ligeramente el color-secondary; aquí elegimos un tono inicial */
+      --color-secondary: #00427a;
+      --color-bg: #ffffff;
+      --color-bg-alt: #fafafa;
+      --color-text: #333;
+      
+      /* Paleta para alert-boxes */
+      --info-bg: #d9ecff;    /* azul claro */
+      --warning-bg: #fff4e5; /* anaranjado suave */
+      --success-bg: #d3f9d8; /* verde pastel */
+      --alert-bg: #ffe4e6;   /* rosado pastel */
+      --info-border: #90c2f8;
+      --warning-border: #ffc078;
+      --success-border: #8ce99a;
+      --alert-border: #ff8787;
+    }
+
+    /* Reset básico y tipografía */
+    * {
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      line-height: 1.6;
+      overflow-x: hidden; /* Evitar scroll horizontal inesperado */
+    }
+
+    header {
+      position: relative;
+      background: linear-gradient(to right, var(--color-primary), #78C2F3);
+      color: #fff;
+      padding: 4rem 2rem 6rem; /* espacio extra para la 'wave' */
+      text-align: center;
+      overflow: hidden;
+    }
+    header h1 {
+      font-size: 2.2rem;
+      margin-bottom: 1rem;
+    }
+    header p {
+      font-size: 1.1rem;
+      max-width: 800px;
+      margin: 0.5rem auto 0 auto;
+    }
+
+    /* Wave con clip-path (varía en cada HTML) */
+    .wave {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 150px;
+      background-color: var(--color-bg);
+      clip-path: polygon(0 75%, 100% 50%, 100% 100%, 0 100%);
+    }
+
+    /* Navegación sticky */
+    nav {
+      position: sticky;
+      top: 0;
+      background-color: #fff;
+      display: flex;
+      gap: 1rem;
+      padding: 0.5rem 1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      z-index: 99;
+    }
+    nav a {
+      text-decoration: none;
+      color: var(--color-primary);
+      font-weight: 500;
+      transition: color 0.2s ease-in-out;
+    }
+    nav a:hover {
+      color: var(--color-secondary);
+    }
+
+    /* Secciones alternando fondos */
+    section {
+      padding: 3rem 2rem;
+    }
+    .bg-alt {
+      background-color: var(--color-bg-alt);
+    }
+    section h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      position: relative;
+      display: inline-block;
+    }
+    section h2 svg {
+      width: 1.2em;
+      height: 1.2em;
+      fill: var(--color-primary);
+      margin-right: 0.3rem;
+      vertical-align: middle;
+    }
+    section p {
+      margin-bottom: 1rem;
+      text-align: justify;
+    }
+
+    /* Alert boxes */
+    .alert-box {
+      border-left: 4px solid;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      border-radius: 4px;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      opacity: 0; /* Para animación con Intersection Observer */
+      transform: translateY(20px);
+    }
+    .alert-icon {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+    }
+    .alert-content {
+      flex: 1;
+    }
+
+    .info {
+      background-color: var(--info-bg);
+      border-color: var(--info-border);
+    }
+    .warning {
+      background-color: var(--warning-bg);
+      border-color: var(--warning-border);
+    }
+    .success {
+      background-color: var(--success-bg);
+      border-color: var(--success-border);
+    }
+    .alert {
+      background-color: var(--alert-bg);
+      border-color: var(--alert-border);
+    }
+
+    /* Interactivo: un Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0; 
+      left: 0; 
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      display: none; /* Oculto por defecto */
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    .modal-content {
+      background-color: #fff;
+      max-width: 600px;
+      width: 90%;
+      padding: 2rem;
+      border-radius: 8px;
+      position: relative;
+    }
+    .modal-content h3 {
+      margin-bottom: 1rem;
+    }
+    .close-modal {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: transparent;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .open-modal-btn {
+      background-color: var(--color-primary);
+      color: #fff;
+      padding: 0.75rem 1.2rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.3s;
+      font-size: 1rem;
+      margin: 1rem 0;
+    }
+    .open-modal-btn:hover {
+      background-color: var(--color-secondary);
+    }
+
+    /* Fade-in general para elementos observados */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .fade-in.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Imagen genérica */
+    .image-wrapper {
+      margin: 2rem 0;
+      text-align: center;
+    }
+    .image-wrapper img {
+      max-width: 90%;
+      height: auto;
+      border-radius: 6px;
+    }
+
+    /* Asegurar suficiente espacio al final */
+    .spacer-bottom {
+      height: 3rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header con wave -->
+  <header>
+    <h1>Guía de Microsoft Teams en Chile - Parte 1</h1>
+    <p>Introducción, instalación y configuración básica para aprovechar Microsoft Teams en el contexto chileno.</p>
+    <div class="wave"></div>
+  </header>
+
+  <!-- Barra de navegación sticky -->
+  <nav>
+    <a href="#introduccion">Introducción</a>
+    <a href="#instalacion">Instalación</a>
+    <a href="#configuracion-inicial">Configuración Inicial</a>
+    <a href="#personalizacion">Personalización</a>
+    <a href="#modal-demo">Modal Demo</a>
+  </nav>
+
+  <!-- Sección Introducción -->
+  <section id="introduccion" class="fade-in">
+    <h2>
+      <!-- Pequeño ícono decorativo en SVG -->
+      <svg aria-hidden="true" viewBox="0 0 512 512"><path fill="currentColor" d="M256 32c123.505 0 224 100.495 224 224S379.505 480 256 480 32 379.505 32 256 132.495 32 256 32zm0 70c-13.255 0-24 10.745-24 24v136a24 24 0 0048 0V126c0-13.255-10.745-24-24-24zm0 244c-17.673 0-32 14.327-32 32v4c0 17.673 14.327 32 32 32h0c17.673 0 32-14.327 32-32v-4c0-17.673-14.327-32-32-32z"></path></svg>
+      Introducción
+    </h2>
+    <p>
+      Microsoft Teams se ha convertido en una herramienta clave de colaboración en Chile, tanto en el sector privado como en organismos públicos. 
+      Su funcionalidad abarca mensajería, videoconferencias, trabajo con documentos y un sinfín de integraciones con el ecosistema Microsoft 365.
+      Este documento se enfoca en explicar cómo instalar y configurar Teams, resaltando buenas prácticas, casos de uso locales 
+      y consideraciones legales relevantes en el país.
+    </p>
+    <div class="alert-box info">
+      <div class="alert-icon">
+        <!-- Icono info -->
+        <svg viewBox="0 0 512 512"><path fill="currentColor" d="M256 32C114.64 32 0 146.64 0 288s114.64 256 256 256 256-114.64 256-256S397.36 32 256 32zm0 96a48 48 0 11-48 48 48 48 0 0148-48zm69.72 308.53a12 12 0 01-12 11.47h-115.4a12 12 0 01-12-12v-11.26a12 12 0 0112-12h27.1V256h-27.1a12 12 0 01-12-12v-11.31a12 12 0 0112-12h100.4a12 12 0 0112 11.63l4.54 176z"></path></svg>
+      </div>
+      <div class="alert-content">
+        <strong>Información:</strong> En esta primera parte se abordará principalmente la instalación de Teams en distintos dispositivos 
+        y la configuración inicial de la aplicación. 
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección Instalación -->
+  <section id="instalacion" class="bg-alt fade-in">
+    <h2>
+      <!-- Ícono decorativo -->
+      <svg aria-hidden="true" viewBox="0 0 512 512"><path fill="currentColor" d="M256 8C119.034 8 8 119.033 8 256c0 136.966 111.034 248 248 248 136.965 0 248-111.034 248-248C504 119.033 392.965 8 256 8zm93.194 272.174l-155.63 155.589c-4.686 4.686-12.284 4.686-16.97 0l-91.029-91.029c-4.686-4.686-4.686-12.284 0-16.97l28.284-28.284c4.686-4.686 12.284-4.686 16.97 0l46.56 46.518 110.296-110.213c4.686-4.686 12.284-4.686 16.97 0l28.284 28.284c4.686 4.686 4.686 12.284 0 16.97z"></path></svg>
+      Instalación
+    </h2>
+    <p>
+      Microsoft Teams está disponible para Windows, macOS, iOS y Android, además de ofrecer versión web.
+      <strong>En Windows</strong> y <strong>macOS</strong>, se descarga desde el sitio oficial de Microsoft (teams.microsoft.com/downloads)
+      e incluye instaladores que no requieren necesariamente privilegios de administrador en Windows.
+      Para <strong>dispositivos móviles</strong>, se usa la App Store en iOS o Google Play Store en Android. 
+      También es posible usar <strong>Teams vía navegador web</strong> (en <em>teams.microsoft.com</em>) cuando no se quiera o pueda instalar la app.
+    </p>
+
+    <p>
+      El uso de la aplicación web resulta práctico especialmente en computadoras de uso compartido o cuando la política de la empresa
+      no permite instalar software adicional. Aun así, la versión de escritorio ofrece todas las funcionalidades y suele ser 
+      la recomendada para un uso intensivo.
+    </p>
+
+    <div class="alert-box success">
+      <div class="alert-icon">
+        <!-- Icono success -->
+        <svg viewBox="0 0 512 512"><path fill="currentColor" d="M173.898 439.404l-166.4-166.4c-4.685-4.686-4.685-12.284 0-16.97l28.284-28.284c4.686-4.686 12.284-4.686 16.97 0L192 312.69 459.248 45.444c4.686-4.686 12.284-4.686 16.97 0l28.284 28.284c4.685 4.686 4.685 12.284 0 16.97l-319.6 319.6c-4.686 4.687-12.284 4.687-16.97.006z"></path></svg>
+      </div>
+      <div class="alert-content">
+        <strong>¡Éxito!</strong> Si instalas Teams en un computador Windows, no necesitas ser administrador para ejecutar el instalador, 
+        lo que facilita la adopción rápida en entornos corporativos.
+      </div>
+    </div>
+
+    <div class="image-wrapper">
+      <img src="https://i.postimg.cc/gk6QKDBy/17380-min.jpg" alt="Imagen ilustrativa de la instalación de Teams">
+    </div>
+  </section>
+
+  <!-- Sección Configuración Inicial -->
+  <section id="configuracion-inicial" class="fade-in">
+    <h2>
+      <!-- Ícono decorativo -->
+      <svg aria-hidden="true" viewBox="0 0 512 512"><path fill="currentColor" d="M256 0c-46.7 0-90.7 12.3-129.4 35.5-5.8 3.2-6.4 11.4-1 15.8l31.3 31.3c3.4 3.4 8.7 4.2 12.9 1.7 25.1-14.5 54.1-22.3 86.1-22.3 99.4 0 156.4 111.3 93.2 192.5-14.7 18.3-36.3 33.5-58.9 43-7.3 3-12 10-12 17.8v44.7c0 7 4.5 13.3 11.3 15.7 36.7 12.7 63.3 46.8 63.3 87 0 7.7 6.3 14 14 14h44.1c7.7 0 14-6.3 14-14 0-63.6-48.5-118.4-110.3-125.9 52.7-20.9 93.5-71.6 93.5-133.7C384 78.7 326.1 0 256 0z"></path></svg>
+      Configuración Inicial
+    </h2>
+    <p>
+      Al abrir Teams por primera vez, se solicita iniciar sesión con una cuenta Microsoft. 
+      En entornos empresariales, generalmente se emplea la cuenta de Microsoft 365 (correo institucional). 
+      El siguiente paso es agregar una foto de perfil, comprobar el nombre que se muestra y ajustar las notificaciones 
+      y el estado de presencia (Disponible, Ocupado, etc.).
+    </p>
+    <p>
+      La interfaz principal de Teams incluye accesos a <em>Actividad, Chat, Equipos, Calendario, Llamadas y Archivos</em>. 
+      Desde la Configuración (menú que aparece al hacer clic en la foto de perfil), se puede elegir entre 
+      <strong>tema claro</strong> o <strong>oscuro</strong>, así como modificar el idioma y las notificaciones.
+    </p>
+    <p>
+      En el contexto chileno, las organizaciones más grandes suelen contar con un administrador de TI que crea 
+      las cuentas de los empleados y define los permisos. Por ejemplo, al crear un <strong>Equipo</strong> de 
+      Microsoft Teams, la persona que lo crea es Propietaria y puede invitar a otros miembros.
+    </p>
+
+    <div class="alert-box warning">
+      <div class="alert-icon">
+        <!-- Icono warning -->
+        <svg viewBox="0 0 512 512"><path fill="currentColor" d="M256 8C119.033 8 8 119.033 8 256c0 136.967 111.034 248 248 248 136.966 0 248-111.033 248-248C504 119.033 392.966 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 238c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-28c0-6.627 5.373-12 12-12h12v-48h-12c-6.627 0-12-5.373-12-12v-28c0-6.627 5.373-12 12-12h60c6.627 0 12 5.373 12 12v88h12c6.627 0 12 5.373 12 12v28z"></path></svg>
+      </div>
+      <div class="alert-content">
+        <strong>Atención:</strong> Si vas a invitar a usuarios externos (clientes o colaboradores de otras empresas), 
+        asegúrate de que la opción “Invitados” esté habilitada por el administrador de tu tenant de Microsoft 365. 
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección Personalización de la Interfaz -->
+  <section id="personalizacion" class="bg-alt fade-in">
+    <h2>
+      <!-- Ícono decorativo -->
+      <svg aria-hidden="true" viewBox="0 0 512 512"><path fill="currentColor" d="M497.9 142.1l-60-60c-4.7-4.7-12.3-4.7-17 0l-20.4 20.4c-4.7 4.7-4.7 12.3 0 17l60 60c4.7 4.7 12.3 4.7 17 0l20.4-20.4c4.8-4.7 4.8-12.3.1-17zM291.7 81.3c-4.7-4.7-12.3-4.7-17 0l-167 167c-1.9 1.9-3.3 4.4-4.1 7l-22.7 79.3c-2.6 9.3 6.1 18 15.4 15.4l79.3-22.7c2.6-.8 5-2.2 7-4.1l167-167c4.7-4.7 4.7-12.3 0-17l-58-58zm-121 237.4l-40.5 11.6 11.6-40.5 86.7-86.7 28.9 28.9-86.7 86.7z"></path></svg>
+      Personalización de la Interfaz
+    </h2>
+    <p>
+      En Microsoft Teams, conviene anclar (pin) los chats y canales que uses con frecuencia, así te aparecen arriba 
+      de la lista. También puedes ocultar canales que no requieres ver. 
+      Ajustar las <strong>notificaciones</strong> según la importancia de cada canal evita sobrecargas de avisos.
+    </p>
+    <p>
+      Al <em>seguir</em> un canal, recibirás notificaciones cada vez que haya un mensaje nuevo. Esto es útil 
+      en proyectos o áreas en las que participas activamente. Para <strong>equilibra</strong>r la concentración, 
+      se recomienda desactivar notificaciones de canales con menor prioridad.
+    </p>
+    <p>
+      Las opciones de personalización se encuentran en Configuración &gt; Notificaciones, donde puedes definir 
+      si deseas banners, correos o solo avisos en la pestaña de Actividad. 
+      Usa reacciones (pulgar arriba, corazón, etc.) para reducir la cantidad de mensajes de respuesta tipo “OK”.
+    </p>
+
+    <div class="alert-box alert">
+      <div class="alert-icon">
+        <!-- Icono alert -->
+        <svg viewBox="0 0 512 512"><path fill="currentColor" d="M256 512c141.384 0 256-114.616 256-256S397.384 0 256 0 0 114.616 0 256s114.616 256 256 256zm0-112c-17.645 0-32-14.355-32-32 0-17.645 14.355-32 32-32s32 14.355 32 32c0 17.645-14.355 32-32 32zm44.373-238.101l-6.518 104c-.235 3.754-3.37 6.681-7.129 6.681h-61.452c-3.759 0-6.894-2.927-7.129-6.681l-6.518-104c-.268-4.265 3.089-7.899 7.353-7.899h74.066c4.263 0 7.62 3.634 7.327 7.899z"></path></svg>
+      </div>
+      <div class="alert-content">
+        <strong>Alerta:</strong> Demasiadas notificaciones pueden afectar la productividad.
+        Ajusta la configuración para no perder información importante ni ser bombardeado por mensajes irrelevantes.
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección Demo: Modal interactivo -->
+  <section id="modal-demo" class="fade-in">
+    <h2>
+      <!-- Ícono decorativo -->
+      <svg aria-hidden="true" viewBox="0 0 512 512"><path fill="currentColor" d="M256 0c-38.4 0-69.3 31.2-69.3 69.3v37.3c0 15.3-12 27.3-27.3 27.3H48c-26.5 0-48 21.5-48 48v208c0 26.5 21.5 48 48 48h69.3c15.3 0 27.3 12 27.3 27.3V443c0 38.4 31.2 69.3 69.3 69.3h208c38.4 0 69.3-31.2 69.3-69.3V256c0-38.4-31.2-69.3-69.3-69.3h-37.3c-15.3 0-27.3-12-27.3-27.3V48c0-26.5-21.5-48-48-48H256zM208 288h96c8.8 0 16 7.2 16 16v80c0 8.8-7.2 16-16 16h-96c-8.8 0-16-7.2-16-16v-80c0-8.8 7.2-16 16-16z"></path></svg>
+      Comentario
+    </h2>
+    <p>
+      Microsoft Teams es una plataforma de colaboración que permite a los equipos trabajar juntos de manera eficiente, facilitando la comunicación y la organización de tareas. Con Teams, puedes realizar videollamadas, compartir archivos y colaborar en documentos en tiempo real, todo en un solo lugar.
+. Pulsa el botón para abrirlo:
+    </p>
+    <button class="open-modal-btn" onclick="openModal()">Abrir Modal</button>
+  </section>
+
+  <div class="spacer-bottom"></div>
+
+  <!-- Modal Overlay -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-content">
+      <button class="close-modal" onclick="closeModal()">X</button>
+      <h3>Modal de Ejemplo</h3>
+      <p>
+        Caso: Organización de una Reunión
+
+Equipo: El equipo de ventas crea un equipo en Microsoft Teams llamado “Reunión Semanal”.<br>
+Canales: Crean un canal para la agenda y otro para notas.<br>
+Reuniones: Programan la reunión semanal y comparten la agenda.<br>
+Colaboración: Editan la agenda y toman notas en tiempo real durante la reunión..
+
+      </p>
+      <p>
+        Para cerrarlo, haz clic en “X”.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    // Intersection Observer para animar .fade-in y .alert-box
+    const faders = document.querySelectorAll('.fade-in, .alert-box');
+    const options = {
+      threshold: 0.1
+    };
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          entry.target.classList.add('show');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, options);
+
+    faders.forEach(el => {
+      observer.observe(el);
+    });
+
+    // Modal script
+    const modalOverlay = document.getElementById('modalOverlay');
+    function openModal() {
+      modalOverlay.style.display = 'flex';
+    }
+    function closeModal() {
+      modalOverlay.style.display = 'none';
+    }
+    // Cerrar modal al hacer clic fuera del contenido
+    modalOverlay.addEventListener('click', (e) => {
+      if(e.target === modalOverlay) {
+        closeModal();
+      }
+    });
+  </script>
+
+</body>
+</html>
